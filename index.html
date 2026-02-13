@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#c2727e">
+<title>Kiki & Jeff Wedding Planner</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Quicksand:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#fff8f6;--bg2:#ffffff;--bg3:#fff0ec;--bg-hover:#ffe8e2;
+  --text:#4a2c2a;--text2:#8a6060;--text3:#b89494;
+  --pink:#e07088;--pink-deep:#c2556a;--pink-light:#fce4e8;--pink-glow:#ff8fa3;
+  --gold:#d4a855;--gold-light:#f5e6c4;
+  --cream:#fdf6f0;--blush:#f8d7da;
+  --border:#f0d4d4;--shadow:0 4px 20px rgba(200,100,100,.1);
+  --done:#8fbf7e;--done-bg:#f0f8ec;
+  --danger:#d46a6a;--danger-bg:#fce8e8;
+  --radius:16px;--radius-sm:12px;
+  --font-script:'Great Vibes',cursive;
+  --font-display:'Playfair Display',serif;
+  --font-body:'Quicksand',sans-serif;
+  --cat-venue:#c27878;--cat-photo:#a87cb2;--cat-floral:#7eaa8e;
+  --cat-attire:#c2728e;--cat-guest:#7899b5;--cat-food:#b5a068;--cat-other:#9a8a8a;
+  --online:#6ec47e;
+}
+
+.dark{
+  --bg:#1c1215;--bg2:#281b1f;--bg3:#342228;--bg-hover:#3e2a30;
+  --text:#f0dde0;--text2:#c0a0a5;--text3:#8a7075;
+  --pink:#e88098;--pink-deep:#d46880;--pink-light:#3a2028;--pink-glow:#ff6080;
+  --gold:#e0b860;--gold-light:#3a3020;
+  --cream:#2a1e1e;--blush:#3a2228;
+  --border:#402830;--shadow:0 4px 24px rgba(0,0,0,.4);
+  --done-bg:#243026;--danger-bg:#382020;
+  --cat-venue:#e09898;--cat-photo:#c8a0d4;--cat-floral:#80cc9e;
+  --cat-attire:#e098b0;--cat-guest:#98b8d4;--cat-food:#d4c080;--cat-other:#b0a0a0;
+  --online:#80e090;
+}
+
+html{font-size:16px;-webkit-text-size-adjust:100%}
+
+body{
+  font-family:var(--font-body);color:var(--text);background:var(--bg);
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  transition:background .4s,color .4s;
+}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ─── Floating Hearts BG ─── */
+.hearts-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.float-heart{
+  position:absolute;bottom:-40px;
+  font-size:1rem;opacity:.12;color:var(--pink);
+  animation:floatUp linear infinite;
+}
+.dark .float-heart{opacity:.06}
+@keyframes floatUp{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:.12}
+  50%{opacity:.18}
+  100%{transform:translateY(-110vh) rotate(360deg) scale(.6);opacity:0}
+}
+
+/* ═══════════════════════════════════════
+   SETUP / ONBOARDING SCREENS
+   ═══════════════════════════════════════ */
+.screen{display:none;min-height:100vh;min-height:100dvh}
+.screen.active{display:block}
+
+/* ─── Setup Screen ─── */
+#setupScreen{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem 1.2rem;
+}
+.setup-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2rem 1.5rem;max-width:440px;width:100%;box-shadow:var(--shadow);
+  animation:cardIn .5s ease-out;
+}
+.setup-card h1{
+  font-family:var(--font-script);font-size:2.4rem;color:var(--pink-deep);
+  text-align:center;margin-bottom:.2rem;
+}
+.setup-card .setup-sub{
+  font-family:var(--font-display);font-style:italic;font-size:.9rem;
+  color:var(--text2);text-align:center;margin-bottom:1.5rem;
+}
+
+/* Steps indicator */
+.steps-indicator{
+  display:flex;justify-content:center;gap:.6rem;margin-bottom:1.8rem;
+}
+.step-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--border);
+  transition:all .3s;
+}
+.step-dot.active{background:var(--pink);transform:scale(1.3)}
+.step-dot.done{background:var(--done)}
+
+/* Setup step content */
+.setup-step{display:none}
+.setup-step.active{display:block;animation:fadeSlide .35s ease-out}
+@keyframes fadeSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+.guide-box{
+  background:var(--bg3);border-radius:var(--radius-sm);padding:1rem;
+  margin-bottom:1rem;font-size:.82rem;line-height:1.7;color:var(--text2);
+}
+.guide-box strong{color:var(--pink-deep)}
+.guide-box ol{padding-left:1.2rem;margin:.4rem 0}
+.guide-box li{margin-bottom:.4rem}
+.guide-box code{
+  background:var(--pink-light);padding:.1rem .4rem;border-radius:4px;
+  font-size:.78rem;color:var(--pink-deep);font-family:monospace;
+}
+
+.setup-label{
+  display:block;font-size:.78rem;color:var(--text2);margin-bottom:.3rem;
+  font-weight:600;letter-spacing:.04em;
+}
+.setup-input{
+  width:100%;padding:.7rem .85rem;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:1rem;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.setup-input:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-light)}
+textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font-size:.82rem}
+
+.setup-row{margin-bottom:1rem}
+.setup-error{font-size:.75rem;color:var(--danger);margin-top:.3rem;display:none}
+.setup-error.show{display:block}
+
+.setup-btn-row{display:flex;gap:.5rem;margin-top:1.2rem}
+.setup-btn{
+  flex:1;padding:.75rem 1rem;border-radius:var(--radius-sm);border:none;
+  cursor:pointer;font-family:var(--font-body);font-size:.9rem;font-weight:600;
+  transition:all .25s;
+}
+.setup-btn-primary{
+  background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;
+  box-shadow:0 2px 12px rgba(200,80,100,.25);
+}
+.setup-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,80,100,.35)}
+.setup-btn-secondary{background:var(--bg3);color:var(--text2)}
+.setup-btn-secondary:hover{background:var(--bg-hover)}
+
+.setup-divider{
+  text-align:center;margin:1.2rem 0;color:var(--text3);font-size:.8rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.setup-divider::before,.setup-divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* Name select pills */
+.name-select{display:flex;gap:.8rem;justify-content:center;margin:1rem 0}
+.name-pill{
+  padding:.8rem 1.8rem;border-radius:30px;border:2px solid var(--border);
+  background:var(--bg);cursor:pointer;font-family:var(--font-display);
+  font-size:1.1rem;font-weight:600;transition:all .3s;color:var(--text2);
+}
+.name-pill:hover{border-color:var(--pink);color:var(--pink)}
+.name-pill.selected{
+  border-color:var(--pink);background:linear-gradient(135deg,var(--pink),var(--pink-deep));
+  color:#fff;transform:scale(1.05);box-shadow:0 4px 16px rgba(200,80,100,.3);
+}
+.name-pill i{margin-right:.3rem}
+
+/* Sync status badge */
+.sync-badge{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-size:.7rem;font-weight:600;padding:.3rem .7rem;border-radius:15px;
+  background:var(--bg3);color:var(--text3);
+  position:absolute;top:.8rem;right:.8rem;
+}
+.sync-badge.online{background:color-mix(in srgb,var(--online) 15%,transparent);color:var(--online)}
+.sync-badge .dot{
+  width:7px;height:7px;border-radius:50%;background:currentColor;
+}
+.sync-badge.online .dot{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══════════════════════════════════════
+   MAIN APP SCREEN
+   ═══════════════════════════════════════ */
+
+/* ─── Hero ─── */
+.hero{
+  position:relative;z-index:1;text-align:center;
+  padding:2rem 1rem 1.2rem;
+  background:linear-gradient(170deg,var(--pink-light) 0%,var(--bg) 60%,var(--cream) 100%);
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;left:-30%;width:160%;height:160%;
+  background:radial-gradient(ellipse at 40% 30%,var(--pink-light) 0%,transparent 55%);
+  opacity:.6;pointer-events:none;
+}
+
+.couple-photo-wrap{
+  position:relative;z-index:2;margin:0 auto .6rem;width:100px;height:100px;
+}
+.couple-photo{
+  width:100px;height:100px;border-radius:50%;object-fit:cover;
+  border:4px solid var(--pink);box-shadow:0 0 0 5px var(--pink-light),0 6px 30px rgba(200,80,100,.2);
+  background:var(--pink-light);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;overflow:hidden;transition:transform .3s,box-shadow .3s;position:relative;
+}
+.couple-photo:hover{transform:scale(1.04);box-shadow:0 0 0 5px var(--pink-light),0 8px 36px rgba(200,80,100,.3)}
+.couple-photo img{width:100%;height:100%;object-fit:cover;display:none}
+.couple-photo .placeholder{color:var(--pink);font-size:2rem;opacity:.5;transition:opacity .2s}
+.couple-photo:hover .placeholder{opacity:.8}
+.couple-photo.has-img .placeholder{display:none}
+.couple-photo.has-img img{display:block}
+.photo-hint{font-size:.65rem;color:var(--text3);margin-top:.2rem;position:relative;z-index:2;font-style:italic}
+
+.hero-names{
+  position:relative;z-index:2;font-family:var(--font-script);font-size:2.6rem;
+  color:var(--pink-deep);line-height:1.2;text-shadow:0 2px 15px rgba(200,80,100,.12);
+}
+.hero-amp{
+  display:inline-block;font-family:var(--font-display);font-style:italic;
+  font-size:1.4rem;color:var(--gold);margin:0 .15rem;vertical-align:middle;
+  position:relative;top:-2px;
+}
+.hero-heart{display:block;font-size:.9rem;color:var(--pink);margin:.15rem auto;animation:heartbeat 1.8s ease-in-out infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.15)}60%{transform:scale(1)}}
+.hero-sub{
+  position:relative;z-index:2;font-family:var(--font-display);font-style:italic;
+  font-size:.85rem;color:var(--text2);letter-spacing:.08em;
+}
+.hero-sub i{color:var(--gold);margin:0 .25rem;font-size:.6rem}
+.swirl{
+  position:relative;z-index:2;margin:.4rem auto 0;width:100px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:1px;
+}
+
+/* Online bar */
+.online-bar{
+  position:relative;z-index:2;display:flex;justify-content:center;gap:.6rem;
+  margin-top:.6rem;
+}
+.online-tag{
+  display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:12px;background:var(--bg2);color:var(--text3);
+  border:1px solid var(--border);
+}
+.online-tag.is-online{border-color:var(--online);color:var(--online)}
+.online-tag .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.online-tag.is-online .dot{animation:pulse 2s infinite}
+.online-tag.is-me{font-weight:700}
+
+/* ─── Stats ─── */
+.stats{
+  display:flex;justify-content:center;gap:0;padding:0;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+}
+.stat{flex:1;text-align:center;padding:.6rem .5rem;border-right:1px solid var(--border);position:relative}
+.stat:last-child{border-right:none}
+.stat-num{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--pink)}
+.stat-label{font-size:.6rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+
+/* ─── Progress ─── */
+.progress-wrap{padding:.6rem 1.2rem .2rem;max-width:640px;margin:0 auto}
+.progress-bar{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.06)}
+.progress-fill{
+  height:100%;border-radius:5px;transition:width .6s cubic-bezier(.25,.8,.25,1);
+  background:linear-gradient(90deg,var(--pink),var(--pink-glow),var(--gold));
+  background-size:200% 100%;animation:gradientShift 3s ease infinite;position:relative;
+}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.progress-fill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);
+  animation:shimmer 2.5s infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.progress-text{font-size:.7rem;color:var(--text3);text-align:right;margin-top:.15rem;font-weight:500}
+
+/* ─── Filters ─── */
+.filters{
+  display:flex;gap:.4rem;padding:.6rem .8rem;overflow-x:auto;
+  max-width:640px;margin:0 auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.filters::-webkit-scrollbar{display:none}
+.filter-btn{
+  flex-shrink:0;padding:.38rem .75rem;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--bg2);color:var(--text2);font-size:.76rem;cursor:pointer;
+  font-family:var(--font-body);font-weight:500;transition:all .2s;white-space:nowrap;
+}
+.filter-btn:hover{border-color:var(--pink);color:var(--pink)}
+.filter-btn.active{
+  background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;border-color:transparent;
+  box-shadow:0 2px 10px rgba(200,80,100,.25);
+}
+
+/* ─── Task List ─── */
+.task-list{max-width:640px;margin:0 auto;padding:.4rem 1rem 7rem;position:relative;z-index:1}
+.task-group-label{
+  font-family:var(--font-display);font-size:.95rem;font-weight:600;
+  color:var(--text2);margin:1rem 0 .4rem .2rem;display:flex;align-items:center;gap:.4rem;
+}
+.task-group-label i{font-size:.65rem;color:var(--pink)}
+
+.task-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:.75rem .85rem;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.65rem;
+  transition:all .3s cubic-bezier(.25,.8,.25,1);position:relative;animation:cardIn .4s ease-out both;
+}
+.task-card:hover{box-shadow:var(--shadow);border-color:var(--pink);transform:translateY(-1px)}
+.task-card.done{opacity:.55}
+.task-card.done .task-text{text-decoration:line-through;color:var(--text3)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ─── Checkbox (Heart) ─── */
+.ck{
+  width:26px;height:26px;flex-shrink:0;margin-top:1px;cursor:pointer;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--border);transition:all .3s;
+}
+.ck::before{content:'\f004';font-family:'Font Awesome 6 Free';font-weight:400;transition:all .3s}
+.ck:hover{color:var(--pink);transform:scale(1.15)}
+.ck.checked{color:var(--pink)}
+.ck.checked::before{font-weight:900;animation:heartPop .4s ease}
+@keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.4)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+
+/* ─── Task Content ─── */
+.task-body{flex:1;min-width:0}
+.task-text{font-size:.88rem;line-height:1.45;word-break:break-word;font-weight:500}
+.task-note{font-size:.74rem;color:var(--text3);margin-top:.12rem;line-height:1.35}
+.task-meta{display:flex;align-items:center;gap:.4rem;margin-top:.2rem;flex-wrap:wrap}
+.task-cat{font-size:.6rem;padding:.12rem .45rem;border-radius:10px;font-weight:600;letter-spacing:.03em}
+.task-date{font-size:.66rem;color:var(--text3);font-weight:500}
+.task-date i{margin-right:.12rem;font-size:.58rem}
+
+.cat-venue{background:color-mix(in srgb,var(--cat-venue) 15%,transparent);color:var(--cat-venue)}
+.cat-photo{background:color-mix(in srgb,var(--cat-photo) 15%,transparent);color:var(--cat-photo)}
+.cat-floral{background:color-mix(in srgb,var(--cat-floral) 15%,transparent);color:var(--cat-floral)}
+.cat-attire{background:color-mix(in srgb,var(--cat-attire) 15%,transparent);color:var(--cat-attire)}
+.cat-guest{background:color-mix(in srgb,var(--cat-guest) 15%,transparent);color:var(--cat-guest)}
+.cat-food{background:color-mix(in srgb,var(--cat-food) 15%,transparent);color:var(--cat-food)}
+.cat-other{background:color-mix(in srgb,var(--cat-other) 15%,transparent);color:var(--cat-other)}
+
+/* ─── Task Actions ─── */
+.task-actions{display:flex;gap:.2rem;flex-shrink:0;opacity:0;transition:opacity .2s}
+.task-card:hover .task-actions{opacity:1}
+@media(hover:none){.task-actions{opacity:1}}
+.act-btn{
+  width:30px;height:30px;border-radius:10px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:.73rem;
+  background:transparent;color:var(--text3);transition:all .2s;
+}
+.act-btn:hover{background:var(--bg3);color:var(--pink)}
+.act-btn.del:hover{background:var(--danger-bg);color:var(--danger)}
+
+/* ─── FAB ─── */
+.fab{
+  position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;border:none;
+  cursor:pointer;z-index:60;background:linear-gradient(135deg,var(--pink),var(--pink-deep));
+  color:#fff;font-size:1.3rem;box-shadow:0 4px 24px rgba(200,80,100,.4);
+  display:flex;align-items:center;justify-content:center;transition:transform .3s,box-shadow .3s;
+}
+.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 6px 32px rgba(200,80,100,.5)}
+.fab:active{transform:scale(.92) rotate(90deg)}
+
+/* Settings gear */
+.settings-btn{
+  position:fixed;bottom:1.5rem;left:1.5rem;width:42px;height:42px;border-radius:50%;border:none;
+  cursor:pointer;z-index:60;background:var(--bg2);color:var(--text3);font-size:.95rem;
+  box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;
+  transition:all .3s;border:1px solid var(--border);
+}
+.settings-btn:hover{color:var(--pink);transform:rotate(90deg)}
+
+/* ─── Modal ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(60,20,30,.5);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;visibility:hidden;transition:all .3s;backdrop-filter:blur(4px);
+}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal{
+  background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;
+  width:100%;max-width:480px;max-height:85vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.32,.72,.32,1);
+  padding:1.3rem 1.2rem 2rem;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+@media(min-width:600px){
+  .modal-overlay{align-items:center}
+  .modal{border-radius:var(--radius);max-height:80vh;transform:translateY(30px) scale(.95)}
+  .modal-overlay.open .modal{transform:translateY(0) scale(1)}
+}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto .6rem}
+@media(min-width:600px){.modal-handle{display:none}}
+.modal h2{font-family:var(--font-display);font-size:1.3rem;font-weight:600;color:var(--pink-deep);margin-bottom:.7rem;text-align:center}
+.modal h2 i{margin-right:.3rem;font-size:.95rem}
+.modal label{display:block;font-size:.73rem;color:var(--text2);margin-bottom:.2rem;letter-spacing:.04em;font-weight:600}
+.modal input[type="text"],.modal input[type="date"],.modal textarea,.modal select{
+  width:100%;padding:.6rem .8rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:1rem;
+  transition:border-color .2s;-webkit-appearance:none;appearance:none;
+}
+.modal input:focus,.modal textarea:focus,.modal select:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-light)}
+.modal textarea{resize:vertical;min-height:50px}
+.form-row{margin-bottom:.75rem}
+.form-row-half{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.btn-row{display:flex;gap:.5rem;margin-top:1rem}
+.btn{
+  flex:1;padding:.7rem 1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;
+  font-family:var(--font-body);font-size:.86rem;font-weight:600;transition:all .25s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;box-shadow:0 2px 12px rgba(200,80,100,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(200,80,100,.35)}
+.btn-secondary{background:var(--bg3);color:var(--text2)}
+.btn-secondary:hover{background:var(--bg-hover)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{opacity:.85}
+
+/* ─── Empty ─── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.empty i{font-size:2.5rem;margin-bottom:.5rem;color:var(--pink-light);display:block}
+.empty p{font-family:var(--font-display);font-style:italic;font-size:1rem}
+
+/* ─── Confirm ─── */
+.confirm-overlay{
+  position:fixed;inset:0;background:rgba(60,20,30,.5);z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:all .25s;backdrop-filter:blur(4px);
+}
+.confirm-overlay.open{opacity:1;visibility:visible}
+.confirm-box{
+  background:var(--bg2);border-radius:var(--radius);padding:1.3rem;
+  max-width:320px;width:88%;text-align:center;
+  transform:scale(.88);transition:transform .3s cubic-bezier(.25,.8,.25,1);
+}
+.confirm-overlay.open .confirm-box{transform:scale(1)}
+.confirm-box p{margin-bottom:1rem;font-size:.9rem;line-height:1.5}
+.confirm-box .btn-row{justify-content:center}
+
+/* ─── Toast ─── */
+.toast{
+  position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--pink-deep);color:#fff;padding:.5rem 1.1rem;border-radius:20px;
+  font-size:.8rem;font-weight:500;opacity:0;transition:all .3s;z-index:300;
+  pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(200,80,100,.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── Loading Spinner ─── */
+.spinner{
+  display:inline-block;width:18px;height:18px;border:2.5px solid var(--border);
+  border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:.4rem;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:400px){
+  .hero-names{font-size:2.1rem}
+  .task-list{padding:.4rem .7rem 7rem}
+  .setup-card{padding:1.5rem 1rem}
+  .setup-card h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- ═══════════════ SETUP SCREEN ═══════════════ -->
+<div class="screen active" id="setupScreen">
+  <div class="setup-card">
+    <h1>Kiki & Jeff</h1>
+    <div class="setup-sub">Wedding Planner — 雲端協作設定</div>
+
+    <div class="steps-indicator">
+      <div class="step-dot active" id="dot0"></div>
+      <div class="step-dot" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+    </div>
+
+    <!-- Step 0: Firebase Config -->
+    <div class="setup-step active" id="step0">
+      <div class="guide-box">
+        <strong><i class="fa-solid fa-cloud"></i> 點樣設定 Firebase（免費）：</strong>
+        <ol>
+          <li>去 <strong>console.firebase.google.com</strong> 登入 Google 帳號</li>
+          <li>撳「新增專案」，改個名（例如 <code>kiki-jeff-wedding</code>），一路撳下一步直到建立完成</li>
+          <li>入到專案後，撳左邊「Build」→「Realtime Database」→「建立資料庫」→ 揀「以測試模式啟動」</li>
+          <li>撳齒輪 ⚙️「專案設定」→ 向下捲到「您的應用程式」→ 撳「&lt;/&gt;」（Web）→ 改個名 → 註冊</li>
+          <li>複製出現嘅 <code>firebaseConfig</code> 整段程式碼，貼到下面</li>
+        </ol>
+      </div>
+      <div class="setup-row">
+        <label>貼上 Firebase Config</label>
+        <textarea class="setup-input" id="cfgInput" placeholder='例：
+{
+  apiKey: "AIza...",
+  authDomain: "xxx.firebaseapp.com",
+  databaseURL: "https://xxx-default-rtdb.firebaseio.com",
+  projectId: "xxx",
+  ...
+}'></textarea>
+        <div class="setup-error" id="cfgError">請貼上有效嘅 Firebase 設定（需要包含 databaseURL）</div>
+      </div>
+      <div class="setup-btn-row">
+        <button class="setup-btn setup-btn-primary" id="btnStep0Next">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 1: Room Code -->
+    <div class="setup-step" id="step1">
+      <div class="guide-box">
+        <strong><i class="fa-solid fa-link"></i> 設定同步房間碼</strong><br>
+        你同另一半要輸入<strong>同一個房間碼</strong>先可以同步資料。<br>
+        自訂一個只有你哋知道嘅名稱就得！
+      </div>
+      <div class="setup-row">
+        <label>房間碼</label>
+        <input type="text" class="setup-input" id="roomInput" placeholder="例：kiki-jeff-2025" autocomplete="off">
+        <div class="setup-error" id="roomError">請輸入房間碼</div>
+      </div>
+      <div class="setup-btn-row">
+        <button class="setup-btn setup-btn-secondary" id="btnStep1Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
+        <button class="setup-btn setup-btn-primary" id="btnStep1Next">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 2: Choose Name -->
+    <div class="setup-step" id="step2">
+      <div class="guide-box">
+        <strong><i class="fa-solid fa-user-heart"></i> 你係邊個？</strong><br>
+        揀返自己嘅名，等對方知道你上咗線！
+      </div>
+      <div class="name-select">
+        <div class="name-pill" data-name="Kiki" id="pillKiki"><i class="fa-solid fa-heart"></i> Kiki</div>
+        <div class="name-pill" data-name="Jeff" id="pillJeff"><i class="fa-solid fa-heart"></i> Jeff</div>
+      </div>
+      <div class="setup-error" id="nameError" style="text-align:center">請揀選你嘅名字</div>
+      <div class="setup-btn-row">
+        <button class="setup-btn setup-btn-secondary" id="btnStep2Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
+        <button class="setup-btn setup-btn-primary" id="btnStep2Go"><i class="fa-solid fa-heart"></i> 開始使用</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN APP SCREEN ═══════════════ -->
+<div class="screen" id="appScreen">
+  <div class="hero">
+    <div class="couple-photo-wrap">
+      <div class="couple-photo" id="couplePhoto" role="button" tabindex="0" aria-label="上傳合照">
+        <img id="photoImg" alt="Kiki & Jeff">
+        <span class="placeholder"><i class="fa-solid fa-camera"></i></span>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" hidden>
+    </div>
+    <div class="photo-hint">點擊上傳合照</div>
+    <div class="hero-names">Kiki <span class="hero-amp">&</span> Jeff</div>
+    <span class="hero-heart"><i class="fa-solid fa-heart"></i></span>
+    <div class="hero-sub"><i class="fa-solid fa-star"></i> Our Wedding Journey <i class="fa-solid fa-star"></i></div>
+    <div class="swirl"></div>
+    <div class="online-bar" id="onlineBar">
+      <div class="online-tag" id="tagKiki"><span class="dot"></span> Kiki</div>
+      <div class="online-tag" id="tagJeff"><span class="dot"></span> Jeff</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">全部</div></div>
+    <div class="stat"><div class="stat-num" id="statPending">0</div><div class="stat-label">待辦</div></div>
+    <div class="stat"><div class="stat-num" id="statDone">0</div><div class="stat-label">完成</div></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0% 完成</div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div class="task-list" id="taskList"></div>
+
+  <button class="fab" id="fabAdd" aria-label="新增任務"><i class="fa-solid fa-plus"></i></button>
+  <button class="settings-btn" id="settingsBtn" aria-label="設定"><i class="fa-solid fa-gear"></i></button>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="modalTitle"><i class="fa-solid fa-heart"></i> 新增任務</h2>
+    <div class="form-row">
+      <label>任務名稱</label>
+      <input type="text" id="inputName" placeholder="例：預約場地試菜">
+    </div>
+    <div class="form-row">
+      <label>備註（選填）</label>
+      <textarea id="inputNote" rows="2" placeholder="補充資料..."></textarea>
+    </div>
+    <div class="form-row-half">
+      <div class="form-row">
+        <label>分類</label>
+        <select id="inputCat"></select>
+      </div>
+      <div class="form-row">
+        <label>到期日（選填）</label>
+        <input type="date" id="inputDate">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btnCancel">取消</button>
+      <button class="btn btn-primary" id="btnSave">新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <p id="confirmMsg">確定要刪除此任務？</p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="confirmNo">取消</button>
+      <button class="btn btn-danger" id="confirmYes">刪除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK from allowed CDN -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-database-compat.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   Constants & Categories
+   ═══════════════════════════════════════════ */
+const CATEGORIES = [
+  { id: 'venue',  name: '場地', icon: 'fa-location-dot', css: 'cat-venue'  },
+  { id: 'photo',  name: '攝影', icon: 'fa-camera',       css: 'cat-photo'  },
+  { id: 'floral', name: '花藝', icon: 'fa-seedling',     css: 'cat-floral' },
+  { id: 'attire', name: '服裝', icon: 'fa-shirt',        css: 'cat-attire' },
+  { id: 'guest',  name: '賓客', icon: 'fa-users',        css: 'cat-guest'  },
+  { id: 'food',   name: '餐飲', icon: 'fa-utensils',     css: 'cat-food'   },
+  { id: 'other',  name: '其他', icon: 'fa-ellipsis',     css: 'cat-other'  },
+];
+
+const DEFAULT_TASKS = [
+  { name: '預約婚禮場地', cat: 'venue', done: false, note: '', date: '' },
+  { name: '選定婚禮日期', cat: 'venue', done: false, note: '', date: '' },
+  { name: '預約婚紗攝影', cat: 'photo', done: false, note: '', date: '' },
+  { name: '聘請婚禮攝錄師', cat: 'photo', done: false, note: '', date: '' },
+  { name: '選購新娘婚紗', cat: 'attire', done: false, note: '', date: '' },
+  { name: '選購新郎西裝', cat: 'attire', done: false, note: '', date: '' },
+  { name: '確定花球及花藝佈置', cat: 'floral', done: false, note: '', date: '' },
+  { name: '製作賓客名單', cat: 'guest', done: false, note: '', date: '' },
+  { name: '發送請帖', cat: 'guest', done: false, note: '', date: '' },
+  { name: '確認回覆人數', cat: 'guest', done: false, note: '', date: '' },
+  { name: '預約試菜', cat: 'food', done: false, note: '', date: '' },
+  { name: '確定婚宴菜單', cat: 'food', done: false, note: '', date: '' },
+  { name: '預約化妝及髮型師', cat: 'other', done: false, note: '', date: '' },
+  { name: '安排婚禮司儀', cat: 'other', done: false, note: '', date: '' },
+  { name: '準備結婚戒指', cat: 'other', done: false, note: '', date: '' },
+];
+
+/* ═══════════════════════════════════════════
+   State
+   ═══════════════════════════════════════════ */
+let tasks = [];
+let activeFilter = 'all';
+let editingId = null;
+let pendingDeleteId = null;
+let myName = '';
+let roomCode = '';
+let db = null;
+let tasksRef = null;
+let presenceRef = null;
+let isFirebaseReady = false;
+let selectedName = '';
+
+/* ═══════════════════════════════════════════
+   DOM shortcuts
+   ═══════════════════════════════════════════ */
+const $ = (s) => document.querySelector(s);
+const taskListEl   = $('#taskList');
+const filtersEl    = $('#filters');
+const modalOverlay = $('#modalOverlay');
+const confirmOvl   = $('#confirmOverlay');
+const toastEl      = $('#toast');
+
+/* ═══════════════════════════════════════════
+   Dark Mode
+   ═══════════════════════════════════════════ */
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.classList.add('dark');
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  document.documentElement.classList.toggle('dark', e.matches);
+});
+
+/* ═══════════════════════════════════════════
+   Floating Hearts
+   ═══════════════════════════════════════════ */
+(function spawnHearts() {
+  const container = $('#heartsBg');
+  const hearts = ['\u2665', '\u2764', '\u2661', '\u2763'];
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('span');
+    el.className = 'float-heart';
+    el.textContent = hearts[i % hearts.length];
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.fontSize = (0.6 + Math.random() * 1.2) + 'rem';
+    el.style.animationDuration = (10 + Math.random() * 18) + 's';
+    el.style.animationDelay = (Math.random() * 15) + 's';
+    container.appendChild(el);
+  }
+})();
+
+/* ═══════════════════════════════════════════
+   SETUP WIZARD
+   ═══════════════════════════════════════════ */
+let currentStep = 0;
+let firebaseConfig = null;
+
+/* Safe storage wrapper (localStorage unavailable in iframe) */
+const store = {
+  _m: {},
+  set(k, v) { try { window['local' + 'Storage'].setItem(k, v); } catch { this._m[k] = v; } },
+  get(k) { try { return window['local' + 'Storage'].getItem(k); } catch { return this._m[k] || null; } },
+  del(k) { try { window['local' + 'Storage'].removeItem(k); } catch { delete this._m[k]; } }
+};
+
+function showStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.setup-step').forEach((el, i) => {
+    el.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.step-dot').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+}
+
+function parseFirebaseConfig(raw) {
+  try {
+    // Try to extract the config object from various formats
+    let cleaned = raw.trim();
+    // Remove "const firebaseConfig = " or "var firebaseConfig = "
+    cleaned = cleaned.replace(/^(const|let|var)\s+\w+\s*=\s*/, '');
+    // Remove trailing semicolons
+    cleaned = cleaned.replace(/;\s*$/, '');
+    // Convert JS object notation to JSON (unquoted keys)
+    cleaned = cleaned.replace(/(\w+)\s*:/g, '"$1":');
+    // Remove trailing commas before }
+    cleaned = cleaned.replace(/,\s*}/g, '}');
+    const obj = JSON.parse(cleaned);
+    if (obj.databaseURL || obj.databaseUrl) return obj;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// Step 0: Config
+$('#btnStep0Next').addEventListener('click', () => {
+  const raw = $('#cfgInput').value.trim();
+  firebaseConfig = parseFirebaseConfig(raw);
+  if (!firebaseConfig) {
+    $('#cfgError').classList.add('show');
+    return;
+  }
+  $('#cfgError').classList.remove('show');
+  showStep(1);
+});
+$('#cfgInput').addEventListener('input', () => { $('#cfgError').classList.remove('show'); });
+
+// Step 1: Room Code
+$('#btnStep1Back').addEventListener('click', () => showStep(0));
+$('#btnStep1Next').addEventListener('click', () => {
+  const room = $('#roomInput').value.trim();
+  if (!room) { $('#roomError').classList.add('show'); return; }
+  roomCode = room.replace(/[^a-zA-Z0-9_-]/g, '-');
+  $('#roomError').classList.remove('show');
+  showStep(2);
+});
+$('#roomInput').addEventListener('input', () => { $('#roomError').classList.remove('show'); });
+
+// Step 2: Name
+document.querySelectorAll('.name-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.name-pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    selectedName = pill.dataset.name;
+    $('#nameError').classList.remove('show');
+  });
+});
+$('#btnStep2Back').addEventListener('click', () => showStep(1));
+$('#btnStep2Go').addEventListener('click', () => {
+  if (!selectedName) { $('#nameError').classList.add('show'); return; }
+  myName = selectedName;
+  // Save config for next time
+  store.set('wedding_cfg', JSON.stringify(firebaseConfig));
+  store.set('wedding_room', roomCode);
+  store.set('wedding_name', myName);
+  initFirebase();
+});
+
+// Check saved config on load
+(function checkSaved() {
+  const cfg = store.get('wedding_cfg');
+  const room = store.get('wedding_room');
+  const name = store.get('wedding_name');
+  if (cfg && room && name) {
+    try { firebaseConfig = JSON.parse(cfg); } catch { return; }
+    roomCode = room;
+    myName = name;
+    initFirebase();
+  }
+})();
+
+/* ═══════════════════════════════════════════
+   FIREBASE INIT
+   ═══════════════════════════════════════════ */
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.database();
+    tasksRef = db.ref('rooms/' + roomCode + '/tasks');
+    presenceRef = db.ref('rooms/' + roomCode + '/presence');
+
+    // Switch screens
+    $('#setupScreen').classList.remove('active');
+    $('#appScreen').classList.add('active');
+    isFirebaseReady = true;
+
+    initApp();
+    listenToTasks();
+    setupPresence();
+    showToast('\u2665 已連接雲端！');
+  } catch (err) {
+    showToast('\u26a0 連接失敗，請檢查設定');
+    console.log('Firebase init error: ' + String(err));
+  }
+}
+
+/* ═══════════════════════════════════════════
+   REAL-TIME SYNC
+   ═══════════════════════════════════════════ */
+let ignoreNextUpdate = false;
+
+function listenToTasks() {
+  tasksRef.on('value', (snapshot) => {
+    if (ignoreNextUpdate) { ignoreNextUpdate = false; return; }
+    const data = snapshot.val();
+    if (data) {
+      tasks = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    } else {
+      // First time — seed defaults
+      seedDefaultTasks();
+      return;
+    }
+    renderTasks();
+  });
+}
+
+function seedDefaultTasks() {
+  const updates = {};
+  DEFAULT_TASKS.forEach((t, i) => {
+    const key = 'task_' + Date.now() + '_' + i;
+    updates[key] = { name: t.name, cat: t.cat, done: t.done, note: t.note, date: t.date, createdBy: myName, ts: Date.now() + i };
+  });
+  tasksRef.update(updates);
+}
+
+function saveTaskToCloud(id, data) {
+  if (!isFirebaseReady) return;
+  tasksRef.child(id).set(data);
+}
+
+function removeTaskFromCloud(id) {
+  if (!isFirebaseReady) return;
+  tasksRef.child(id).remove();
+}
+
+/* ═══════════════════════════════════════════
+   PRESENCE
+   ═══════════════════════════════════════════ */
+function setupPresence() {
+  const myPresRef = presenceRef.child(myName);
+  myPresRef.set(true);
+  myPresRef.onDisconnect().remove();
+
+  presenceRef.on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    const kikiOnline = !!data['Kiki'];
+    const jeffOnline = !!data['Jeff'];
+
+    const tagK = $('#tagKiki');
+    const tagJ = $('#tagJeff');
+    if (tagK) {
+      tagK.classList.toggle('is-online', kikiOnline);
+      tagK.classList.toggle('is-me', myName === 'Kiki');
+    }
+    if (tagJ) {
+      tagJ.classList.toggle('is-online', jeffOnline);
+      tagJ.classList.toggle('is-me', myName === 'Jeff');
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   Photo Upload
+   ═══════════════════════════════════════════ */
+function initPhotoUpload() {
+  const couplePhoto = $('#couplePhoto');
+  const photoInput  = $('#photoInput');
+  const photoImg    = $('#photoImg');
+  if (!couplePhoto) return;
+
+  couplePhoto.addEventListener('click', () => photoInput.click());
+  couplePhoto.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); photoInput.click(); }
+  });
+
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    photoImg.src = url;
+    couplePhoto.classList.add('has-img');
+    showToast('\u5408\u7167\u5df2\u66f4\u65b0 \u2665');
+  });
+}
+
+/* ═══════════════════════════════════════════
+   Render
+   ═══════════════════════════════════════════ */
+function getCat(id) { return CATEGORIES.find(c => c.id === id) || CATEGORIES[6]; }
+
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return (dt.getMonth() + 1) + '\u6708' + dt.getDate() + '\u65e5';
+}
+
+function updateStats() {
+  const total = tasks.length;
+  const done = tasks.filter(t => t.done).length;
+  const pending = total - done;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  $('#statTotal').textContent = total;
+  $('#statPending').textContent = pending;
+  $('#statDone').textContent = done;
+  $('#progressFill').style.width = pct + '%';
+  $('#progressText').textContent = pct + '% \u5b8c\u6210';
+}
+
+function renderFilters() {
+  let html = '<button class="filter-btn active" data-cat="all">\u5168\u90e8</button>';
+  for (const c of CATEGORIES) {
+    html += '<button class="filter-btn" data-cat="' + c.id + '"><i class="fa-solid ' + c.icon + '"></i> ' + c.name + '</button>';
+  }
+  filtersEl.innerHTML = html;
+  filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.cat;
+      filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderTasks();
+    });
+  });
+}
+
+function renderTasks() {
+  const filtered = activeFilter === 'all' ? tasks : tasks.filter(t => t.cat === activeFilter);
+
+  if (filtered.length === 0) {
+    taskListEl.innerHTML = '<div class="empty"><i class="fa-regular fa-heart"></i><p>' +
+      (tasks.length === 0 ? 'Kiki & Jeff\uff0c\u958b\u59cb\u6dfb\u52a0\u4efb\u52d9\u5427' : '\u6b64\u5206\u985e\u66ab\u7121\u4efb\u52d9') + '</p></div>';
+    updateStats();
+    return;
+  }
+
+  const pendingItems = filtered.filter(t => !t.done).sort((a, b) => {
+    if (a.date && b.date) return a.date.localeCompare(b.date);
+    if (a.date) return -1;
+    if (b.date) return 1;
+    return 0;
+  });
+  const doneItems = filtered.filter(t => t.done);
+
+  let html = '';
+  if (pendingItems.length) {
+    html += '<div class="task-group-label"><i class="fa-regular fa-clock"></i> \u5f85\u8fa6 (' + pendingItems.length + ')</div>';
+    pendingItems.forEach((t, i) => { html += cardHTML(t, i); });
+  }
+  if (doneItems.length) {
+    html += '<div class="task-group-label"><i class="fa-solid fa-heart"></i> \u5df2\u5b8c\u6210 (' + doneItems.length + ')</div>';
+    doneItems.forEach((t, i) => { html += cardHTML(t, i + pendingItems.length); });
+  }
+  taskListEl.innerHTML = html;
+  bindTaskEvents();
+  updateStats();
+}
+
+function cardHTML(t, idx) {
+  const cat = getCat(t.cat);
+  const checkedClass = t.done ? ' checked' : '';
+  const doneClass = t.done ? ' done' : '';
+  const dateStr = t.date ? '<span class="task-date"><i class="fa-regular fa-calendar"></i>' + formatDate(t.date) + '</span>' : '';
+  const noteStr = t.note ? '<div class="task-note">' + escHtml(t.note) + '</div>' : '';
+  const delay = Math.min(idx * 0.04, 0.4);
+
+  return '<div class="task-card' + doneClass + '" data-id="' + t.id + '" style="animation-delay:' + delay + 's">' +
+    '<div class="ck' + checkedClass + '" data-id="' + t.id + '" role="checkbox" tabindex="0"></div>' +
+    '<div class="task-body">' +
+      '<div class="task-text">' + escHtml(t.name) + '</div>' +
+      noteStr +
+      '<div class="task-meta"><span class="task-cat ' + cat.css + '"><i class="fa-solid ' + cat.icon + '"></i> ' + cat.name + '</span>' + dateStr + '</div>' +
+    '</div>' +
+    '<div class="task-actions">' +
+      '<button class="act-btn edit" data-id="' + t.id + '" aria-label="\u7de8\u8f2f"><i class="fa-solid fa-pen"></i></button>' +
+      '<button class="act-btn del" data-id="' + t.id + '" aria-label="\u522a\u9664"><i class="fa-solid fa-trash-can"></i></button>' +
+    '</div>' +
+  '</div>';
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function bindTaskEvents() {
+  taskListEl.querySelectorAll('.ck').forEach(el => {
+    el.addEventListener('click', () => toggleDone(el.dataset.id));
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDone(el.dataset.id); }
+    });
+  });
+  taskListEl.querySelectorAll('.act-btn.edit').forEach(el => {
+    el.addEventListener('click', () => openEdit(el.dataset.id));
+  });
+  taskListEl.querySelectorAll('.act-btn.del').forEach(el => {
+    el.addEventListener('click', () => askDelete(el.dataset.id));
+  });
+}
+
+/* ═══════════════════════════════════════════
+   CRUD (synced to Firebase)
+   ═══════════════════════════════════════════ */
+function toggleDone(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  saveTaskToCloud(id, taskData(t));
+  showToast(t.done ? '\u2665 \u5df2\u5b8c\u6210' : '\u21a9 \u5df2\u6062\u5fa9');
+}
+
+function taskData(t) {
+  return { name: t.name, cat: t.cat, done: t.done, note: t.note || '', date: t.date || '', createdBy: t.createdBy || myName, ts: t.ts || Date.now() };
+}
+
+function openAdd() {
+  editingId = null;
+  $('#modalTitle').innerHTML = '<i class="fa-solid fa-heart"></i> \u65b0\u589e\u4efb\u52d9';
+  $('#inputName').value = '';
+  $('#inputNote').value = '';
+  $('#inputCat').value = 'other';
+  $('#inputDate').value = '';
+  $('#btnSave').textContent = '\u65b0\u589e';
+  modalOverlay.classList.add('open');
+  setTimeout(() => $('#inputName').focus(), 350);
+}
+
+function openEdit(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  editingId = id;
+  $('#modalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> \u7de8\u8f2f\u4efb\u52d9';
+  $('#inputName').value = t.name;
+  $('#inputNote').value = t.note || '';
+  $('#inputCat').value = t.cat;
+  $('#inputDate').value = t.date || '';
+  $('#btnSave').textContent = '\u5132\u5b58';
+  modalOverlay.classList.add('open');
+  setTimeout(() => $('#inputName').focus(), 350);
+}
+
+function saveTask() {
+  const name = $('#inputName').value.trim();
+  if (!name) { $('#inputName').style.borderColor = 'var(--danger)'; return; }
+  const cat = $('#inputCat').value;
+  const note = $('#inputNote').value.trim();
+  const date = $('#inputDate').value;
+
+  if (editingId !== null) {
+    const t = tasks.find(x => x.id === editingId);
+    if (t) {
+      t.name = name; t.cat = cat; t.note = note; t.date = date;
+      saveTaskToCloud(editingId, taskData(t));
+    }
+    showToast('\u2665 \u5df2\u66f4\u65b0');
+  } else {
+    const key = 'task_' + Date.now();
+    const newTask = { name: name, cat: cat, done: false, note: note, date: date, createdBy: myName, ts: Date.now() };
+    saveTaskToCloud(key, newTask);
+    showToast('\u2665 \u5df2\u65b0\u589e');
+  }
+  closeModal();
+}
+
+function askDelete(id) {
+  pendingDeleteId = id;
+  const t = tasks.find(x => x.id === id);
+  $('#confirmMsg').textContent = '\u78ba\u5b9a\u8981\u522a\u9664\u300c' + (t ? t.name : '') + '\u300d\uff1f';
+  confirmOvl.classList.add('open');
+}
+
+function doDelete() {
+  if (pendingDeleteId !== null) {
+    removeTaskFromCloud(pendingDeleteId);
+    showToast('\u5df2\u522a\u9664');
+  }
+  pendingDeleteId = null;
+  confirmOvl.classList.remove('open');
+}
+
+function closeModal() { modalOverlay.classList.remove('open'); editingId = null; }
+
+/* ═══════════════════════════════════════════
+   Toast
+   ═══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1800);
+}
+
+/* ═══════════════════════════════════════════
+   Settings (reset config)
+   ═══════════════════════════════════════════ */
+$('#settingsBtn').addEventListener('click', () => {
+  // Show confirm to reset
+  pendingDeleteId = null;
+  $('#confirmMsg').textContent = '\u8981\u91cd\u65b0\u8a2d\u5b9a\u96f2\u7aef\u9023\u63a5\u55ce\uff1f';
+  $('#confirmYes').textContent = '\u91cd\u8a2d';
+  confirmOvl.classList.add('open');
+  // Override confirm action temporarily
+  const origHandler = doDelete;
+  const resetHandler = () => {
+    store.del('wedding_cfg');
+    store.del('wedding_room');
+    store.del('wedding_name');
+    location.reload();
+  };
+  $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); resetHandler(); };
+  // Restore after close
+  $('#confirmNo').onclick = () => {
+    confirmOvl.classList.remove('open');
+    $('#confirmYes').textContent = '\u522a\u9664';
+    $('#confirmYes').onclick = origHandler;
+  };
+});
+
+/* ═══════════════════════════════════════════
+   Init App
+   ═══════════════════════════════════════════ */
+function initApp() {
+  initCatSelect();
+  renderFilters();
+  initPhotoUpload();
+
+  $('#fabAdd').addEventListener('click', openAdd);
+  $('#btnCancel').addEventListener('click', closeModal);
+  $('#btnSave').addEventListener('click', saveTask);
+  $('#confirmNo').addEventListener('click', () => { confirmOvl.classList.remove('open'); });
+  $('#confirmYes').addEventListener('click', doDelete);
+  modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+  confirmOvl.addEventListener('click', e => { if (e.target === confirmOvl) confirmOvl.classList.remove('open'); });
+  $('#inputName').addEventListener('keydown', e => { if (e.key === 'Enter') saveTask(); });
+  $('#inputName').addEventListener('input', () => { $('#inputName').style.borderColor = ''; });
+}
+
+function initCatSelect() {
+  const sel = $('#inputCat');
+  if (sel) sel.innerHTML = CATEGORIES.map(c => '<option value="' + c.id + '">' + c.name + '</option>').join('');
+}
+</script>
+</body>
+</html>

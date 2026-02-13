@@ -1,0 +1,21 @@
+{
+  "name": "婚禮統籌 Wedding Planner",
+  "short_name": "婚禮統籌",
+  "description": "婚禮任務清單及統籌工具",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#faf6f3",
+  "theme_color": "#a3705f",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
