@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>💒 我哋嘅婚禮 · 個人化版</title>
+    
+    <!-- Firebase SDK -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Helvetica Neue', 'PingFang HK', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fce4ec 0%, #fff9e6 100%);
+            min-height: 100vh;
+            padding: 0;
+            padding-bottom: 80px;
+        }
+
+        /* ===== 密碼鎖 ===== */
+        .password-lock {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #fce4ec 0%, #fff9e6 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .lock-container {
+            background: white;
+            padding: 40px;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(255,135,135,0.15);
+            text-align: center;
+        }
+
+        .lock-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .lock-title {
+            color: #ff8787;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 16px;
+            margin: 20px 0;
+            border: 2px solid #ffe3e3;
+            border-radius: 16px;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        .password-input:focus {
+            border-color: #ff8787;
+            box-shadow: 0 0 0 4px rgba(255,135,135,0.1);
+        }
+
+        .unlock-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .unlock-btn:hover {
+            transform: scale(0.98);
+            box-shadow: 0 10px 20px rgba(255,107,107,0.3);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 16px;
+            min-height: 20px;
+        }
+
+        /* ===== 婚禮App主體 ===== */
+        .wedding-app {
+            max-width: 600px;
+            margin: 0 auto;
+            display: none;
+            padding: 16px;
+        }
+
+        /* ===== 個人檔案頭像區 ===== */
+        .profile-section {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .couple-profiles {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .profile-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            background: #f8f9fa;
+            border: 3px solid #ff8787;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(255,135,135,0.2);
+        }
+
+        .bride {
+            background: #ffc0cb;
+            border-color: #ff69b4;
+        }
+
+        .groom {
+            background: #b0e0e6;
+            border-color: #4169e1;
+        }
+
+        .avatar-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #ff8787;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 2px solid white;
+            cursor: pointer;
+        }
+
+        .profile-name-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ffe3e3;
+            border-radius: 50px;
+            font-size: 14px;
+            text-align: center;
+            outline: none;
+        }
+
+        .profile-name-input:focus {
+            border-color: #ff8787;
+        }
+
+        .heart-divider {
+            font-size: 32px;
+            color: #ff8787;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ===== 倒數卡片 ===== */
+        .countdown-card {
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            border-radius: 24px;
+            padding: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(255,107,107,0.2);
+        }
+
+        .wedding-date {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .countdown {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+        }
+
+        .edit-date-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .edit-date-btn:hover {
+            background: white;
+            color: #ff6b6b;
+        }
+
+        /* ===== 底部導航欄 ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 16px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #adb5bd;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: #ff8787;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        /* ===== Tab 內容 ===== */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== 任務清單 ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            color: #495057;
+            font-size: 20px;
+        }
+
+        .add-btn {
+            padding: 10px 20px;
+            background: #ff8787;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .add-btn:hover {
+            background: #ff6b6b;
+            transform: scale(0.98);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .category-filter {
+            padding: 8px 16px;
+            border: none;
+            background: #f1f3f5;
+            border-radius: 50px;
+            font-size: 13px;
+            color: #495057;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .category-filter.active {
+            background: #ff8787;
+            color: white;
+        }
+
+        .task-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .task-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #f1f3f5;
+            transition: 0.3s;
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255,135,135,0.1);
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+            background: #f8f9fa;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            border: 2px solid #ff8787;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .task-checkbox:checked {
+            background: #ff8787;
+        }
+
+        .task-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .task-category {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 50px;
+            background: #f1f3f5;
+            color: #495057;
+        }
+
+        .task-due {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 50px;
+        }
+
+        .task-assignee {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 50px;
+            background: #e7f5ff;
+            color: #1864ab;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #adb5bd;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .delete-btn:hover {
+            color: #ff6b6b;
+        }
+
+        /* ===== 預算部分 ===== */
+        .budget-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .budget-label {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .budget-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff8787;
+        }
+
+        .budget-input {
+            padding: 8px 12px;
+            border: 2px solid #ffe3e3;
+            border-radius: 12px;
+            width: 150px;
+            font-size: 16px;
+        }
+
+        .expense-list {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        /* ===== 賓客名單 ===== */
+        .guest-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff8787;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #868e96;
+        }
+
+        .guest-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ===== Modal ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 32px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #adb5bd;
+        }
+
+        .close-btn:hover {
+            color: #ff6b6b;
+        }
+
+        .modal h2 {
+            color: #ff8787;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ffe3e3;
+            border-radius: 16px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #ff8787;
+        }
+
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .category-tag {
+            padding: 8px 16px;
+            background: #f1f3f5;
+            border-radius: 50px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .category-tag.selected {
+            background: #ff8787;
+            color: white;
+        }
+
+        .remove-category {
+            color: #ff6b6b;
+            font-size: 16px;
+        }
+
+        .add-category-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        /* ===== 空狀態 ===== */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            background: white;
+            border-radius: 24px;
+            color: #adb5bd;
+        }
+
+        .empty-state p {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== 密碼鎖畫面 ===== -->
+    <div id="passwordLock" class="password-lock">
+        <div class="lock-container">
+            <div class="lock-icon">💒</div>
+            <h1 class="lock-title">我哋嘅婚禮</h1>
+            <p style="color: #868e96; margin-bottom: 16px;">輸入專屬密碼</p>
+            <input type="password" id="couplePassword" class="password-input" placeholder="●●●●●●">
+            <button id="unlockBtn" class="unlock-btn">🔓 解鎖 · 進入婚禮</button>
+            <div id="passwordError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- ===== 婚禮App主體 ===== -->
+    <div id="weddingApp" class="wedding-app">
+        <!-- ===== 個人檔案區 ===== -->
+        <div class="profile-section">
+            <div class="couple-profiles">
+                <!-- 新娘檔案 -->
+                <div class="profile-card">
+                    <div class="avatar-container">
+                        <div id="brideAvatar" class="avatar bride" onclick="openAvatarModal('bride')">👰🏻‍♀️</div>
+                        <div class="avatar-edit" onclick="openAvatarModal('bride')">✎</div>
+                    </div>
+                    <input type="text" id="brideName" class="profile-name-input" value="未婚妻" placeholder="新娘名字" onchange="updateProfile()">
+                </div>
+                
+                <div class="heart-divider">❤️</div>
+                
+                <!-- 新郎檔案 -->
+                <div class="profile-card">
+                    <div class="avatar-container">
+                        <div id="groomAvatar" class="avatar groom" onclick="openAvatarModal('groom')">🤵🏻</div>
+                        <div class="avatar-edit" onclick="openAvatarModal('groom')">✎</div>
+                    </div>
+                    <input type="text" id="groomName" class="profile-name-input" value="你" placeholder="新郎名字" onchange="updateProfile()">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 倒數卡片 ===== -->
+        <div class="countdown-card">
+            <div class="wedding-date" id="weddingDateDisplay">大日子：2025-12-25</div>
+            <div class="countdown" id="countdown">距離婚禮仲有 -- 日 💕</div>
+            <button id="editDateBtn" class="edit-date-btn">📅 更改大日子</button>
+        </div>
+
+        <!-- ===== Tab 內容 ===== -->
+        
+        <!-- Tab 1: 任務清單 -->
+        <div id="tasksTab" class="tab-content active">
+            <div class="section-header">
+                <h3>✅ 待辦事項</h3>
+                <button id="addTaskBtn" class="add-btn">➕ 新增任務</button>
+            </div>
+            
+            <div class="category-filters" id="categoryFilters">
+                <!-- 動態載入分類 -->
+            </div>
+            
+            <div id="taskList" class="task-list"></div>
+        </div>
+        
+        <!-- Tab 2: 預算追蹤 -->
+        <div id="budgetTab" class="tab-content">
+            <div class="section-header">
+                <h3>💰 婚禮預算</h3>
+                <button id="addExpenseBtn" class="add-btn">➕ 記錄開支</button>
+            </div>
+            
+            <div class="budget-summary">
+                <div class="budget-item">
+                    <span class="budget-label">總預算</span>
+                    <input type="number" id="totalBudget" class="budget-input" value="80000" placeholder="HK$" onchange="updateBudget()">
+                </div>
+                <div class="budget-item">
+                    <span class="budget-label">已用開支</span>
+                    <span class="budget-amount" id="totalSpent">HK$0</span>
+                </div>
+                <div class="budget-item">
+                    <span class="budget-label">剩餘預算</span>
+                    <span class="budget-amount" id="remainingBudget">HK$80000</span>
+                </div>
+            </div>
+            
+            <div id="expenseList" class="expense-list"></div>
+        </div>
+        
+        <!-- Tab 3: 賓客名單 -->
+        <div id="guestsTab" class="tab-content">
+            <div class="section-header">
+                <h3>👥 賓客名單</h3>
+                <button id="addGuestBtn" class="add-btn">➕ 新增賓客</button>
+            </div>
+            
+            <div class="guest-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalGuests">0</div>
+                    <div class="stat-label">邀請</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="confirmedGuests">0</div>
+                    <div class="stat-label">確認</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="attendingGuests">0</div>
+                    <div class="stat-label">出席</div>
+                </div>
+            </div>
+            
+            <div id="guestList" class="guest-list"></div>
+        </div>
+        
+        <!-- Tab 4: 設定 -->
+        <div id="settingsTab" class="tab-content">
+            <div class="section-header">
+                <h3>⚙️ 設定</h3>
+            </div>
+            
+            <div style="background: white; border-radius: 20px; padding: 20px;">
+                <h4 style="margin-bottom: 16px; color: #ff8787;">任務分類管理</h4>
+                <div id="categoryManageList" style="margin-bottom: 20px;"></div>
+                
+                <div class="add-category-input">
+                    <input type="text" id="newCategoryName" class="form-control" placeholder="新增分類名稱" style="flex: 1;">
+                    <button id="addCategoryBtn" class="add-btn" style="padding: 14px 20px;">➕ 新增</button>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <button id="logoutBtn" style="width: 100%; padding: 14px; background: #fff5f5; border: 2px solid #ff8787; color: #ff8787; border-radius: 16px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                        🔓 登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 底部導航欄 ===== -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-tab="tasksTab">
+            <span class="nav-icon">✅</span>
+            <span>任務</span>
+        </div>
+        <div class="nav-item" data-tab="budgetTab">
+            <span class="nav-icon">💰</span>
+            <span>預算</span>
+        </div>
+        <div class="nav-item" data-tab="guestsTab">
+            <span class="nav-icon">👥</span>
+            <span>賓客</span>
+        </div>
+        <div class="nav-item" data-tab="settingsTab">
+            <span class="nav-icon">⚙️</span>
+            <span>設定</span>
+        </div>
+    </div>
+
+    <!-- ===== Modal ===== -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== Firebase 初始化 =====
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        // ⭐ 改1：貼你個 Firebase Config
+        const firebaseConfig = {
+    apiKey: "AIzaSyDo8cjGa3Nqwsuq3UgsJqB-jlDo5VTqnOI",
+    authDomain: "jk-wedding-d39ea.firebaseapp.com",
+    databaseURL: "https://jk-wedding-d39ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "jk-wedding-d39ea",
+    storageBucket: "jk-wedding-d39ea.firebasestorage.app",
+    messagingSenderId: "843399262130",
+    appId: "1:843399262130:web:f951c2c5da090af9d53eab"
+  };
+
+        // ⭐ 改2：你哋嘅情侶密碼
+        const COUPLE_SECRET = "06030104";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const weddingRef = ref(db, 'wedding');
+
+        let weddingData = null;
+        let currentFilter = 'all';
+
+        // ===== 監聽登入狀態 =====
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('passwordLock').style.display = 'none';
+                document.getElementById('weddingApp').style.display = 'block';
+                
+                onValue(weddingRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        weddingData = data;
+                    } else {
+                        // 初始化數據
+                        weddingData = {
+                            date: '2025-12-25',
+                            profiles: {
+                                bride: { name: '未婚妻', avatar: '👰🏻‍♀️' },
+                                groom: { name: '你', avatar: '🤵🏻' }
+                            },
+                            categories: ['場地', '攝影', '婚紗', '佈置', '餐飲', '其他'],
+                            tasks: [],
+                            budget: { total: 80000, expenses: [] },
+                            guests: []
+                        };
+                    }
+                    renderAll();
+                    saveToFirebase();
+                });
+            } else {
+                document.getElementById('passwordLock').style.display = 'flex';
+                document.getElementById('weddingApp').style.display = 'none';
+            }
+        });
+
+        // ===== 儲存到 Firebase =====
+        function saveToFirebase() {
+            set(weddingRef, weddingData);
+        }
+
+        // ===== 解鎖 =====
+        window.unlockApp = function() {
+            const password = document.getElementById('couplePassword').value;
+            const errorEl = document.getElementById('passwordError');
+            
+            if (password === COUPLE_SECRET) {
+                errorEl.textContent = '⏳ 登入中...';
+                signInAnonymously(auth)
+                    .then(() => errorEl.textContent = '')
+                    .catch((error) => errorEl.textContent = '❌ ' + error.message);
+            } else {
+                errorEl.textContent = '❌ 密碼錯誤';
+                document.getElementById('couplePassword').value = '';
+            }
+        };
+
+        // ===== 登出 =====
+        window.logout = function() {
+            signOut(auth);
+        };
+
+        // ===== 更新個人檔案 =====
+        window.updateProfile = function() {
+            if (!weddingData.profiles) weddingData.profiles = {};
+            weddingData.profiles.bride = {
+                name: document.getElementById('brideName').value,
+                avatar: weddingData.profiles.bride?.avatar || '👰🏻‍♀️'
+            };
+            weddingData.profiles.groom = {
+                name: document.getElementById('groomName').value,
+                avatar: weddingData.profiles.groom?.avatar || '🤵🏻'
+            };
+            saveToFirebase();
+        };
+
+        // ===== 開啟頭像選擇 =====
+        window.openAvatarModal = function(person) {
+            const avatars = person === 'bride' 
+                ? ['👰🏻‍♀️', '👸🏻', '🧝🏻‍♀️', '🧚🏻‍♀️', '🌸', '💃🏻', '👘', '💒']
+                : ['🤵🏻', '🕴🏻', '🧝🏻‍♂️', '🧙🏻‍♂️', '🎩', '👨🏻‍💼', '⛪️', '🏰'];
+            
+            let html = `<h2>選擇 ${person === 'bride' ? '新娘' : '新郎'} 頭像</h2>`;
+            html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">';
+            
+            avatars.forEach(emoji => {
+                html += `<div style="font-size: 48px; text-align: center; padding: 12px; border: 2px solid #ffe3e3; border-radius: 16px; cursor: pointer;" 
+                        onclick="selectAvatar('${person}', '${emoji}')">${emoji}</div>`;
+            });
+            
+            html += '</div>';
+            
+            document.getElementById('modalBody').innerHTML = html;
+            openModal();
+        };
+
+        window.selectAvatar = function(person, emoji) {
+            if (!weddingData.profiles) weddingData.profiles = {};
+            if (!weddingData.profiles[person]) weddingData.profiles[person] = {};
+            weddingData.profiles[person].avatar = emoji;
+            saveToFirebase();
+            document.getElementById(`${person}Avatar`).textContent = emoji;
+            closeModal();
+        };
+
+        // ===== 倒數計時 =====
+        function updateCountdown() {
+            if (!weddingData?.date) return;
+            const weddingDate = new Date(weddingData.date);
+            const today = new Date();
+            const diffDays = Math.ceil((weddingDate - today) / (1000 * 60 * 60 * 24));
+            
+            let text = '';
+            if (diffDays > 0) text = `距離婚禮仲有 ${diffDays} 日 💕`;
+            else if (diffDays === 0) text = `今日係大日子呀！恭喜晒！ 🎉`;
+            else text = `已經係新婚第 ${Math.abs(diffDays)} 日 💖`;
+            
+            document.getElementById('countdown').textContent = text;
+        }
+
+        // ===== 更改大日子 =====
+        window.editWeddingDate = function() {
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>📅 更改大日子</h2>
+                <div class="form-group">
+                    <label>選擇日期</label>
+                    <input type="date" id="newWeddingDate" class="form-control" value="${weddingData.date || '2025-12-25'}">
+                </div>
+                <button class="save-btn" onclick="saveWeddingDate()">儲存日期</button>
+            `;
+            openModal();
+        };
+
+        window.saveWeddingDate = function() {
+            const newDate = document.getElementById('newWeddingDate').value;
+            if (newDate) {
+                weddingData.date = newDate;
+                saveToFirebase();
+                document.getElementById('weddingDateDisplay').textContent = `大日子：${newDate}`;
+                updateCountdown();
+                closeModal();
+            }
+        };
+
+        // ===== 渲染分類過濾器 =====
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            if (!container || !weddingData?.categories) return;
+            
+            let html = `<button class="category-filter ${currentFilter === 'all' ? 'active' : ''}" onclick="setCategoryFilter('all')">全部</button>`;
+            
+            weddingData.categories.forEach(cat => {
+                html += `<button class="category-filter ${currentFilter === cat ? 'active' : ''}" onclick="setCategoryFilter('${cat}')">${cat}</button>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.setCategoryFilter = function(category) {
+            currentFilter = category;
+            renderCategoryFilters();
+            renderTasks();
+        };
+
+        // ===== 渲染任務 =====
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            if (!taskList || !weddingData?.tasks) return;
+            
+            let filteredTasks = weddingData.tasks;
+            if (currentFilter !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.category === currentFilter);
+            }
+            
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state">✨ 未有任務，快啲新增啦！</div>';
+                return;
+            }
+            
+            taskList.innerHTML = filteredTasks.map(task => {
+                let dueHtml = '';
+                if (task.dueDate) {
+                    const today = new Date();
+                    const due = new Date(task.dueDate);
+                    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+                    let color = '';
+                    if (diffDays < 0) color = 'background: #ffe3e3; color: #c92a2a;';
+                    else if (diffDays === 0) color = 'background: #fff3bf; color: #e67700;';
+                    else color = 'background: #e7f5ff; color: #1864ab;';
+                    dueHtml = `<span class="task-due" style="${color}">📅 ${task.dueDate}</span>`;
+                }
+                
+                return `
+                    <div class="task-item ${task.completed ? 'completed' : ''}">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id})">
+                        <div class="task-content">
+                            <div class="task-title" style="${task.completed ? 'text-decoration: line-through; color: #adb5bd;' : ''}">
+                                ${escapeHtml(task.title)}
+                            </div>
+                            <div class="task-meta">
+                                <span class="task-category">${task.category}</span>
+                                ${dueHtml}
+                                ${task.assignee ? `<span class="task-assignee">👤 ${task.assignee}</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+            
+            // 更新整體進度
+            const completed = weddingData.tasks.filter(t => t.completed).length;
+            const total = weddingData.tasks.length;
+            const progress = total ? Math.round((completed / total) * 100) : 0;
+        }
+
+        // ===== 切換任務狀態 =====
+        window.toggleTask = function(id) {
+            const task = weddingData.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveToFirebase();
+                renderTasks();
+            }
+        };
+
+        // ===== 刪除任務 =====
+        window.deleteTask = function(id) {
+            weddingData.tasks = weddingData.tasks.filter(t => t.id !== id);
+            saveToFirebase();
+            renderTasks();
+        };
+
+        // ===== 新增任務 =====
+        window.showAddTaskModal = function() {
+            const modalBody = document.getElementById('modalBody');
+            
+            let categoryOptions = '';
+            weddingData.categories.forEach(cat => {
+                categoryOptions += `<div class="category-tag" onclick="selectCategory('${cat}')">${cat}</div>`;
+            });
+            
+            modalBody.innerHTML = `
+                <h2>➕ 新增任務</h2>
+                
+                <div class="form-group">
+                    <label>任務名稱</label>
+                    <input type="text" id="taskTitle" class="form-control" placeholder="例如：試婚紗">
+                </div>
+                
+                <div class="form-group">
+                    <label>類別</label>
+                    <div class="category-list" id="categorySelectList">
+                        ${categoryOptions}
+                    </div>
+                    <input type="text" id="customCategory" class="form-control" placeholder="或其他新類別" style="margin-top: 8px;">
+                </div>
+                
+                <div class="form-group">
+                    <label>負責人（可選）</label>
+                    <select id="taskAssignee" class="form-control">
+                        <option value="">揀負責人</option>
+                        <option value="${weddingData.profiles?.bride?.name || '未婚妻'}">${weddingData.profiles?.bride?.name || '未婚妻'}</option>
+                        <option value="${weddingData.profiles?.groom?.name || '你'}">${weddingData.profiles?.groom?.name || '你'}</option>
+                        <option value="一齊">一齊</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>到期日（可選）</label>
+                    <input type="date" id="taskDueDate" class="form-control">
+                </div>
+                
+                <button class="save-btn" onclick="saveNewTask()">💖 儲存任務</button>
+            `;
+            
+            openModal();
+        };
+
+        window.selectedCategory = null;
+        
+        window.selectCategory = function(category) {
+            window.selectedCategory = category;
+            document.querySelectorAll('.category-tag').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        };
+
+        window.saveNewTask = function() {
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) {
+                alert('請輸入任務名稱');
+                return;
+            }
+            
+            let category = window.selectedCategory;
+            const customCategory = document.getElementById('customCategory').value.trim();
+            if (customCategory) {
+                category = customCategory;
+                // 加到分類列表（如果未存在）
+                if (!weddingData.categories.includes(category)) {
+                    weddingData.categories.push(category);
+                }
+            }
+            
+            if (!category) category = '其他';
+            
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                assignee: document.getElementById('taskAssignee').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                completed: false
+            };
+            
+            if (!weddingData.tasks) weddingData.tasks = [];
+            weddingData.tasks.push(newTask);
+            saveToFirebase();
+            renderTasks();
+            renderCategoryFilters();
+            closeModal();
+        };
+
+        // ===== 分類管理 =====
+        function renderCategoryManage() {
+            const container = document.getElementById('categoryManageList');
+            if (!container || !weddingData?.categories) return;
+            
+            let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+            weddingData.categories.forEach(cat => {
+                html += `
+                    <div style="background: #f1f3f5; padding: 8px 16px; border-radius: 50px; display: flex; align-items: center; gap: 8px;">
+                        <span>${cat}</span>
+                        <span style="color: #ff6b6b; cursor: pointer;" onclick="deleteCategory('${cat}')">✕</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        window.deleteCategory = function(category) {
+            if (category === '其他') {
+                alert('「其他」類別唔可以刪除');
+                return;
+            }
+            weddingData.categories = weddingData.categories.filter(c => c !== category);
+            // 將屬於呢個分類嘅任務改為「其他」
+            weddingData.tasks.forEach(task => {
+                if (task.category === category) {
+                    task.category = '其他';
+                }
+            });
+            saveToFirebase();
+            renderCategoryManage();
+            renderCategoryFilters();
+            renderTasks();
+        };
+
+        window.addCategory = function() {
+            const newCat = document.getElementById('newCategoryName').value.trim();
+            if (newCat && !weddingData.categories.includes(newCat)) {
+                weddingData.categories.push(newCat);
+                saveToFirebase();
+                renderCategoryManage();
+                renderCategoryFilters();
+                document.getElementById('newCategoryName').value = '';
+            }
+        };
+
+        // ===== 預算功能 =====
+        window.updateBudget = function() {
+            const total = parseInt(document.getElementById('totalBudget').value) || 0;
+            weddingData.budget.total = total;
+            saveToFirebase();
+            renderBudget();
+        };
+
+        function renderBudget() {
+            if (!weddingData?.budget) return;
+            
+            const total = weddingData.budget.total || 0;
+            const spent = weddingData.budget.expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+            const remaining = total - spent;
+            
+            document.getElementById('totalSpent').textContent = `HK$${spent.toLocaleString()}`;
+            document.getElementById('remainingBudget').textContent = `HK$${remaining.toLocaleString()}`;
+            
+            const expenseList = document.getElementById('expenseList');
+            if (!weddingData.budget.expenses?.length) {
+                expenseList.innerHTML = '<div class="empty-state">💰 未有開支記錄</div>';
+                return;
+            }
+            
+            expenseList.innerHTML = weddingData.budget.expenses.map(exp => `
+                <div class="expense-item">
+                    <div>
+                        <div style="font-weight: 600;">${exp.item}</div>
+                        <div style="font-size: 12px; color: #868e96;">${exp.date || ''}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-weight: 600; color: #ff8787;">HK$${exp.amount.toLocaleString()}</span>
+                        <button class="delete-btn" onclick="deleteExpense(${exp.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.showAddExpenseModal = function() {
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>💰 記錄開支</h2>
+                <div class="form-group">
+                    <label>項目名稱</label>
+                    <input type="text" id="expenseItem" class="form-control" placeholder="例如：婚紗租借">
+                </div>
+                <div class="form-group">
+                    <label>金額 (HK$)</label>
+                    <input type="number" id="expenseAmount" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>日期（可選）</label>
+                    <input type="date" id="expenseDate" class="form-control">
+                </div>
+                <button class="save-btn" onclick="saveExpense()">儲存開支</button>
+            `;
+            openModal();
+        };
+
+        window.saveExpense = function() {
+            const item = document.getElementById('expenseItem').value.trim();
+            const amount = parseInt(document.getElementById('expenseAmount').value);
+            
+            if (!item || !amount) {
+                alert('請輸入項目名稱同金額');
+                return;
+            }
+            
+            if (!weddingData.budget.expenses) weddingData.budget.expenses = [];
+            
+            weddingData.budget.expenses.push({
+                id: Date.now(),
+                item: item,
+                amount: amount,
+                date: document.getElementById('expenseDate').value
+            });
+            
+            saveToFirebase();
+            renderBudget();
+            closeModal();
+        };
+
+        window.deleteExpense = function(id) {
+            weddingData.budget.expenses = weddingData.budget.expenses.filter(e => e.id !== id);
+            saveToFirebase();
+            renderBudget();
+        };
+
+        // ===== 賓客功能 =====
+        function renderGuests() {
+            const guestList = document.getElementById('guestList');
+            if (!weddingData?.guests?.length) {
+                guestList.innerHTML = '<div class="empty-state">👥 未有賓客名單</div>';
+                return;
+            }
+            
+            guestList.innerHTML = weddingData.guests.map(guest => `
+                <div class="guest-item">
+                    <div>
+                        <div style="font-weight: 600;">${guest.name}</div>
+                        <div style="font-size: 12px; color: #868e96;">${guest.relation || ''}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <select onchange="updateGuestStatus(${guest.id}, this.value)" style="padding: 6px; border: 2px solid #ffe3e3; border-radius: 8px;">
+                            <option value="pending" ${guest.status === 'pending' ? 'selected' : ''}>⏳ 待確認</option>
+                            <option value="confirmed" ${guest.status === 'confirmed' ? 'selected' : ''}>✅ 確認</option>
+                            <option value="attending" ${guest.status === 'attending' ? 'selected' : ''}>🎉 出席</option>
+                            <option value="declined" ${guest.status === 'declined' ? 'selected' : ''}>❌ 未能出席</option>
+                        </select>
+                        <button class="delete-btn" onclick="deleteGuest(${guest.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 更新統計
+            const total = weddingData.guests.length;
+            const confirmed = weddingData.guests.filter(g => g.status === 'confirmed' || g.status === 'attending').length;
+            const attending = weddingData.guests.filter(g => g.status === 'attending').length;
+            
+            document.getElementById('totalGuests').textContent = total;
+            document.getElementById('confirmedGuests').textContent = confirmed;
+            document.getElementById('attendingGuests').textContent = attending;
+        }
+
+        window.showAddGuestModal = function() {
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>👥 新增賓客</h2>
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" id="guestName" class="form-control" placeholder="例如：陳小明">
+                </div>
+                <div class="form-group">
+                    <label>關係（可選）</label>
+                    <input type="text" id="guestRelation" class="form-control" placeholder="例如：大學同學">
+                </div>
+                <button class="save-btn" onclick="saveGuest()">儲存賓客</button>
+            `;
+            openModal();
+        };
+
+        window.saveGuest = function() {
+            const name = document.getElementById('guestName').value.trim();
+            if (!name) {
+                alert('請輸入賓客姓名');
+                return;
+            }
+            
+            if (!weddingData.guests) weddingData.guests = [];
+            
+            weddingData.guests.push({
+                id: Date.now(),
+                name: name,
+                relation: document.getElementById('guestRelation').value.trim(),
+                status: 'pending'
+            });
+            
+            saveToFirebase();
+            renderGuests();
+            closeModal();
+        };
+
+        window.updateGuestStatus = function(id, status) {
+            const guest = weddingData.guests.find(g => g.id === id);
+            if (guest) {
+                guest.status = status;
+                saveToFirebase();
+                renderGuests();
+            }
+        };
+
+        window.deleteGuest = function(id) {
+            weddingData.guests = weddingData.guests.filter(g => g.id !== id);
+            saveToFirebase();
+            renderGuests();
+        };
+
+        // ===== 工具函數 =====
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== Modal 控制 =====
+        window.openModal = function() {
+            document.getElementById('modal').style.display = 'flex';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('modal').style.display = 'none';
+        };
+
+        // ===== 全部渲染 =====
+        function renderAll() {
+            // 更新個人檔案
+            if (weddingData.profiles) {
+                document.getElementById('brideName').value = weddingData.profiles.bride?.name || '未婚妻';
+                document.getElementById('groomName').value = weddingData.profiles.groom?.name || '你';
+                document.getElementById('brideAvatar').textContent = weddingData.profiles.bride?.avatar || '👰🏻‍♀️';
+                document.getElementById('groomAvatar').textContent = weddingData.profiles.groom?.avatar || '🤵🏻';
+            }
+            
+            // 更新倒數
+            document.getElementById('weddingDateDisplay').textContent = `大日子：${weddingData.date || '2025-12-25'}`;
+            updateCountdown();
+            
+            // 更新分類
+            if (!weddingData.categories) weddingData.categories = ['場地', '攝影', '婚紗', '佈置', '餐飲', '其他'];
+            if (!weddingData.tasks) weddingData.tasks = [];
+            if (!weddingData.budget) weddingData.budget = { total: 80000, expenses: [] };
+            if (!weddingData.guests) weddingData.guests = [];
+            
+            renderCategoryFilters();
+            renderTasks();
+            renderBudget();
+            renderGuests();
+            renderCategoryManage();
+        }
+
+        // ===== 事件監聽 =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // 密碼解鎖
+            document.getElementById('unlockBtn').addEventListener('click', unlockApp);
+            document.getElementById('couplePassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') unlockApp();
+            });
+            
+            // 底部導航
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    item.classList.add('active');
+                    document.getElementById(item.dataset.tab).classList.add('active');
+                });
+            });
+            
+            // 按鈕事件
+            document.getElementById('addTaskBtn').addEventListener('click', showAddTaskModal);
+            document.getElementById('editDateBtn').addEventListener('click', editWeddingDate);
+            document.getElementById('addExpenseBtn').addEventListener('click', showAddExpenseModal);
+            document.getElementById('addGuestBtn').addEventListener('click', showAddGuestModal);
+            document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Modal 關閉
+            window.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('modal')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
