@@ -756,23 +756,39 @@ function showStep(n) {
 }
 
 function parseFirebaseConfig(raw) {
+  let cleaned = raw.trim();
+  // Remove variable declaration prefix
+  cleaned = cleaned.replace(/^(const|let|var)\s+\w+\s*=\s*/, '');
+  // Remove trailing semicolons
+  cleaned = cleaned.replace(/;\s*$/, '');
+  // Ensure it starts with {
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start === -1 || end === -1) return null;
+  cleaned = cleaned.slice(start, end + 1);
+
+  // Method 1: Try direct JSON parse
   try {
-    // Try to extract the config object from various formats
-    let cleaned = raw.trim();
-    // Remove "const firebaseConfig = " or "var firebaseConfig = "
-    cleaned = cleaned.replace(/^(const|let|var)\s+\w+\s*=\s*/, '');
-    // Remove trailing semicolons
-    cleaned = cleaned.replace(/;\s*$/, '');
-    // Convert JS object notation to JSON (unquoted keys)
-    cleaned = cleaned.replace(/(\w+)\s*:/g, '"$1":');
-    // Remove trailing commas before }
-    cleaned = cleaned.replace(/,\s*}/g, '}');
     const obj = JSON.parse(cleaned);
-    if (obj.databaseURL || obj.databaseUrl) return obj;
-    return null;
-  } catch {
-    return null;
-  }
+    if (obj.databaseURL) return obj;
+  } catch { /* try next method */ }
+
+  // Method 2: Evaluate as JS object literal (safe for config objects)
+  try {
+    const obj = new Function('return (' + cleaned + ')')();
+    if (obj && typeof obj === 'object' && obj.databaseURL) return obj;
+  } catch { /* try next method */ }
+
+  // Method 3: Extract key-value pairs manually
+  try {
+    const obj = {};
+    const re = /(\w+)\s*:\s*"([^"]*)"/g;
+    let m;
+    while ((m = re.exec(cleaned)) !== null) { obj[m[1]] = m[2]; }
+    if (obj.databaseURL) return obj;
+  } catch { /* fall through */ }
+
+  return null;
 }
 
 // Step 0: Config
