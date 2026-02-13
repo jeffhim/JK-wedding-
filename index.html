@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>💒 我哋嘅婚禮 · 我與你</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="我哋嘅婚禮">
+    <meta name="theme-color" content="#ff8787">
+    
+    <!-- iPhone Homescreen Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E6%88%91%E5%94%89%E5%98%85%E5%A9%9A%E7%A6%AE%22%2C%22short_name%22%3A%22%E5%A9%9A%E7%A6%AE%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ff8787%22%2C%22theme_color%22%3A%22%23ff8787%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAnVSURBVHgB7d39b1t1Gcfx9%2Bk5p7Sn7elzWZ%2FQbQU2GBCNDtARkP5AovGFxpcq8Q%2FYX6DxxYtf%2FCN8Y4KJxhhfKMYXk8GAgS1jG0zba13Xc3q%2BP6RdW5uL25OePs%2F9vF9J03Rden93%2Btznnud7vt%2FvQwghhBD2yqBChBDCdimhhRC2SwkthLBdSmghhO1SQgshbJcSWghhu5TQQgjbpYQWQtguJbQQwnYpoYUQtksJLYSwXUpoIYTtUkILV5nP53h6eoKDgwP29%2FfZ39%2Fj8PAQY4x9hWq3WiwWi3D%2FP4%2FHg9frJZ%2FPUygUKJVKFAoFfD4fbrfbvoKVSgV8Ph%2Fdbpf9%2FX329vY4Pj5mcXFx%2BVpCy60P1%2FN4PLhcLjzGHf5%2F1%2BgU13iGu7PD9bNjfIE8biOEEMI%2BgUCAQqFAsVikUqmwsrLC6uoq1WqVarVKJpMhk8kQj8eJRqNEIhH8fj8ej2d5X%2F5%2FfT4fPp9v%2BWc2mx0%2BzWaz5PP55X1qtRqNRoN2u02v12M4HDIcDhkMBvT7fXq93vJ7o9EIfx5P8Hh9mNgRjv4Bw%2B4h%2FmKVwCv3cfRzAgghhHhB4XCYWq1GrVZjY2ODmzdvcvPmTW7dukWr1aLRaNDr9ej1estEdrvd%2BHw%2BPB4PHo9nmex%2Bv3%2F5OZ%2FP5%2FF4PItYfobH42E4HDIej5dffzgcLr8eDAaMRiMmkwmTyeQ8iSeTyb8n9WTy3BN9MplgjCHsDdDvfMnwsMvt39zm%2Focf4P5L6J%2FyJ4UQLmCMYW9vj263y6effsrHH3%2FMH%2F%2F4R95%2F%2F33q9Trj8Zh8Pk8%2Bn6dQKFAul6lWq5TLZYrFIvl8frlTmEwmGI5wTMY4JmMc0zHj6YjJZMJkMlk%2Bp09nPJ%2BOefr1aDL9%2Fl%2F3z6YjprMxk8kYh2MZ4MZgxguJvYj9m0zGTMYjHB4fxnU29DMm%2BKt1Km%2B8Qv%2BTT4nUGlS3NnGMhuOGEEL8R2ZmJp1OE4lEuHbtGq%2B%2B%2BiovvfQS77zzDnfv3sXv97O6ukq1WqVWq1Eul0kmk8TjcaLRKJFIZHm7x%2BNh7PNiZs7LmWfmbODqMhjM6fXm9Hpzer0pve6UXndCpztjcjzCMZ%2FDDByMZm7mDi8uN4TcHjJGkDEOAo6MrNsb8AayBLNZfIUC%2FuVncj4f84UwzmeFEOIlxJgZxmEYDoe0Wi3u3LnDBx98wHvvvcdHH31Es9nE5%2FMRjUap1WrUajWWl5eXj4s8Hg9e43k%2BxmfP4DLnSY4DnA5wTGD%2BvFfPhjPOjmaMh0uNnRnThTPHmYtJ7MDhMS5cBpYJC45lGng8BFZX8a6tElhZwb%2B0hL9axVut4q1UcLjcGGMMs9mMyWTCeDym3%2B%2FT7XZpt9t0Oh263S6TyQS3243L5cLlcuF2u5d3mM1mDIdD2u02nU6HwWCAz%2BdzlR0KIVxKY2bGg%2FmUYzOjP%2B3TGXcYzAZ4jQeP8Zx%2F8Zg5x9Pxd6eZh%2FFsjNvlXp6l%2FZ%2Blnyi48ft8%2BD0BvMaLx0BmMKPpWKWf61I%2B6hDudgj2egR6Pfy9Hv5eD2%2B3i6%2FbZfJ0Cm40GjEcDul2u3Q6nWXiTqdT3G43Ho9n%2BQzP5XLh9Xrxer3Ld0Dm8%2FkysbvdLt1ud3kAq5PWCgVXUUK71Hw2p2t6tCZtPus%2B4dP7GQ7nAwbjAQu3w%2Buec7MwxzNn%2BD3%2B5R7aGLOMZx%2BYgQvP8h0PT3BMPp%2FDQf%2F0a17rPWVrZ5eN3V2W9%2Fbw9HrLJB2NRgwGg2VyTqdT%2FH4%2FHo8HY8wyPr1eL36%2FH5%2FPt9xtiOUuI1qtFh9%2B%2BCF3795leXmZWq1GuVwmHo9TKpWWW3yPx7M8fofD4fL%2B4%2FGY4XC43F0MBgO63S7tdptWq8V4PF6%2BVSKEEI5lUv%2Fo9BGPm4%2B5d3yX%2B2f3uXd6j48ff8xR74hZPEJj1WbWmDKdz3C5XMt4ns1mi6Q2LjeL2B27ZnlW9wVc%2BMNe4t6A73oGj82c%2FSy8d9Ll7aeH%2FO3ugC%2BP5nx9NufrgzmP24bRcYy5g%2BVJ6b8vFovlJ4VLpdLyZLFYLFKpVKhUKsvXQC0tLVGtVikUCuRyOTKZzHJ30Wg02NvbW%2B5QWq0W3W4X4H8uPSGEcBrHl%2F1H%2FO3oM3559A6%2FPPo1b598wK%2BN4R2Py%2Ffdj6jTb3HkO6Ib6tJ0t2i6W4zdY9zGzfy%2FGnwnJwwnJ8w8MwbuAceeY45jR0zNlNxJjo3cGWejGZ1Jl5PRCUdHx0ynUzKZDOVymXK5TKlUWr6YVKlUlmcG5XKZdDpNOp0mlUqRTqdJJBLLpO73%2BzSbTfb392m1WnS7Xfr9PpPJ5F87FCGEcI5Zf8r%2B7i7jTp9Go8H9f33C4d17jMdjfLkAqZEhOjLExi2%2Bz3l5L%2FUVW8MveSP4Nt8Pv8mr4de4H%2Fycv0Z%2Bxx%2BHv%2BPDx2%2Fxq7s%2F4t2HH3H25Zcc3L3LpNMhFApRr9dZWVmhWq0uX1kZiUSWt6dSKZLJ5PJyKIFAAGNMb%2FnyTqPRoNfrMZlM8Pv9GI9x7UuMQoibwzGdM3fMmdjFmcNhvB784QChUIhQJEI8mSAWi5NOp5dPzVOpFNFoFJ%2FPR71eJ5VKUSgU8Pl8y6MkLpfL7B0eHv6z1%2Bu1j4%2BPGQ6Hy%2Fuw3FUIIZyJY8bCPWd2NsV8b8LCfN%2BkYzZjNnNMZ8YxM5Pv9hfz%2BdzM53Mzn8%2FMYrEwi8Vi%2BV8%2Bfc3C3Lt3z2xsbJhMJnP%2BNaVSySwtLZlSqWTy%2BbzJZDLm4cOHZmNjY%2Fl9IYS4yebz%2BTKOnz59uiyBXC5nMpmMyWQyJp1OLxO4UqkstyQrKyumXC6bdDptUqmU8Xg8y6%2F3eDwX8hVCCCGEcJ6LJ7QQQgghhBBCCCGEuGFcLtfyQnwLh4PpzLhwnJnzwn3m6wJ3QojLxBhYzB3LiyH%2Fl8vlMplMZjkuQwghhBDiUvL7%2FQSDweWlk%2BI1ka9%2FyNvX3%2BGtx7%2Fk3eP3%2BP3p3%2Fj66Cua3RZzY4QQ4t9wGIcL4%2FP5CAaDRCIRKpUKy8vL1Go1VlZWqNVqy8unx%2BNxYrEY0WgUj8ezvJg%2FfLcUv8vlWp4pLJ9CzBfM5nOG0xGDyYDBZEjf9OmN%2B%2FTHfYbTIUbzS4UQF8e4cLgW4PP5CAaDRCIRKpUKKysr1Ot1lpeXqVar5HI5stksqVSKZDIJ%2FB%2B1Ws1kMpmL3gkhhBBCXDr%2FDwjjWElGUN5yAAAAAElFTkSuQmCC%22%2C%22sizes%22%3A%22180x180%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+    
+    <!-- Firebase SDK -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
+            }
+        }
+    </script>
+    
+    <style>
+        /* ===== 手機App重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang HK', sans-serif;
+            background: linear-gradient(145deg, #fff5f5 0%, #fff0f0 100%);
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #app {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            background: linear-gradient(145deg, #fff5f5 0%, #fff0f0 100%);
+        }
+
+        /* ===== 狀態欄 ===== */
+        .status-bar {
+            height: env(safe-area-inset-top, 10px);
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            width: 100%;
+        }
+
+        /* ===== 密碼鎖 ===== */
+        .password-lock {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lock-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px 24px;
+            border-radius: 40px;
+            width: 85%;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .app-logo-large {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 30px rgba(255,107,107,0.3);
+        }
+
+        .app-logo-large span {
+            font-size: 60px;
+        }
+
+        .lock-title {
+            color: #ff8787;
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .lock-subtitle {
+            color: #868e96;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 18px;
+            margin: 16px 0 20px;
+            border: none;
+            background: #f8f9fa;
+            border-radius: 50px;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 4px;
+            font-weight: 600;
+            outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .unlock-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 16px rgba(255,107,107,0.2);
+        }
+
+        .unlock-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 8px rgba(255,107,107,0.3);
+        }
+
+        /* ===== 主App ===== */
+        .wedding-app {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            background: linear-gradient(145deg, #fff5f5 0%, #fff0f0 100%);
+        }
+
+        /* ===== 可滾動內容 ===== */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 5px 16px 0 16px;
+        }
+
+        /* ===== Header - 固定高度 ===== */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 44px;
+            min-height: 44px;
+            max-height: 44px;
+            margin-bottom: 8px;
+            padding: 0 4px;
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-icon-small {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(255,107,107,0.2);
+        }
+
+        .app-icon-small span {
+            font-size: 22px;
+        }
+
+        .app-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff8787;
+        }
+
+        .couple-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff8787;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            height: 36px;
+        }
+
+        /* ===== 個人檔案卡片 ===== */
+        .profile-card-app {
+            background: white;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(255,135,135,0.08);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .couple-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .person-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar-large {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border: 4px solid white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.02);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .avatar-edit-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #ff8787;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 3px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .name-input-app {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ffe3e3;
+            border-radius: 50px;
+            font-size: 14px;
+            text-align: center;
+            background: white;
+            outline: none;
+        }
+
+        /* ===== 倒數卡片 ===== */
+        .countdown-card-app {
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            border-radius: 32px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 24px rgba(255,107,107,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .countdown-card-app::before {
+            content: '💒';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .wedding-date-app {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-number {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 4px;
+        }
+
+        .countdown-label {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .edit-date-btn-app {
+            background: rgba(255,255,255,0.2);
+            border: 1.5px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 底部導航欄 - 固定唔郁 ===== */
+        .bottom-nav-app {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 8px env(safe-area-inset-bottom, 8px) 8px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
+            border-top: 1px solid rgba(255,255,255,0.8);
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .nav-item-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #adb5bd;
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            padding: 6px 0;
+            border-radius: 50px;
+        }
+
+        .nav-item-app.active {
+            color: #ff8787;
+            background: rgba(255,135,135,0.08);
+        }
+
+        .nav-icon-app {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        /* ===== 任務樣式 ===== */
+        .section-header-app {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .section-header-app h3 {
+            color: #495057;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .add-btn-app {
+            padding: 10px 20px;
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(255,135,135,0.2);
+            transition: 0.2s;
+        }
+
+        .category-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            padding: 4px 0 16px 0;
+            margin-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-filters-app {
+            display: inline-flex;
+            gap: 10px;
+            padding: 0 4px;
+        }
+
+        .category-filter-app {
+            padding: 8px 18px;
+            border: none;
+            background: white;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #ffe3e3;
+        }
+
+        .category-filter-app.active {
+            background: linear-gradient(145deg, #ff8787, #ff6b6b);
+            color: white;
+            border: none;
+            box-shadow: 0 6px 12px rgba(255,135,135,0.2);
+        }
+
+        .task-list-app {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item-app {
+            background: white;
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: 0.2s;
+        }
+
+        .task-checkbox-app {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            border: 2.5px solid #ff8787;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .task-checkbox-app:checked {
+            background: #ff8787;
+            border-color: #ff8787;
+            transform: scale(0.9);
+        }
+
+        .task-checkbox-app:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .task-content-app {
+            flex: 1;
+        }
+
+        .task-title-app {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-meta-app {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .task-category-app {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .delete-btn-app {
+            background: none;
+            border: none;
+            color: #ced4da;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            transition: 0.2s;
+            border-radius: 50%;
+        }
+
+        .delete-btn-app:active {
+            background: #fff5f5;
+            color: #ff6b6b;
+            transform: scale(1.1);
+        }
+
+        .empty-state-app {
+            text-align: center;
+            padding: 40px 24px;
+            background: white;
+            border-radius: 32px;
+            color: #adb5bd;
+            margin-top: 20px;
+        }
+
+        /* ===== Modal ===== */
+        .modal-app {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content-app {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 32px 32px 0 0;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUpModal 0.3s ease;
+        }
+
+        @keyframes slideUpModal {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            color: #ff8787;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-btn-app {
+            font-size: 32px;
+            color: #adb5bd;
+            cursor: pointer;
+            padding: 8px;
+            line-height: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .tab-content-app {
+            display: none;
+        }
+
+        .tab-content-app.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="status-bar"></div>
+        
+        <!-- 密碼鎖畫面 -->
+        <div id="passwordLock" class="password-lock">
+            <div class="lock-container">
+                <div class="app-logo-large">
+                    <span>💒</span>
+                </div>
+                <h1 class="lock-title">我哋嘅婚禮</h1>
+                <p class="lock-subtitle">我與你 · 一生一世</p>
+                <input type="password" id="couplePassword" class="password-input" placeholder="請輸入密碼" autocomplete="off">
+                <button id="unlockBtn" class="unlock-btn">🔓 解鎖 · 進入</button>
+                <div id="passwordError" style="color: #ff6b6b; margin-top: 16px; min-height: 20px; font-size: 14px;"></div>
+                <p style="color: #adb5bd; margin-top: 24px; font-size: 13px;">👰🏻‍♀️ 只屬於我哋兩個 🤵🏻</p>
+            </div>
+        </div>
+
+        <!-- 主App -->
+        <div id="weddingApp" class="wedding-app">
+            <div class="app-content">
+                <!-- Header - 高度44px固定 -->
+                <div class="app-header">
+                    <div class="app-title">
+                        <div class="app-icon-small"><span>💒</span></div>
+                        <span class="app-name">我哋嘅婚禮</span>
+                    </div>
+                    <div class="couple-badge">
+                        <span>👰🏻‍♀️</span><span>❤️</span><span>🤵🏻</span>
+                    </div>
+                </div>
+
+                <!-- 個人檔案卡片 -->
+                <div class="profile-card-app">
+                    <div class="couple-row">
+                        <div class="person-card">
+                            <div class="avatar-large" id="brideAvatar" onclick="openAvatarModal('bride')">
+                                👰🏻‍♀️<span class="avatar-edit-badge">✎</span>
+                            </div>
+                            <input type="text" id="brideName" class="name-input-app" value="未婚妻" onchange="updateProfile()">
+                        </div>
+                        <div style="font-size: 32px; color: #ff8787; animation: heartbeat 2s infinite;">❤️</div>
+                        <div class="person-card">
+                            <div class="avatar-large" id="groomAvatar" onclick="openAvatarModal('groom')">
+                                🤵🏻<span class="avatar-edit-badge">✎</span>
+                            </div>
+                            <input type="text" id="groomName" class="name-input-app" value="你" onchange="updateProfile()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 倒數卡片 -->
+                <div class="countdown-card-app">
+                    <div class="wedding-date-app" id="weddingDateDisplay">大日子：2025-12-25</div>
+                    <div class="countdown-number" id="countdownDays">--</div>
+                    <div class="countdown-label" id="countdownText">距離婚禮仲有</div>
+                    <button id="editDateBtn" class="edit-date-btn-app">📅 更改大日子</button>
+                </div>
+
+                <!-- 任務Tab -->
+                <div id="tasksTab" class="tab-content-app active">
+                    <div class="section-header-app">
+                        <h3>✅ 待辦事項</h3>
+                        <button id="addTaskBtn" class="add-btn-app">➕ 新增</button>
+                    </div>
+                    
+                    <div class="category-scroll">
+                        <div class="category-filters-app" id="categoryFilters">
+                            <button class="category-filter-app active">📋 全部</button>
+                            <button class="category-filter-app">場地</button>
+                            <button class="category-filter-app">攝影</button>
+                            <button class="category-filter-app">婚紗</button>
+                        </div>
+                    </div>
+                    
+                    <div id="taskList" class="task-list-app">
+                        <div class="task-item-app">
+                            <input type="checkbox" class="task-checkbox-app">
+                            <div class="task-content-app">
+                                <div class="task-title-app">試婚紗</div>
+                                <div class="task-meta-app">
+                                    <span class="task-category-app">婚紗</span>
+                                </div>
+                            </div>
+                            <button class="delete-btn-app">🗑️</button>
+                        </div>
+                        <div class="task-item-app">
+                            <input type="checkbox" class="task-checkbox-app">
+                            <div class="task-content-app">
+                                <div class="task-title-app">揀場地</div>
+                                <div class="task-meta-app">
+                                    <span class="task-category-app">場地</span>
+                                </div>
+                            </div>
+                            <button class="delete-btn-app">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他Tabs (簡化版) -->
+                <div id="budgetTab" class="tab-content-app" style="display: none;">
+                    <div class="section-header-app">
+                        <h3>💰 婚禮預算</h3>
+                        <button class="add-btn-app">💰 記錄</button>
+                    </div>
+                    <div class="empty-state-app">
+                        <span>💰</span>
+                        <p>未有開支記錄</p>
+                    </div>
+                </div>
+                
+                <div id="guestsTab" class="tab-content-app" style="display: none;">
+                    <div class="section-header-app">
+                        <h3>👥 賓客名單</h3>
+                        <button class="add-btn-app">👥 新增</button>
+                    </div>
+                    <div class="empty-state-app">
+                        <span>👥</span>
+                        <p>未有賓客名單</p>
+                    </div>
+                </div>
+                
+                <div id="settingsTab" class="tab-content-app" style="display: none;">
+                    <div class="section-header-app">
+                        <h3>⚙️ 設定</h3>
+                    </div>
+                    <div class="empty-state-app">
+                        <span>⚙️</span>
+                        <p>設定</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部導航欄 - 固定喺下面 -->
+            <div class="bottom-nav-app">
+                <div class="nav-item-app active" data-tab="tasksTab"><span class="nav-icon-app">✅</span><span>任務</span></div>
+                <div class="nav-item-app" data-tab="budgetTab"><span class="nav-icon-app">💰</span><span>預算</span></div>
+                <div class="nav-item-app" data-tab="guestsTab"><span class="nav-icon-app">👥</span><span>賓客</span></div>
+                <div class="nav-item-app" data-tab="settingsTab"><span class="nav-icon-app">⚙️</span><span>設定</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-app">
+        <div class="modal-content-app">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close-btn-app" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== Firebase 初始化 =====
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        // ⭐ 改1：貼上你嘅 Firebase Config
+        const firebaseConfig = {
+    apiKey: "AIzaSyDo8cjGa3Nqwsuq3UgsJqB-jlDo5VTqnOI",
+    authDomain: "jk-wedding-d39ea.firebaseapp.com",
+    databaseURL: "https://jk-wedding-d39ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "jk-wedding-d39ea",
+    storageBucket: "jk-wedding-d39ea.firebasestorage.app",
+    messagingSenderId: "843399262130",
+    appId: "1:843399262130:web:f951c2c5da090af9d53eab"
+  };
+
+        // ⭐ 改2：你哋嘅情侶密碼
+        const COUPLE_SECRET = "06030104";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const weddingRef = ref(db, 'wedding');
+
+        let weddingData = null;
+        let currentFilter = 'all';
+        let selectedCategory = null;
+
+        // ===== 監聽登入狀態 =====
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('passwordLock').style.display = 'none';
+                document.getElementById('weddingApp').style.display = 'flex';
+                
+                onValue(weddingRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        weddingData = data;
+                    } else {
+                        // 初始化數據
+                        weddingData = {
+                            date: '2025-12-25',
+                            profiles: {
+                                bride: { name: '未婚妻', avatar: '👰🏻‍♀️' },
+                                groom: { name: '你', avatar: '🤵🏻' }
+                            },
+                            categories: ['場地', '攝影', '婚紗', '佈置', '餐飲', '其他'],
+                            tasks: [],
+                            budget: { total: 80000, expenses: [] },
+                            guests: []
+                        };
+                    }
+                    renderAll();
+                    set(weddingRef, weddingData);
+                });
+            } else {
+                document.getElementById('passwordLock').style.display = 'flex';
+                document.getElementById('weddingApp').style.display = 'none';
+            }
+        });
+
+        // ===== 解鎖 =====
+        window.unlockApp = function() {
+            const pwd = document.getElementById('couplePassword').value;
+            if (pwd === COUPLE_SECRET) {
+                signInAnonymously(auth);
+            } else {
+                document.getElementById('passwordError').textContent = '❌ 密碼錯誤';
+            }
+        };
+
+        // ===== 登出 =====
+        window.logout = function() {
+            signOut(auth);
+        };
+
+        // ===== 更新個人檔案 =====
+        window.updateProfile = function() {
+            weddingData.profiles.bride.name = document.getElementById('brideName').value;
+            weddingData.profiles.groom.name = document.getElementById('groomName').value;
+            set(weddingRef, weddingData);
+        };
+
+        // ===== 頭像選擇 =====
+        window.openAvatarModal = function(person) {
+            const avatars = person === 'bride' 
+                ? ['👰🏻‍♀️', '👸🏻', '🧝🏻‍♀️', '🧚🏻‍♀️', '🌸', '💃🏻', '👘', '💒']
+                : ['🤵🏻', '🕴🏻', '🧝🏻‍♂️', '🧙🏻‍♂️', '🎩', '👨🏻‍💼', '⛪️', '🏰'];
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(4,1fr); gap:16px;">';
+            avatars.forEach(emoji => {
+                html += `<div style="font-size:52px; text-align:center; padding:12px; background:#f8f9fa; border-radius:20px; cursor:pointer;" onclick="selectAvatar('${person}','${emoji}')">${emoji}</div>`;
+            });
+            html += '</div>';
+            
+            document.getElementById('modalTitle').textContent = `選擇${person === 'bride'?'新娘':'新郎'}頭像`;
+            document.getElementById('modalBody').innerHTML = html;
+            openModal();
+        };
+
+        window.selectAvatar = function(person, emoji) {
+            weddingData.profiles[person].avatar = emoji;
+            set(weddingRef, weddingData);
+            document.getElementById(`${person}Avatar`).innerHTML = `${emoji}<span class="avatar-edit-badge">✎</span>`;
+            closeModal();
+        };
+
+        // ===== Modal 控制 =====
+        window.openModal = function() {
+            document.getElementById('modal').style.display = 'flex';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('modal').style.display = 'none';
+            selectedCategory = null;
+        };
+
+        // ===== 倒數計時 =====
+        function updateCountdown() {
+            if (!weddingData?.date) return;
+            const weddingDate = new Date(weddingData.date);
+            const today = new Date();
+            const diffDays = Math.ceil((weddingDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 0) {
+                document.getElementById('countdownDays').textContent = diffDays;
+                document.getElementById('countdownText').textContent = '距離婚禮仲有';
+            } else if (diffDays === 0) {
+                document.getElementById('countdownDays').textContent = '🎉';
+                document.getElementById('countdownText').textContent = '今日係大日子！';
+            } else {
+                document.getElementById('countdownDays').textContent = Math.abs(diffDays);
+                document.getElementById('countdownText').textContent = '新婚第';
+            }
+        }
+
+        // ===== 更改大日子 =====
+        window.editWeddingDate = function() {
+            document.getElementById('modalTitle').textContent = '📅 更改大日子';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; margin-bottom: 12px; color: #495057; font-weight: 600;">選擇我哋嘅大日子</label>
+                    <input type="date" id="newWeddingDate" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" value="${weddingData.date}">
+                </div>
+                <button onclick="saveWeddingDate()" style="width:100%; padding:16px; background:#ff8787; color:white; border:none; border-radius:16px; font-size:16px; font-weight:600; cursor:pointer;">💕 儲存日期</button>
+            `;
+            openModal();
+        };
+
+        window.saveWeddingDate = function() {
+            const newDate = document.getElementById('newWeddingDate').value;
+            if (newDate) {
+                weddingData.date = newDate;
+                set(weddingRef, weddingData);
+                document.getElementById('weddingDateDisplay').textContent = `大日子：${newDate}`;
+                updateCountdown();
+                closeModal();
+            }
+        };
+
+        // ===== 渲染分類過濾器 =====
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            if (!container || !weddingData?.categories) return;
+            
+            let html = `<button class="category-filter-app ${currentFilter === 'all' ? 'active' : ''}" onclick="setCategoryFilter('all')">📋 全部</button>`;
+            
+            weddingData.categories.forEach(cat => {
+                html += `<button class="category-filter-app ${currentFilter === cat ? 'active' : ''}" onclick="setCategoryFilter('${cat}')">${cat}</button>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.setCategoryFilter = function(cat) {
+            currentFilter = cat;
+            renderCategoryFilters();
+            renderTasks();
+        };
+
+        // ===== 渲染任務 =====
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            if (!taskList || !weddingData?.tasks) return;
+            
+            let filtered = weddingData.tasks;
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(t => t.category === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                taskList.innerHTML = '<div class="empty-state-app"><span>✨</span><p>未有任務，快啲新增啦！</p></div>';
+                return;
+            }
+            
+            taskList.innerHTML = filtered.map(task => {
+                let dueHtml = '';
+                if (task.dueDate) {
+                    const today = new Date();
+                    const due = new Date(task.dueDate);
+                    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+                    let color = '';
+                    if (diffDays < 0) color = 'background: #ffe3e3; color: #c92a2a;';
+                    else if (diffDays === 0) color = 'background: #fff3bf; color: #e67700;';
+                    else color = 'background: #e7f5ff; color: #1864ab;';
+                    dueHtml = `<span class="task-due-app" style="${color}">📅 ${task.dueDate}</span>`;
+                }
+                
+                return `
+                    <div class="task-item-app">
+                        <input type="checkbox" class="task-checkbox-app" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                        <div class="task-content-app">
+                            <div class="task-title-app" style="${task.completed ? 'text-decoration:line-through; color:#adb5bd;' : ''}">${escapeHtml(task.title)}</div>
+                            <div class="task-meta-app">
+                                <span class="task-category-app">${task.category}</span>
+                                ${dueHtml}
+                                ${task.assignee ? `<span style="background:#e7f5ff; padding:4px 12px; border-radius:50px; font-size:12px;">👤 ${task.assignee}</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="delete-btn-app" onclick="deleteTask(${task.id})">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.toggleTask = function(id) {
+            const task = weddingData.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                set(weddingRef, weddingData);
+            }
+        };
+
+        window.deleteTask = function(id) {
+            if (confirm('確定刪除呢項任務？')) {
+                weddingData.tasks = weddingData.tasks.filter(t => t.id !== id);
+                set(weddingRef, weddingData);
+            }
+        };
+
+        // ===== 新增任務 =====
+        window.showAddTaskModal = function() {
+            let categoryOptions = '';
+            weddingData.categories.forEach(cat => {
+                categoryOptions += `<div class="category-tag" onclick="selectCategory('${cat}')" style="padding:12px 20px; background:#f8f9fa; border-radius:50px; display:inline-block; margin:4px; cursor:pointer;">${cat}</div>`;
+            });
+            
+            document.getElementById('modalTitle').textContent = '➕ 新增任務';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">任務名稱</label>
+                    <input type="text" id="taskTitle" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="例如：試婚紗、揀場地...">
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">類別</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;" id="categorySelectList">${categoryOptions}</div>
+                    <input type="text" id="customCategory" style="width:100%; padding:14px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="或輸入新類別">
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">負責人（可選）</label>
+                    <select id="taskAssignee" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px; background:white;">
+                        <option value="">— 揀負責人 —</option>
+                        <option value="${weddingData.profiles?.bride?.name || '未婚妻'}">👰🏻‍♀️ ${weddingData.profiles?.bride?.name || '未婚妻'}</option>
+                        <option value="${weddingData.profiles?.groom?.name || '你'}">🤵🏻 ${weddingData.profiles?.groom?.name || '你'}</option>
+                        <option value="一齊">💑 一齊</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom:24px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">到期日（可選）</label>
+                    <input type="date" id="taskDueDate" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;">
+                </div>
+                
+                <button onclick="saveNewTask()" style="width:100%; padding:16px; background:linear-gradient(145deg, #ff8787, #ff6b6b); color:white; border:none; border-radius:16px; font-size:16px; font-weight:600; cursor:pointer;">💖 儲存任務</button>
+            `;
+            openModal();
+        };
+
+        window.selectCategory = function(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.category-tag').forEach(el => {
+                el.style.background = '#f8f9fa';
+                el.style.color = '#495057';
+            });
+            event.target.style.background = '#ff8787';
+            event.target.style.color = 'white';
+        };
+
+        window.saveNewTask = function() {
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) {
+                alert('請輸入任務名稱');
+                return;
+            }
+            
+            let category = selectedCategory;
+            const customCategory = document.getElementById('customCategory').value.trim();
+            if (customCategory) {
+                category = customCategory;
+                if (!weddingData.categories.includes(category)) {
+                    weddingData.categories.push(category);
+                }
+            }
+            
+            if (!category) category = '其他';
+            
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                assignee: document.getElementById('taskAssignee').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                completed: false
+            };
+            
+            weddingData.tasks.push(newTask);
+            set(weddingRef, weddingData);
+            closeModal();
+        };
+
+        // ===== 分類管理 =====
+        function renderCategoryManage() {
+            const container = document.getElementById('categoryManageList');
+            if (!container || !weddingData?.categories) return;
+            
+            let html = '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+            weddingData.categories.forEach(cat => {
+                if (cat !== '其他') {
+                    html += `
+                        <div style="background: #f8f9fa; padding: 10px 18px; border-radius: 50px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 500;">${cat}</span>
+                            <span style="color: #ff6b6b; font-size: 16px; cursor: pointer;" onclick="deleteCategory('${cat}')">✕</span>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div style="background: #f1f3f5; padding: 10px 18px; border-radius: 50px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 500;">${cat}</span>
+                            <span style="color: #adb5bd; font-size: 12px;">(預設)</span>
+                        </div>
+                    `;
+                }
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        window.deleteCategory = function(category) {
+            if (category === '其他') {
+                alert('「其他」類別係預設，唔可以刪除');
+                return;
+            }
+            weddingData.categories = weddingData.categories.filter(c => c !== category);
+            weddingData.tasks.forEach(task => {
+                if (task.category === category) {
+                    task.category = '其他';
+                }
+            });
+            set(weddingRef, weddingData);
+        };
+
+        window.addCategory = function() {
+            const newCat = document.getElementById('newCategoryName').value.trim();
+            if (newCat && !weddingData.categories.includes(newCat)) {
+                weddingData.categories.push(newCat);
+                set(weddingRef, weddingData);
+                document.getElementById('newCategoryName').value = '';
+            }
+        };
+
+        // ===== 預算功能 =====
+        function renderBudget() {
+            if (!weddingData?.budget) return;
+            
+            const total = weddingData.budget.total || 0;
+            const spent = weddingData.budget.expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+            
+            document.getElementById('totalSpent').textContent = `HK$${spent.toLocaleString()}`;
+            document.getElementById('remainingBudget').textContent = `HK$${(total - spent).toLocaleString()}`;
+            
+            const expenseList = document.getElementById('expenseList');
+            if (!weddingData.budget.expenses?.length) {
+                expenseList.innerHTML = '<div class="empty-state-app"><span>💰</span><p>未有開支記錄</p></div>';
+                return;
+            }
+            
+            expenseList.innerHTML = weddingData.budget.expenses.map(exp => `
+                <div style="background:white; border-radius:20px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:600; margin-bottom:4px;">${exp.item}</div>
+                        <div style="font-size:12px; color:#868e96;">${exp.date || ''}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:700; color:#ff8787;">HK$${exp.amount.toLocaleString()}</span>
+                        <button class="delete-btn-app" onclick="deleteExpense(${exp.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.updateBudget = function() {
+            weddingData.budget.total = parseInt(document.getElementById('totalBudget').value) || 0;
+            set(weddingRef, weddingData);
+        };
+
+        window.showAddExpenseModal = function() {
+            document.getElementById('modalTitle').textContent = '💰 記錄開支';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">項目名稱</label>
+                    <input type="text" id="expenseItem" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="例如：婚紗租借">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">金額 (HK$)</label>
+                    <input type="number" id="expenseAmount" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="0">
+                </div>
+                <div style="margin-bottom:24px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">日期（可選）</label>
+                    <input type="date" id="expenseDate" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;">
+                </div>
+                <button onclick="saveExpense()" style="width:100%; padding:16px; background:#ff8787; color:white; border:none; border-radius:16px; font-size:16px; font-weight:600; cursor:pointer;">💾 儲存開支</button>
+            `;
+            openModal();
+        };
+
+        window.saveExpense = function() {
+            const item = document.getElementById('expenseItem').value.trim();
+            const amount = parseInt(document.getElementById('expenseAmount').value);
+            if (!item || !amount) {
+                alert('請輸入項目名稱同金額');
+                return;
+            }
+            weddingData.budget.expenses.push({
+                id: Date.now(),
+                item: item,
+                amount: amount,
+                date: document.getElementById('expenseDate').value
+            });
+            set(weddingRef, weddingData);
+            closeModal();
+        };
+
+        window.deleteExpense = function(id) {
+            weddingData.budget.expenses = weddingData.budget.expenses.filter(e => e.id !== id);
+            set(weddingRef, weddingData);
+        };
+
+        // ===== 賓客功能 =====
+        function renderGuests() {
+            const guestList = document.getElementById('guestList');
+            if (!weddingData.guests?.length) {
+                guestList.innerHTML = '<div class="empty-state-app"><span>👥</span><p>未有賓客名單</p></div>';
+                return;
+            }
+            
+            guestList.innerHTML = weddingData.guests.map(guest => `
+                <div style="background:white; border-radius:20px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:600; margin-bottom:4px;">${guest.name}</div>
+                        <div style="font-size:12px; color:#868e96;">${guest.relation || ''}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <select onchange="updateGuestStatus(${guest.id}, this.value)" style="padding:8px; border:2px solid #ffe3e3; border-radius:12px;">
+                            <option value="pending" ${guest.status === 'pending' ? 'selected' : ''}>⏳ 待確認</option>
+                            <option value="confirmed" ${guest.status === 'confirmed' ? 'selected' : ''}>✅ 確認</option>
+                            <option value="attending" ${guest.status === 'attending' ? 'selected' : ''}>🎉 出席</option>
+                            <option value="declined" ${guest.status === 'declined' ? 'selected' : ''}>❌ 未能出席</option>
+                        </select>
+                        <button class="delete-btn-app" onclick="deleteGuest(${guest.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('totalGuests').textContent = weddingData.guests.length;
+            document.getElementById('confirmedGuests').textContent = weddingData.guests.filter(g => g.status === 'confirmed' || g.status === 'attending').length;
+            document.getElementById('attendingGuests').textContent = weddingData.guests.filter(g => g.status === 'attending').length;
+        }
+
+        window.showAddGuestModal = function() {
+            document.getElementById('modalTitle').textContent = '👥 新增賓客';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">姓名</label>
+                    <input type="text" id="guestName" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="例如：陳小明">
+                </div>
+                <div style="margin-bottom:24px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">關係（可選）</label>
+                    <input type="text" id="guestRelation" style="width:100%; padding:16px; border:2px solid #ffe3e3; border-radius:16px;" placeholder="例如：大學同學">
+                </div>
+                <button onclick="saveGuest()" style="width:100%; padding:16px; background:#ff8787; color:white; border:none; border-radius:16px; font-size:16px; font-weight:600; cursor:pointer;">💾 儲存賓客</button>
+            `;
+            openModal();
+        };
+
+        window.saveGuest = function() {
+            const name = document.getElementById('guestName').value.trim();
+            if (!name) {
+                alert('請輸入賓客姓名');
+                return;
+            }
+            weddingData.guests.push({
+                id: Date.now(),
+                name: name,
+                relation: document.getElementById('guestRelation').value.trim(),
+                status: 'pending'
+            });
+            set(weddingRef, weddingData);
+            closeModal();
+        };
+
+        window.updateGuestStatus = function(id, status) {
+            const guest = weddingData.guests.find(g => g.id === id);
+            if (guest) {
+                guest.status = status;
+                set(weddingRef, weddingData);
+            }
+        };
+
+        window.deleteGuest = function(id) {
+            weddingData.guests = weddingData.guests.filter(g => g.id !== id);
+            set(weddingRef, weddingData);
+        };
+
+        // ===== 工具函數 =====
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== 全部渲染 =====
+        function renderAll() {
+            document.getElementById('brideName').value = weddingData.profiles.bride.name;
+            document.getElementById('groomName').value = weddingData.profiles.groom.name;
+            document.getElementById('brideAvatar').innerHTML = `${weddingData.profiles.bride.avatar}<span class="avatar-edit-badge">✎</span>`;
+            document.getElementById('groomAvatar').innerHTML = `${weddingData.profiles.groom.avatar}<span class="avatar-edit-badge">✎</span>`;
+            document.getElementById('weddingDateDisplay').textContent = `大日子：${weddingData.date}`;
+            updateCountdown();
+            
+            if (!weddingData.categories) weddingData.categories = ['場地', '攝影', '婚紗', '佈置', '餐飲', '其他'];
+            if (!weddingData.tasks) weddingData.tasks = [];
+            if (!weddingData.budget) weddingData.budget = { total: 80000, expenses: [] };
+            if (!weddingData.guests) weddingData.guests = [];
+            
+            renderCategoryFilters();
+            renderTasks();
+            renderBudget();
+            renderGuests();
+            renderCategoryManage();
+        }
+
+        // ===== 事件監聽 =====
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('unlockBtn').addEventListener('click', window.unlockApp);
+            document.getElementById('couplePassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') window.unlockApp();
+            });
+            
+            // 底部導航切換
+            document.querySelectorAll('.nav-item-app').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item-app').forEach(n => n.classList.remove('active'));
+                    document.querySelectorAll('.tab-content-app').forEach(t => t.style.display = 'none');
+                    item.classList.add('active');
+                    document.getElementById(item.dataset.tab).style.display = 'block';
+                });
+            });
+            
+            document.getElementById('addTaskBtn').addEventListener('click', window.showAddTaskModal);
+            document.getElementById('editDateBtn').addEventListener('click', window.editWeddingDate);
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('modal')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
