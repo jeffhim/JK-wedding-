@@ -961,22 +961,6 @@ function pickName(name) {
   }
 }
 
-// Auto-login on load
-try {
-  var _pinOk = store.get('v2_pin');
-  if (_pinOk === '1') {
-    pinVerified = true;
-    var _name = store.get('v2_name');
-    if (_name && firebaseConfig && savedRoomCode) {
-      myName = _name;
-      roomCode = savedRoomCode;
-      initFirebase(true);
-    } else {
-      showScreen('setupScreen');
-    }
-  }
-} catch(e) { /* ignore, show PIN screen */ }
-
 /* ═══════════════════════════════════════════
    FIREBASE INIT (direct — no auth needed)
    ═══════════════════════════════════════════ */
@@ -1026,6 +1010,22 @@ function initFirebase(silent) {
     showToast('\u26a0 連接失敗: ' + String(err), true);
   }
 }
+
+// Auto-login on load
+try {
+  var _pinOk = store.get('v2_pin');
+  if (_pinOk === '1') {
+    pinVerified = true;
+    var _name = store.get('v2_name');
+    if (_name && firebaseConfig && savedRoomCode) {
+      myName = _name;
+      roomCode = savedRoomCode;
+      initFirebase(true);
+    } else {
+      showScreen('setupScreen');
+    }
+  }
+} catch(e) { /* ignore, show PIN screen */ }
 
 /* ═══════════════════════════════════════════
    REAL-TIME SYNC
