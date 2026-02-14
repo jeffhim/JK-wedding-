@@ -1164,7 +1164,7 @@ function compressCouplePhoto(file) {
     reader.onload = function(e) {
       var img = new Image();
       img.onload = function() {
-        var maxSize = 400;
+        var maxSize = 300; // keep small for Firebase
         var w = img.width, h = img.height;
         if (w > maxSize || h > maxSize) {
           if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
@@ -1173,31 +1173,45 @@ function compressCouplePhoto(file) {
         var canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.65));
+        var result = canvas.toDataURL('image/jpeg', 0.5);
+        console.log('[WP] Couple photo compressed: ' + w + 'x' + h + ', ' + result.length + ' chars');
+        resolve(result);
       };
-      img.onerror = function() { resolve(null); };
+      img.onerror = function() { console.log('[WP] Couple photo img load error'); resolve(null); };
       img.src = e.target.result;
     };
-    reader.onerror = function() { resolve(null); };
+    reader.onerror = function() { console.log('[WP] Couple photo read error'); resolve(null); };
     reader.readAsDataURL(file);
   });
 }
 
 function saveCouplePhoto(dataUrl) {
-  if (!isFirebaseReady || !db) return;
-  db.ref('rooms/' + roomCode + '/couplePhoto').set(dataUrl);
+  if (!isFirebaseReady || !db) { console.log('[WP] saveCouplePhoto: not ready'); return; }
+  console.log('[WP] Saving couple photo, size: ' + dataUrl.length + ' chars');
+  db.ref('rooms/' + roomCode + '/couplePhoto').set(dataUrl)
+    .then(function() {
+      console.log('[WP] Couple photo saved OK');
+      showToast('\u2665 合照已同步雲端！');
+    })
+    .catch(function(err) {
+      console.log('[WP] Couple photo save FAILED: ' + err.message);
+      showToast('\u26a0 合照儲存失敗: ' + err.message, true);
+    });
 }
 
 function loadCouplePhoto() {
   if (!isFirebaseReady || !db) return;
   db.ref('rooms/' + roomCode + '/couplePhoto').on('value', function(snapshot) {
     var data = snapshot.val();
+    console.log('[WP] loadCouplePhoto: ' + (data ? data.length + ' chars' : 'empty'));
     if (data) {
       var photoImg = $('#photoImg');
       var couplePhoto = $('#couplePhoto');
       if (photoImg) photoImg.src = data;
       if (couplePhoto) couplePhoto.classList.add('has-img');
     }
+  }, function(err) {
+    console.log('[WP] loadCouplePhoto error: ' + err.message);
   });
 }
 
@@ -1210,18 +1224,29 @@ function initPhotoUpload() {
   photoInput.addEventListener('change', async function() {
     var file = photoInput.files[0];
     if (!file) return;
+    console.log('[WP] Photo selected: ' + file.name + ', size: ' + file.size);
     // Show immediately with blob URL
-    var url = URL.createObjectURL(file);
-    if (photoImg) photoImg.src = url;
-    if (couplePhoto) couplePhoto.classList.add('has-img');
-    showToast('\u2665 \u6b63\u5728\u4fdd\u5b58\u5408\u7167...');
+    try {
+      var url = URL.createObjectURL(file);
+      if (photoImg) photoImg.src = url;
+      if (couplePhoto) couplePhoto.classList.add('has-img');
+    } catch(e) { console.log('[WP] Blob URL error: ' + e); }
+    showToast('\u2665 正在壓縮合照...');
     // Compress and save to Firebase
-    var dataUrl = await compressCouplePhoto(file);
-    if (dataUrl) {
-      saveCouplePhoto(dataUrl);
-      if (photoImg) photoImg.src = dataUrl;
-      showToast('\u2665 \u5408\u7167\u5df2\u540c\u6b65\u96f2\u7aef\uff01');
+    try {
+      var dataUrl = await compressCouplePhoto(file);
+      if (dataUrl) {
+        if (photoImg) photoImg.src = dataUrl;
+        saveCouplePhoto(dataUrl);
+      } else {
+        showToast('\u26a0 相片壓縮失敗', true);
+      }
+    } catch(e) {
+      console.log('[WP] Photo compress/save error: ' + e);
+      showToast('\u26a0 相片處理失敗: ' + e, true);
     }
+    // Reset input so same file can be re-selected
+    photoInput.value = '';
   });
 }
 
