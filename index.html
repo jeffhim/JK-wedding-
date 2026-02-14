@@ -828,12 +828,62 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 let currentStep = 0;
 let firebaseConfig = null;
 
-/* Safe storage wrapper (localStorage unavailable in iframe) */
+/* Safe storage wrapper — triple fallback: localStorage → URL hash → memory */
 const store = {
   _m: {},
-  set(k, v) { try { window['local' + 'Storage'].setItem(k, v); } catch { this._m[k] = v; } },
-  get(k) { try { return window['local' + 'Storage'].getItem(k); } catch { return this._m[k] || null; } },
-  del(k) { try { window['local' + 'Storage'].removeItem(k); } catch { delete this._m[k]; } }
+  _hashCache: null,
+  set(k, v) {
+    try { window['local' + 'Storage'].setItem(k, v); } catch { /* ignore */ }
+    this._m[k] = v;
+    this._saveHash();
+  },
+  get(k) {
+    // Try memory first (fastest, always current)
+    if (this._m[k] !== undefined) return this._m[k];
+    // Try localStorage
+    try {
+      const val = window['local' + 'Storage'].getItem(k);
+      if (val !== null) { this._m[k] = val; return val; }
+    } catch { /* ignore */ }
+    // Try URL hash
+    const hd = this._readHash();
+    if (hd && hd[k] !== undefined) { this._m[k] = hd[k]; return hd[k]; }
+    return null;
+  },
+  del(k) {
+    delete this._m[k];
+    try { window['local' + 'Storage'].removeItem(k); } catch { /* ignore */ }
+    this._saveHash();
+  },
+  _saveHash() {
+    try {
+      const obj = {};
+      var keys = ['wedding_cfg', 'wedding_room', 'wedding_name'];
+      for (var i = 0; i < keys.length; i++) {
+        if (this._m[keys[i]] !== undefined) obj[keys[i]] = this._m[keys[i]];
+      }
+      if (Object.keys(obj).length > 0) {
+        var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+        if (window.location.hash !== '#' + encoded) {
+          history.replaceState(null, '', '#' + encoded);
+        }
+      } else {
+        history.replaceState(null, '', window.location.pathname);
+      }
+    } catch { /* ignore */ }
+  },
+  _readHash() {
+    if (this._hashCache) return this._hashCache;
+    try {
+      var h = window.location.hash;
+      if (h && h.length > 1) {
+        var decoded = decodeURIComponent(escape(atob(h.slice(1))));
+        this._hashCache = JSON.parse(decoded);
+        return this._hashCache;
+      }
+    } catch { /* ignore */ }
+    return null;
+  }
 };
 
 function showStep(n) {
@@ -935,22 +985,32 @@ document.querySelectorAll('.name-pill').forEach(pill => {
   const name = store.get('wedding_name');
   if (cfg && room && name) {
     try { firebaseConfig = JSON.parse(cfg); } catch { return; }
+    if (!firebaseConfig || !firebaseConfig.databaseURL) return;
     roomCode = room;
     myName = name;
-    initFirebase();
+    // Silent mode — don't show error toast on auto-reconnect
+    initFirebase(true);
   }
 })();
 
 /* ═══════════════════════════════════════════
    FIREBASE INIT
    ═══════════════════════════════════════════ */
-function initFirebase() {
+let firebaseInitAttempts = 0;
+
+function initFirebase(silent) {
   // Always ensure app screen is shown
   $('#setupScreen').classList.remove('active');
   $('#appScreen').classList.add('active');
 
   // Init app UI first (so user sees something immediately)
   if (!isFirebaseReady) initApp();
+
+  // Guard: need valid config
+  if (!firebaseConfig || !firebaseConfig.databaseURL) {
+    if (!silent) showToast('\u26a0 Firebase 設定無效');
+    return;
+  }
 
   try {
     if (!firebase.apps.length) {
@@ -960,13 +1020,21 @@ function initFirebase() {
     tasksRef = db.ref('rooms/' + roomCode + '/tasks');
     presenceRef = db.ref('rooms/' + roomCode + '/presence');
     isFirebaseReady = true;
+    firebaseInitAttempts = 0;
 
     listenToTasks();
     setupPresence();
+    loadCouplePhoto();
     showToast('\u2665 已連接雲端！');
   } catch (err) {
-    showToast('\u26a0 連接失敗，請檢查設定');
+    firebaseInitAttempts++;
     console.log('Firebase init error: ' + String(err));
+    if (firebaseInitAttempts <= 2) {
+      // Retry silently after a short delay
+      setTimeout(function() { initFirebase(true); }, 2000);
+    } else if (!silent) {
+      showToast('\u26a0 連接失敗，請檢查設定');
+    }
   }
 }
 
@@ -1043,23 +1111,72 @@ function setupPresence() {
 }
 
 /* ═══════════════════════════════════════════
-   Photo Upload
+   Photo Upload — synced to Firebase
    ═══════════════════════════════════════════ */
+function compressCouplePhoto(file) {
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var maxSize = 400;
+        var w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+          else { w = Math.round(w * maxSize / h); h = maxSize; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.65));
+      };
+      img.onerror = function() { resolve(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function() { resolve(null); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function saveCouplePhoto(dataUrl) {
+  if (!isFirebaseReady || !db) return;
+  db.ref('rooms/' + roomCode + '/couplePhoto').set(dataUrl);
+}
+
+function loadCouplePhoto() {
+  if (!isFirebaseReady || !db) return;
+  db.ref('rooms/' + roomCode + '/couplePhoto').on('value', function(snapshot) {
+    var data = snapshot.val();
+    if (data) {
+      var photoImg = $('#photoImg');
+      var couplePhoto = $('#couplePhoto');
+      if (photoImg) photoImg.src = data;
+      if (couplePhoto) couplePhoto.classList.add('has-img');
+    }
+  });
+}
+
 function initPhotoUpload() {
-  const couplePhoto = $('#couplePhoto');
-  const photoInput  = $('#photoInput');
-  const photoImg    = $('#photoImg');
+  var couplePhoto = $('#couplePhoto');
+  var photoInput  = $('#photoInput');
+  var photoImg    = $('#photoImg');
   if (!photoInput) return;
 
-  // <label for="photoInput"> handles click natively on iOS/Android
-  // Just listen for the file change
-  photoInput.addEventListener('change', () => {
-    const file = photoInput.files[0];
+  photoInput.addEventListener('change', async function() {
+    var file = photoInput.files[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    photoImg.src = url;
+    // Show immediately with blob URL
+    var url = URL.createObjectURL(file);
+    if (photoImg) photoImg.src = url;
     if (couplePhoto) couplePhoto.classList.add('has-img');
-    showToast('\u5408\u7167\u5df2\u66f4\u65b0 \u2665');
+    showToast('\u2665 \u6b63\u5728\u4fdd\u5b58\u5408\u7167...');
+    // Compress and save to Firebase
+    var dataUrl = await compressCouplePhoto(file);
+    if (dataUrl) {
+      saveCouplePhoto(dataUrl);
+      if (photoImg) photoImg.src = dataUrl;
+      showToast('\u2665 \u5408\u7167\u5df2\u540c\u6b65\u96f2\u7aef\uff01');
+    }
   });
 }
 
@@ -1482,6 +1599,8 @@ $('#settingsBtn').addEventListener('click', () => {
     store.del('wedding_cfg');
     store.del('wedding_room');
     store.del('wedding_name');
+    // Clear URL hash
+    try { history.replaceState(null, '', window.location.pathname); } catch(e) { /* ignore */ }
     location.reload();
   };
   $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); resetHandler(); };
