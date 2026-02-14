@@ -73,11 +73,12 @@ body{
 }
 
 /* ═══════════════════════════════════════
-   SETUP / ONBOARDING SCREENS
+   THREE SCREENS: PIN → NAME → APP
    ═══════════════════════════════════════ */
-.screen{display:none;min-height:100vh;min-height:100dvh}
-.screen.active{display:block}
-#pinScreen.active,#setupScreen.active{display:flex}
+.screen{display:none !important;min-height:100vh;min-height:100dvh}
+.screen.active{display:block !important;animation:screenIn .35s ease-out}
+#pinScreen.active,#setupScreen.active{display:flex !important}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ─── Setup Screen ─── */
 #pinScreen,#setupScreen{
@@ -575,7 +576,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
       <input type="password" class="setup-input" id="pinInput" placeholder="輸入密碼…" inputmode="numeric" autocomplete="off" style="text-align:center;font-size:1.3rem;letter-spacing:.3em">
       <div class="setup-error" id="pinError">密碼不正確，再試一次 ♥</div>
     </div>
-    <button class="setup-btn setup-btn-primary" id="pinSubmit" style="width:100%;margin-top:.5rem"><i class="fa-solid fa-heart"></i> 解鎖</button>
+    <button class="setup-btn setup-btn-primary" id="pinSubmit" onclick="verifyPin()" style="width:100%;margin-top:.5rem"><i class="fa-solid fa-heart"></i> 解鎖</button>
   </div>
 </div>
 
@@ -587,8 +588,8 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
     <span class="hero-heart" style="display:block;margin:.3rem auto"><i class="fa-solid fa-heart"></i></span>
     <div style="font-size:.95rem;color:var(--text2);margin-bottom:1.2rem;font-weight:500">你係邊個？</div>
     <div class="name-select">
-      <div class="name-pill" data-name="Kiki" id="pillKiki"><i class="fa-solid fa-heart"></i> Kiki</div>
-      <div class="name-pill" data-name="Jeff" id="pillJeff"><i class="fa-solid fa-heart"></i> Jeff</div>
+      <div class="name-pill" data-name="Kiki" id="pillKiki" onclick="pickName('Kiki')"><i class="fa-solid fa-heart"></i> Kiki</div>
+      <div class="name-pill" data-name="Jeff" id="pillJeff" onclick="pickName('Jeff')"><i class="fa-solid fa-heart"></i> Jeff</div>
     </div>
   </div>
 </div>
@@ -701,9 +702,15 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-database-compat.min.js"></script>
 
 <script>
+/* Global error catcher — shows errors visually */
+window.onerror = function(msg, src, line) {
+  var d = document.getElementById('toast');
+  if (d) { d.textContent = 'JS Error L' + line + ': ' + msg; d.className = 'toast show'; }
+  return false;
+};
+
 /* ╔═══════════════════════════════════════════╗
-   ║  🔧 你嘅 Firebase 設定 — 貼喺下面！       ║
-   ║  貼完之後就永遠唔使再輸入 config 喇！       ║
+   ║  🔧 Firebase 設定                          ║
    ╚═══════════════════════════════════════════╝ */
 const HARDCODED_CONFIG = {
   apiKey: "AIzaSyCkhCYW6SiLnmbbALlxLw0QAkgLe2KjjgQ",
@@ -903,78 +910,72 @@ function showScreen(id) {
   if (el) el.classList.add('active');
 }
 
-// Start IndexedDB init (async, will auto-login if PIN+name found)
+// Start IndexedDB init
 store.init();
 
-// ─── PIN verification ───
-$('#pinSubmit').addEventListener('click', verifyPin);
-$('#pinInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
-
+// ─── PIN verify (called via onclick in HTML) ───
 function verifyPin() {
-  var input = $('#pinInput').value.trim();
-  if (input === _PH) {
-    // PIN correct!
-    pinVerified = true;
-    store.set('wedding_pin_ok', '1');
-    $('#pinError').classList.remove('show');
-    // Check if name already saved — skip to app
-    var savedName = store.get('wedding_name');
-    if (savedName) {
-      myName = savedName;
-      roomCode = savedRoomCode;
-      initFirebase(true);
+  try {
+    var input = document.getElementById('pinInput').value.trim();
+    if (input === _PH) {
+      pinVerified = true;
+      store.set('wedding_pin_ok', '1');
+      var pe = document.getElementById('pinError');
+      if (pe) pe.classList.remove('show');
+      var savedName = store.get('wedding_name');
+      if (savedName) {
+        myName = savedName;
+        roomCode = savedRoomCode;
+        initFirebase(true);
+      } else {
+        showScreen('setupScreen');
+      }
     } else {
-      showScreen('setupScreen');
+      var pe2 = document.getElementById('pinError');
+      if (pe2) pe2.classList.add('show');
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinInput').focus();
     }
-  } else {
-    // Wrong PIN
-    $('#pinError').classList.add('show');
-    $('#pinInput').value = '';
-    $('#pinInput').focus();
-    // Shake animation
-    var card = $('#pinScreen').querySelector('.setup-card');
-    card.style.animation = 'none';
-    void card.offsetHeight; // reflow
-    card.style.animation = 'shake .4s ease-out';
+  } catch(e) {
+    var t = document.getElementById('toast');
+    if (t) { t.textContent = 'PIN Error: ' + e.message; t.className = 'toast show'; }
   }
 }
 
-// Name pill click — one tap to enter
-document.querySelectorAll('.name-pill').forEach(function(pill) {
-  pill.addEventListener('click', function() {
-    document.querySelectorAll('.name-pill').forEach(function(p) { p.classList.remove('selected'); });
-    pill.classList.add('selected');
-    myName = pill.dataset.name;
+// Enter key on PIN input
+try {
+  document.getElementById('pinInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
+} catch(e) { /* ignore */ }
+
+// ─── Name pick (called via onclick in HTML) ───
+function pickName(name) {
+  try {
+    myName = name;
     roomCode = savedRoomCode;
-    console.log('[WP] Name selected: ' + myName + ', roomCode: ' + roomCode);
-
-    // Save name everywhere
     store.set('wedding_name', myName);
-
-    // Go!
     showScreen('appScreen');
     setTimeout(function() { initFirebase(); }, 200);
-  });
-});
+  } catch(e) {
+    var t = document.getElementById('toast');
+    if (t) { t.textContent = 'Name Error: ' + e.message; t.className = 'toast show'; }
+  }
+}
 
-// Check saved PIN + name on load — instant auto-login
-(function checkSaved() {
-  var pinOk = store.get('wedding_pin_ok');
-  if (pinOk === '1') {
+// Auto-login on load
+try {
+  var _pinOk = store.get('wedding_pin_ok');
+  if (_pinOk === '1') {
     pinVerified = true;
-    var name = store.get('wedding_name');
-    if (name && firebaseConfig && savedRoomCode) {
-      myName = name;
+    var _name = store.get('wedding_name');
+    if (_name && firebaseConfig && savedRoomCode) {
+      myName = _name;
       roomCode = savedRoomCode;
       initFirebase(true);
     } else {
-      // PIN remembered but no name — show name picker
       showScreen('setupScreen');
     }
   }
-  // else: show PIN screen (pinScreen is already active by default)
-  // IndexedDB will also try auto-login async via _syncFromIDB
-})();
+} catch(e) { /* ignore, show PIN screen */ }
 
 /* ═══════════════════════════════════════════
    FIREBASE INIT (direct — no auth needed)
@@ -1611,6 +1612,7 @@ $('#settingsBtn').addEventListener('click', () => {
     store.del('wedding_name');
     myName = '';
     isFirebaseReady = false;
+    firebaseListenerAttached = false;
     showScreen('setupScreen');
   };
   $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; resetHandler(); };
