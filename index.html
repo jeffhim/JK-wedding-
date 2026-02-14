@@ -735,6 +735,20 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-database-compat.min.js"></script>
 
 <script>
+/* ╔═══════════════════════════════════════════╗
+   ║  🔧 你嘅 Firebase 設定 — 貼喺下面！       ║
+   ║  貼完之後就永遠唔使再輸入 config 喇！       ║
+   ╚═══════════════════════════════════════════╝ */
+const HARDCODED_CONFIG = {
+  apiKey: "AIzaSyDWMpbQaYrQ6A0i4kClthOy-Z8xbu2HW0c",
+  authDomain: "new-wedding-planner.firebaseapp.com",
+  databaseURL: "https://new-wedding-planner-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "new-wedding-planner",
+  storageBucket: "new-wedding-planner.firebasestorage.app",
+  messagingSenderId: "799246927956",
+  appId: "1:799246927956:web:43d19b17f49b900de5c5c1"
+};
+
 /* ═══════════════════════════════════════════
    Constants & Categories
    ═══════════════════════════════════════════ */
@@ -828,61 +842,32 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 let currentStep = 0;
 let firebaseConfig = null;
 
-/* Safe storage wrapper — triple fallback: localStorage → URL hash → memory */
+/* Persistent storage: cookie (365 days) + localStorage + memory fallback */
 const store = {
   _m: {},
-  _hashCache: null,
   set(k, v) {
-    try { window['local' + 'Storage'].setItem(k, v); } catch { /* ignore */ }
     this._m[k] = v;
-    this._saveHash();
+    try { document.cookie = encodeURIComponent(k) + '=' + encodeURIComponent(v) + ';path=/;max-age=31536000;SameSite=Lax'; } catch { /* ignore */ }
+    try { window['local' + 'Storage'].setItem(k, v); } catch { /* ignore */ }
   },
   get(k) {
-    // Try memory first (fastest, always current)
     if (this._m[k] !== undefined) return this._m[k];
-    // Try localStorage
+    // Try cookie first (most reliable on mobile)
     try {
-      const val = window['local' + 'Storage'].getItem(k);
+      var match = document.cookie.match(new RegExp('(?:^|;\\s*)' + encodeURIComponent(k).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+      if (match) { var v = decodeURIComponent(match[1]); this._m[k] = v; return v; }
+    } catch { /* ignore */ }
+    // Fallback to localStorage
+    try {
+      var val = window['local' + 'Storage'].getItem(k);
       if (val !== null) { this._m[k] = val; return val; }
     } catch { /* ignore */ }
-    // Try URL hash
-    const hd = this._readHash();
-    if (hd && hd[k] !== undefined) { this._m[k] = hd[k]; return hd[k]; }
     return null;
   },
   del(k) {
     delete this._m[k];
+    try { document.cookie = encodeURIComponent(k) + '=;path=/;max-age=0'; } catch { /* ignore */ }
     try { window['local' + 'Storage'].removeItem(k); } catch { /* ignore */ }
-    this._saveHash();
-  },
-  _saveHash() {
-    try {
-      const obj = {};
-      var keys = ['wedding_cfg', 'wedding_room', 'wedding_name'];
-      for (var i = 0; i < keys.length; i++) {
-        if (this._m[keys[i]] !== undefined) obj[keys[i]] = this._m[keys[i]];
-      }
-      if (Object.keys(obj).length > 0) {
-        var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
-        if (window.location.hash !== '#' + encoded) {
-          history.replaceState(null, '', '#' + encoded);
-        }
-      } else {
-        history.replaceState(null, '', window.location.pathname);
-      }
-    } catch { /* ignore */ }
-  },
-  _readHash() {
-    if (this._hashCache) return this._hashCache;
-    try {
-      var h = window.location.hash;
-      if (h && h.length > 1) {
-        var decoded = decodeURIComponent(escape(atob(h.slice(1))));
-        this._hashCache = JSON.parse(decoded);
-        return this._hashCache;
-      }
-    } catch { /* ignore */ }
-    return null;
   }
 };
 
@@ -959,13 +944,18 @@ document.querySelectorAll('.name-pill').forEach(pill => {
     if (!room) { $('#roomError').classList.add('show'); return; }
     roomCode = room.replace(/[^a-zA-Z0-9_-]/g, '-');
 
+    // Use hardcoded config if available
+    if (HARDCODED_CONFIG && HARDCODED_CONFIG.databaseURL) {
+      firebaseConfig = HARDCODED_CONFIG;
+    }
+
     // Highlight selected pill
     document.querySelectorAll('.name-pill').forEach(p => p.classList.remove('selected'));
     pill.classList.add('selected');
     myName = pill.dataset.name;
 
-    // Save and go — switch screen immediately, connect in background
-    store.set('wedding_cfg', JSON.stringify(firebaseConfig));
+    // Save room + name to cookie (persists 1 year)
+    if (firebaseConfig) store.set('wedding_cfg', JSON.stringify(firebaseConfig));
     store.set('wedding_room', roomCode);
     store.set('wedding_name', myName);
 
@@ -978,19 +968,36 @@ document.querySelectorAll('.name-pill').forEach(pill => {
   });
 });
 
-// Check saved config on load
+// Check saved config on load — auto-login if possible
 (function checkSaved() {
-  const cfg = store.get('wedding_cfg');
-  const room = store.get('wedding_room');
-  const name = store.get('wedding_name');
-  if (cfg && room && name) {
-    try { firebaseConfig = JSON.parse(cfg); } catch { return; }
-    if (!firebaseConfig || !firebaseConfig.databaseURL) return;
-    roomCode = room;
-    myName = name;
-    // Silent mode — don't show error toast on auto-reconnect
-    initFirebase(true);
+  // Priority 1: hardcoded config in HTML (most reliable)
+  if (HARDCODED_CONFIG && HARDCODED_CONFIG.databaseURL) {
+    firebaseConfig = HARDCODED_CONFIG;
+  } else {
+    // Priority 2: saved config from cookie/localStorage
+    var cfg = store.get('wedding_cfg');
+    if (cfg) {
+      try { firebaseConfig = JSON.parse(cfg); } catch { firebaseConfig = null; }
+      if (!firebaseConfig || !firebaseConfig.databaseURL) { firebaseConfig = null; }
+    }
   }
+
+  // If we have a config, check for saved room + name
+  if (firebaseConfig) {
+    var room = store.get('wedding_room');
+    var name = store.get('wedding_name');
+    if (room && name) {
+      // Full auto-login! No setup needed
+      roomCode = room;
+      myName = name;
+      initFirebase(true);
+      return;
+    }
+    // Have config but no room/name — skip to step 1 (room + name only)
+    showStep(1);
+    return;
+  }
+  // No config at all — show full setup from step 0
 })();
 
 /* ═══════════════════════════════════════════
@@ -1599,8 +1606,6 @@ $('#settingsBtn').addEventListener('click', () => {
     store.del('wedding_cfg');
     store.del('wedding_room');
     store.del('wedding_name');
-    // Clear URL hash
-    try { history.replaceState(null, '', window.location.pathname); } catch(e) { /* ignore */ }
     location.reload();
   };
   $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); resetHandler(); };
