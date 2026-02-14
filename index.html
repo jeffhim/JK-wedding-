@@ -211,7 +211,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 }
 
 .couple-photo-wrap{
-  position:relative;z-index:2;margin:0 auto .6rem;width:100px;height:100px;
+  display:block;position:relative;z-index:2;margin:0 auto .6rem;width:100px;height:100px;cursor:pointer;
 }
 .couple-photo{
   width:100px;height:100px;border-radius:50%;object-fit:cover;
@@ -430,6 +430,88 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 .btn-danger{background:var(--danger);color:#fff}
 .btn-danger:hover{opacity:.85}
 
+/* ─── Attachments in Modal ─── */
+.attach-area{
+  margin-top:.2rem;
+  border:2px dashed var(--border);border-radius:var(--radius-sm);
+  padding:.8rem;text-align:center;cursor:pointer;transition:all .25s;
+  position:relative;background:var(--bg);
+}
+.attach-area:hover{border-color:var(--pink);background:var(--pink-light)}
+.attach-area .attach-icon{font-size:1.4rem;color:var(--text3);margin-bottom:.2rem;transition:color .25s}
+.attach-area:hover .attach-icon{color:var(--pink)}
+.attach-area .attach-label{font-size:.72rem;color:var(--text3);font-weight:500}
+.attach-previews{
+  display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem;
+}
+.attach-preview{
+  position:relative;width:68px;height:68px;border-radius:var(--radius-sm);overflow:hidden;
+  border:1.5px solid var(--border);background:var(--bg3);flex-shrink:0;
+}
+.attach-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.attach-preview .file-icon{
+  display:flex;align-items:center;justify-content:center;width:100%;height:100%;
+  flex-direction:column;gap:.15rem;
+}
+.attach-preview .file-icon i{font-size:1.3rem;color:var(--text3)}
+.attach-preview .file-icon span{font-size:.5rem;color:var(--text3);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.attach-preview .remove-attach{
+  position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:.55rem;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;
+  line-height:1;
+}
+.attach-preview .remove-attach:hover{background:var(--danger)}
+
+/* ─── Attachments in Task Cards ─── */
+.task-thumbs{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.35rem}
+.task-thumb{
+  width:44px;height:44px;border-radius:8px;overflow:hidden;cursor:pointer;
+  border:1.5px solid var(--border);transition:all .2s;flex-shrink:0;
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+}
+.task-thumb:hover{border-color:var(--pink);transform:scale(1.08);box-shadow:0 2px 8px rgba(200,80,100,.2)}
+.task-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.task-thumb .thumb-file{font-size:.7rem;color:var(--text3)}
+.task-attach-count{
+  font-size:.62rem;color:var(--text3);margin-top:.2rem;font-weight:500;
+  display:inline-flex;align-items:center;gap:.2rem;
+}
+.task-attach-count i{font-size:.55rem}
+
+/* ─── Lightbox ─── */
+.lightbox-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:all .3s;backdrop-filter:blur(8px);
+  flex-direction:column;gap:.8rem;
+}
+.lightbox-overlay.open{opacity:1;visibility:visible}
+.lightbox-img{
+  max-width:92vw;max-height:78vh;border-radius:var(--radius);
+  box-shadow:0 8px 40px rgba(0,0,0,.5);object-fit:contain;
+  transform:scale(.9);transition:transform .35s cubic-bezier(.25,.8,.25,1);
+}
+.lightbox-overlay.open .lightbox-img{transform:scale(1)}
+.lightbox-close{
+  position:absolute;top:1rem;right:1rem;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.15);color:#fff;border:none;cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;
+  backdrop-filter:blur(4px);
+}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.lightbox-nav{
+  display:flex;gap:1rem;align-items:center;
+}
+.lightbox-nav button{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.12);color:#fff;border:none;cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.lightbox-nav button:hover{background:rgba(255,255,255,.25)}
+.lightbox-counter{color:rgba(255,255,255,.6);font-size:.75rem;font-weight:500}
+.lightbox-filename{color:rgba(255,255,255,.5);font-size:.7rem;max-width:80vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* ─── Empty ─── */
 .empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
 .empty i{font-size:2.5rem;margin-bottom:.5rem;color:var(--pink-light);display:block}
@@ -489,7 +571,6 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
     <div class="steps-indicator">
       <div class="step-dot active" id="dot0"></div>
       <div class="step-dot" id="dot1"></div>
-      <div class="step-dot" id="dot2"></div>
     </div>
 
     <!-- Step 0: Firebase Config -->
@@ -521,38 +602,26 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
       </div>
     </div>
 
-    <!-- Step 1: Room Code -->
+    <!-- Step 1: Room Code + Name -->
     <div class="setup-step" id="step1">
       <div class="guide-box">
-        <strong><i class="fa-solid fa-link"></i> 設定同步房間碼</strong><br>
-        你同另一半要輸入<strong>同一個房間碼</strong>先可以同步資料。<br>
-        自訂一個只有你哋知道嘅名稱就得！
+        <strong><i class="fa-solid fa-lock-heart"></i> 設定你哋嘅甜蜜密碼</strong><br>
+        你同另一半要輸入<strong>同一個甜蜜密碼</strong>先可以同步資料。
       </div>
       <div class="setup-row">
-        <label>房間碼</label>
-        <input type="text" class="setup-input" id="roomInput" placeholder="例：kiki-jeff-2025" autocomplete="off">
-        <div class="setup-error" id="roomError">請輸入房間碼</div>
+        <label>甜蜜密碼</label>
+        <input type="text" class="setup-input" id="roomInput" placeholder="例：kiki-loves-jeff" autocomplete="off">
+        <div class="setup-error" id="roomError">請先輸入你哋嘅甜蜜密碼</div>
       </div>
-      <div class="setup-btn-row">
-        <button class="setup-btn setup-btn-secondary" id="btnStep1Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
-        <button class="setup-btn setup-btn-primary" id="btnStep1Next">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- Step 2: Choose Name -->
-    <div class="setup-step" id="step2">
-      <div class="guide-box">
-        <strong><i class="fa-solid fa-user-heart"></i> 你係邊個？</strong><br>
-        揀返自己嘅名，等對方知道你上咗線！
+      <div class="guide-box" style="margin-top:.5rem">
+        <strong><i class="fa-solid fa-heart"></i> 你係邊個？</strong>　揀名之後會自動進入 App
       </div>
       <div class="name-select">
         <div class="name-pill" data-name="Kiki" id="pillKiki"><i class="fa-solid fa-heart"></i> Kiki</div>
         <div class="name-pill" data-name="Jeff" id="pillJeff"><i class="fa-solid fa-heart"></i> Jeff</div>
       </div>
-      <div class="setup-error" id="nameError" style="text-align:center">請揀選你嘅名字</div>
-      <div class="setup-btn-row">
-        <button class="setup-btn setup-btn-secondary" id="btnStep2Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
-        <button class="setup-btn setup-btn-primary" id="btnStep2Go"><i class="fa-solid fa-heart"></i> 開始使用</button>
+      <div class="setup-btn-row" style="margin-top:.6rem">
+        <button class="setup-btn setup-btn-secondary" id="btnStep1Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
       </div>
     </div>
   </div>
@@ -561,13 +630,13 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 <!-- ═══════════════ MAIN APP SCREEN ═══════════════ -->
 <div class="screen" id="appScreen">
   <div class="hero">
-    <div class="couple-photo-wrap">
-      <div class="couple-photo" id="couplePhoto" role="button" tabindex="0" aria-label="上傳合照">
+    <label class="couple-photo-wrap" for="photoInput">
+      <div class="couple-photo" id="couplePhoto" aria-label="上傳合照">
         <img id="photoImg" alt="Kiki & Jeff">
         <span class="placeholder"><i class="fa-solid fa-camera"></i></span>
       </div>
-      <input type="file" id="photoInput" accept="image/*" hidden>
-    </div>
+      <input type="file" id="photoInput" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+    </label>
     <div class="photo-hint">點擊上傳合照</div>
     <div class="hero-names">Kiki <span class="hero-amp">&</span> Jeff</div>
     <span class="hero-heart"><i class="fa-solid fa-heart"></i></span>
@@ -620,6 +689,15 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
         <input type="date" id="inputDate">
       </div>
     </div>
+    <div class="form-row">
+      <span class="form-label-text" style="display:block;font-size:.73rem;color:var(--text2);margin-bottom:.2rem;letter-spacing:.04em;font-weight:600">附件（選填）</span>
+      <label class="attach-area" for="attachInput">
+        <div class="attach-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <div class="attach-label">點擊上傳相片或文件</div>
+        <input type="file" id="attachInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+      </label>
+      <div class="attach-previews" id="attachPreviews"></div>
+    </div>
     <div class="btn-row">
       <button class="btn btn-secondary" id="btnCancel">取消</button>
       <button class="btn btn-primary" id="btnSave">新增</button>
@@ -636,6 +714,18 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
       <button class="btn btn-danger" id="confirmYes">刪除</button>
     </div>
   </div>
+</div>
+
+<!-- Lightbox Viewer -->
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <button class="lightbox-close" id="lightboxClose" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+  <img class="lightbox-img" id="lightboxImg" alt="">
+  <div class="lightbox-nav">
+    <button id="lightboxPrev" aria-label="上一張"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="lightbox-counter" id="lightboxCounter"></span>
+    <button id="lightboxNext" aria-label="下一張"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+  <div class="lightbox-filename" id="lightboxFilename"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -690,6 +780,9 @@ let tasksRef = null;
 let presenceRef = null;
 let isFirebaseReady = false;
 let selectedName = '';
+let pendingAttachments = []; // {name, type, data (base64), isImage}
+let lightboxImages = [];
+let lightboxIndex = 0;
 
 /* ═══════════════════════════════════════════
    DOM shortcuts
@@ -804,35 +897,35 @@ $('#btnStep0Next').addEventListener('click', () => {
 });
 $('#cfgInput').addEventListener('input', () => { $('#cfgError').classList.remove('show'); });
 
-// Step 1: Room Code
+// Step 1: Room Code + Name (combined)
 $('#btnStep1Back').addEventListener('click', () => showStep(0));
-$('#btnStep1Next').addEventListener('click', () => {
-  const room = $('#roomInput').value.trim();
-  if (!room) { $('#roomError').classList.add('show'); return; }
-  roomCode = room.replace(/[^a-zA-Z0-9_-]/g, '-');
-  $('#roomError').classList.remove('show');
-  showStep(2);
-});
 $('#roomInput').addEventListener('input', () => { $('#roomError').classList.remove('show'); });
 
-// Step 2: Name
+// Tapping a name pill auto-launches the app
 document.querySelectorAll('.name-pill').forEach(pill => {
   pill.addEventListener('click', () => {
+    // Validate room code first
+    const room = $('#roomInput').value.trim();
+    if (!room) { $('#roomError').classList.add('show'); return; }
+    roomCode = room.replace(/[^a-zA-Z0-9_-]/g, '-');
+
+    // Highlight selected pill
     document.querySelectorAll('.name-pill').forEach(p => p.classList.remove('selected'));
     pill.classList.add('selected');
-    selectedName = pill.dataset.name;
-    $('#nameError').classList.remove('show');
+    myName = pill.dataset.name;
+
+    // Save and go — switch screen immediately, connect in background
+    store.set('wedding_cfg', JSON.stringify(firebaseConfig));
+    store.set('wedding_room', roomCode);
+    store.set('wedding_name', myName);
+
+    // Instant screen switch
+    $('#setupScreen').classList.remove('active');
+    $('#appScreen').classList.add('active');
+
+    // Connect Firebase after screen is visible
+    setTimeout(() => { initFirebase(); }, 100);
   });
-});
-$('#btnStep2Back').addEventListener('click', () => showStep(1));
-$('#btnStep2Go').addEventListener('click', () => {
-  if (!selectedName) { $('#nameError').classList.add('show'); return; }
-  myName = selectedName;
-  // Save config for next time
-  store.set('wedding_cfg', JSON.stringify(firebaseConfig));
-  store.set('wedding_room', roomCode);
-  store.set('wedding_name', myName);
-  initFirebase();
 });
 
 // Check saved config on load
@@ -852,6 +945,13 @@ $('#btnStep2Go').addEventListener('click', () => {
    FIREBASE INIT
    ═══════════════════════════════════════════ */
 function initFirebase() {
+  // Always ensure app screen is shown
+  $('#setupScreen').classList.remove('active');
+  $('#appScreen').classList.add('active');
+
+  // Init app UI first (so user sees something immediately)
+  if (!isFirebaseReady) initApp();
+
   try {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -859,13 +959,8 @@ function initFirebase() {
     db = firebase.database();
     tasksRef = db.ref('rooms/' + roomCode + '/tasks');
     presenceRef = db.ref('rooms/' + roomCode + '/presence');
-
-    // Switch screens
-    $('#setupScreen').classList.remove('active');
-    $('#appScreen').classList.add('active');
     isFirebaseReady = true;
 
-    initApp();
     listenToTasks();
     setupPresence();
     showToast('\u2665 已連接雲端！');
@@ -885,7 +980,14 @@ function listenToTasks() {
     if (ignoreNextUpdate) { ignoreNextUpdate = false; return; }
     const data = snapshot.val();
     if (data) {
-      tasks = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      tasks = Object.keys(data).map(key => {
+        const t = { id: key, ...data[key] };
+        // Firebase may store arrays as objects with numeric keys — normalize
+        if (t.attachments && !Array.isArray(t.attachments)) {
+          t.attachments = Object.values(t.attachments);
+        }
+        return t;
+      });
     } else {
       // First time — seed defaults
       seedDefaultTasks();
@@ -947,20 +1049,172 @@ function initPhotoUpload() {
   const couplePhoto = $('#couplePhoto');
   const photoInput  = $('#photoInput');
   const photoImg    = $('#photoImg');
-  if (!couplePhoto) return;
+  if (!photoInput) return;
 
-  couplePhoto.addEventListener('click', () => photoInput.click());
-  couplePhoto.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); photoInput.click(); }
-  });
-
+  // <label for="photoInput"> handles click natively on iOS/Android
+  // Just listen for the file change
   photoInput.addEventListener('change', () => {
     const file = photoInput.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
     photoImg.src = url;
-    couplePhoto.classList.add('has-img');
+    if (couplePhoto) couplePhoto.classList.add('has-img');
     showToast('\u5408\u7167\u5df2\u66f4\u65b0 \u2665');
+  });
+}
+
+/* ═══════════════════════════════════════════
+   Attachment Handling
+   ═══════════════════════════════════════════ */
+const MAX_IMG_SIZE = 800; // max width/height for compression
+const MAX_FILE_B64 = 200000; // ~150KB base64 limit per file (Firebase node limit)
+
+function isImageType(type) {
+  return type && type.startsWith('image/');
+}
+
+function getFileIcon(name) {
+  const ext = (name || '').split('.').pop().toLowerCase();
+  const icons = {
+    pdf: 'fa-file-pdf', doc: 'fa-file-word', docx: 'fa-file-word',
+    xls: 'fa-file-excel', xlsx: 'fa-file-excel',
+    txt: 'fa-file-lines', csv: 'fa-file-csv',
+  };
+  return icons[ext] || 'fa-file';
+}
+
+function compressImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > MAX_IMG_SIZE || h > MAX_IMG_SIZE) {
+          if (w > h) { h = Math.round(h * MAX_IMG_SIZE / w); w = MAX_IMG_SIZE; }
+          else { w = Math.round(w * MAX_IMG_SIZE / h); h = MAX_IMG_SIZE; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = () => resolve(null);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function processFiles(files) {
+  for (const file of files) {
+    if (isImageType(file.type)) {
+      const data = await compressImage(file);
+      if (data && data.length <= MAX_FILE_B64 * 4) {
+        pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: true });
+      } else if (data) {
+        // Try more aggressive compression
+        showToast('\u26a0 \u5716\u7247\u904e\u5927\uff0c\u5df2\u58d3\u7e2e');
+        pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: true });
+      }
+    } else {
+      const data = await fileToBase64(file);
+      if (data && data.length <= MAX_FILE_B64 * 4) {
+        pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: false });
+      } else {
+        showToast('\u26a0 ' + file.name + ' \u6a94\u6848\u904e\u5927');
+      }
+    }
+  }
+  renderAttachPreviews();
+}
+
+function renderAttachPreviews() {
+  const container = $('#attachPreviews');
+  if (!container) return;
+  container.innerHTML = '';
+  pendingAttachments.forEach((att, i) => {
+    const div = document.createElement('div');
+    div.className = 'attach-preview';
+    if (att.isImage) {
+      div.innerHTML = '<img src="' + att.data + '" alt="' + escHtml(att.name) + '">' +
+        '<button class="remove-attach" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></button>';
+    } else {
+      div.innerHTML = '<div class="file-icon"><i class="fa-solid ' + getFileIcon(att.name) + '"></i><span>' + escHtml(att.name) + '</span></div>' +
+        '<button class="remove-attach" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></button>';
+    }
+    container.appendChild(div);
+  });
+  container.querySelectorAll('.remove-attach').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx, 10);
+      pendingAttachments.splice(idx, 1);
+      renderAttachPreviews();
+    });
+  });
+}
+
+function initAttachInput() {
+  const input = $('#attachInput');
+  if (!input) return;
+  input.addEventListener('change', () => {
+    if (input.files && input.files.length > 0) {
+      processFiles(Array.from(input.files));
+      input.value = '';
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   Lightbox
+   ═══════════════════════════════════════════ */
+function openLightbox(images, startIdx) {
+  lightboxImages = images;
+  lightboxIndex = startIdx || 0;
+  updateLightbox();
+  $('#lightboxOverlay').classList.add('open');
+}
+
+function closeLightbox() {
+  $('#lightboxOverlay').classList.remove('open');
+}
+
+function updateLightbox() {
+  const item = lightboxImages[lightboxIndex];
+  if (!item) return;
+  $('#lightboxImg').src = item.data;
+  $('#lightboxCounter').textContent = (lightboxIndex + 1) + ' / ' + lightboxImages.length;
+  $('#lightboxFilename').textContent = item.name || '';
+  $('#lightboxPrev').style.visibility = lightboxIndex > 0 ? 'visible' : 'hidden';
+  $('#lightboxNext').style.visibility = lightboxIndex < lightboxImages.length - 1 ? 'visible' : 'hidden';
+}
+
+function initLightbox() {
+  $('#lightboxClose').addEventListener('click', closeLightbox);
+  $('#lightboxOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#lightboxOverlay')) closeLightbox();
+  });
+  $('#lightboxPrev').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIndex > 0) { lightboxIndex--; updateLightbox(); }
+  });
+  $('#lightboxNext').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lightboxIndex < lightboxImages.length - 1) { lightboxIndex++; updateLightbox(); }
   });
 }
 
@@ -1042,11 +1296,31 @@ function cardHTML(t, idx) {
   const noteStr = t.note ? '<div class="task-note">' + escHtml(t.note) + '</div>' : '';
   const delay = Math.min(idx * 0.04, 0.4);
 
+  // Build attachment thumbnails
+  let attachStr = '';
+  const atts = t.attachments || [];
+  if (atts.length > 0) {
+    const images = atts.filter(a => a.isImage);
+    const files = atts.filter(a => !a.isImage);
+    attachStr = '<div class="task-thumbs">';
+    images.forEach((a, i) => {
+      attachStr += '<div class="task-thumb" data-task-id="' + t.id + '" data-img-idx="' + i + '"><img src="' + a.data + '" alt="' + escHtml(a.name) + '"></div>';
+    });
+    files.forEach(a => {
+      attachStr += '<div class="task-thumb" title="' + escHtml(a.name) + '"><span class="thumb-file"><i class="fa-solid ' + getFileIcon(a.name) + '"></i></span></div>';
+    });
+    attachStr += '</div>';
+    if (atts.length > 0) {
+      attachStr += '<div class="task-attach-count"><i class="fa-solid fa-paperclip"></i> ' + atts.length + ' 個附件</div>';
+    }
+  }
+
   return '<div class="task-card' + doneClass + '" data-id="' + t.id + '" style="animation-delay:' + delay + 's">' +
     '<div class="ck' + checkedClass + '" data-id="' + t.id + '" role="checkbox" tabindex="0"></div>' +
     '<div class="task-body">' +
       '<div class="task-text">' + escHtml(t.name) + '</div>' +
       noteStr +
+      attachStr +
       '<div class="task-meta"><span class="task-cat ' + cat.css + '"><i class="fa-solid ' + cat.icon + '"></i> ' + cat.name + '</span>' + dateStr + '</div>' +
     '</div>' +
     '<div class="task-actions">' +
@@ -1075,6 +1349,17 @@ function bindTaskEvents() {
   taskListEl.querySelectorAll('.act-btn.del').forEach(el => {
     el.addEventListener('click', () => askDelete(el.dataset.id));
   });
+  // Lightbox for task image thumbnails
+  taskListEl.querySelectorAll('.task-thumb[data-task-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const taskId = el.dataset.taskId;
+      const imgIdx = parseInt(el.dataset.imgIdx, 10);
+      const t = tasks.find(x => x.id === taskId);
+      if (!t || !t.attachments) return;
+      const images = t.attachments.filter(a => a.isImage);
+      if (images.length > 0) openLightbox(images, imgIdx);
+    });
+  });
 }
 
 /* ═══════════════════════════════════════════
@@ -1089,17 +1374,23 @@ function toggleDone(id) {
 }
 
 function taskData(t) {
-  return { name: t.name, cat: t.cat, done: t.done, note: t.note || '', date: t.date || '', createdBy: t.createdBy || myName, ts: t.ts || Date.now() };
+  const d = { name: t.name, cat: t.cat, done: t.done, note: t.note || '', date: t.date || '', createdBy: t.createdBy || myName, ts: t.ts || Date.now() };
+  if (t.attachments && t.attachments.length > 0) {
+    d.attachments = t.attachments;
+  }
+  return d;
 }
 
 function openAdd() {
   editingId = null;
+  pendingAttachments = [];
   $('#modalTitle').innerHTML = '<i class="fa-solid fa-heart"></i> \u65b0\u589e\u4efb\u52d9';
   $('#inputName').value = '';
   $('#inputNote').value = '';
   $('#inputCat').value = 'other';
   $('#inputDate').value = '';
   $('#btnSave').textContent = '\u65b0\u589e';
+  renderAttachPreviews();
   modalOverlay.classList.add('open');
   setTimeout(() => $('#inputName').focus(), 350);
 }
@@ -1108,12 +1399,14 @@ function openEdit(id) {
   const t = tasks.find(x => x.id === id);
   if (!t) return;
   editingId = id;
+  pendingAttachments = t.attachments ? t.attachments.map(a => ({...a})) : [];
   $('#modalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> \u7de8\u8f2f\u4efb\u52d9';
   $('#inputName').value = t.name;
   $('#inputNote').value = t.note || '';
   $('#inputCat').value = t.cat;
   $('#inputDate').value = t.date || '';
   $('#btnSave').textContent = '\u5132\u5b58';
+  renderAttachPreviews();
   modalOverlay.classList.add('open');
   setTimeout(() => $('#inputName').focus(), 350);
 }
@@ -1124,20 +1417,24 @@ function saveTask() {
   const cat = $('#inputCat').value;
   const note = $('#inputNote').value.trim();
   const date = $('#inputDate').value;
+  const attachments = pendingAttachments.length > 0 ? pendingAttachments.slice() : null;
 
   if (editingId !== null) {
     const t = tasks.find(x => x.id === editingId);
     if (t) {
       t.name = name; t.cat = cat; t.note = note; t.date = date;
+      t.attachments = attachments || [];
       saveTaskToCloud(editingId, taskData(t));
     }
     showToast('\u2665 \u5df2\u66f4\u65b0');
   } else {
     const key = 'task_' + Date.now();
     const newTask = { name: name, cat: cat, done: false, note: note, date: date, createdBy: myName, ts: Date.now() };
+    if (attachments) newTask.attachments = attachments;
     saveTaskToCloud(key, newTask);
     showToast('\u2665 \u5df2\u65b0\u589e');
   }
+  pendingAttachments = [];
   closeModal();
 }
 
@@ -1157,7 +1454,7 @@ function doDelete() {
   confirmOvl.classList.remove('open');
 }
 
-function closeModal() { modalOverlay.classList.remove('open'); editingId = null; }
+function closeModal() { modalOverlay.classList.remove('open'); editingId = null; pendingAttachments = []; }
 
 /* ═══════════════════════════════════════════
    Toast
@@ -1203,6 +1500,8 @@ function initApp() {
   initCatSelect();
   renderFilters();
   initPhotoUpload();
+  initAttachInput();
+  initLightbox();
 
   $('#fabAdd').addEventListener('click', openAdd);
   $('#btnCancel').addEventListener('click', closeModal);
