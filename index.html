@@ -698,7 +698,6 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 
 <!-- Firebase SDK from allowed CDN -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-auth-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-database-compat.min.js"></script>
 
 <script>
@@ -978,97 +977,40 @@ document.querySelectorAll('.name-pill').forEach(function(pill) {
 })();
 
 /* ═══════════════════════════════════════════
-   FIREBASE INIT (with Anonymous Auth)
+   FIREBASE INIT (direct — no auth needed)
    ═══════════════════════════════════════════ */
-let firebaseInitAttempts = 0;
 let firebaseListenerAttached = false;
 
 function initFirebase(silent) {
-  console.log('[WP] initFirebase called, silent=' + !!silent + ', roomCode=' + roomCode + ', myName=' + myName);
-
   // Always ensure app screen is shown
   showScreen('appScreen');
 
-  // Init app UI first (so user sees something immediately)
+  // Init app UI first
   if (!isFirebaseReady) initApp();
-
-  // Render initial state
   renderTasks();
 
-  // Guard: need valid config
-  if (!firebaseConfig || !firebaseConfig.databaseURL) {
-    console.log('[WP] No valid Firebase config');
-    showToast('\u26a0 Firebase 設定無效');
-    return;
-  }
-
-  // Don't double-init
-  if (firebaseListenerAttached) {
-    console.log('[WP] Firebase listener already attached, skipping');
-    return;
-  }
+  // Guard
+  if (!firebaseConfig || !firebaseConfig.databaseURL) return;
+  if (firebaseListenerAttached) return;
 
   try {
-    if (!firebase.apps.length) {
-      console.log('[WP] Initializing Firebase app...');
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    // Step 1: Anonymous Auth first, then connect to DB
-    console.log('[WP] Starting anonymous sign-in...');
-    showToast('\u231b 連接雲端中…');
-
-    firebase.auth().signInAnonymously()
-      .then(function() {
-        console.log('[WP] Anonymous auth success');
-        connectToDatabase();
-      })
-      .catch(function(authErr) {
-        console.log('[WP] Anonymous auth failed: ' + authErr.code + ' ' + authErr.message);
-        // Try connecting without auth (might work if rules are open)
-        console.log('[WP] Trying without auth...');
-        connectToDatabase();
-      });
-
-  } catch (err) {
-    console.log('[WP] Firebase init error: ' + String(err));
-    showToast('\u26a0 Firebase 初始化失敗: ' + String(err));
-  }
-}
-
-function connectToDatabase() {
-  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.database();
     tasksRef = db.ref('rooms/' + roomCode + '/tasks');
     presenceRef = db.ref('rooms/' + roomCode + '/presence');
     isFirebaseReady = true;
     firebaseListenerAttached = true;
 
-    console.log('[WP] Connecting to rooms/' + roomCode + '/tasks');
+    // Monitor connection
+    db.ref('.info/connected').on('value', function(snap) {
+      if (snap.val() === true) showToast('\u2665 已連接雲端！');
+    });
+
     listenToTasks();
     setupPresence();
     loadCouplePhoto();
-
-    // Monitor connection state
-    db.ref('.info/connected').on('value', function(snap) {
-      var connected = snap.val();
-      console.log('[WP] Firebase connected: ' + connected);
-      if (connected) {
-        showToast('\u2665 已連接雲端！');
-      }
-    });
-
-    // Timeout: if no data after 8 seconds
-    setTimeout(function() {
-      if (tasks.length === 0) {
-        console.log('[WP] Timeout: no tasks after 8s');
-        showToast('\u26a0 無法載入資料，可能係安全規則問題。請檢查 Firebase 設定。', true);
-      }
-    }, 8000);
-
   } catch (err) {
-    console.log('[WP] Database connect error: ' + String(err));
-    showToast('\u26a0 資料庫連接失敗: ' + String(err));
+    showToast('\u26a0 連接失敗: ' + String(err), true);
   }
 }
 
