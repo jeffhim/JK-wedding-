@@ -946,13 +946,14 @@ document.querySelectorAll('.name-pill').forEach(function(pill) {
     pill.classList.add('selected');
     myName = pill.dataset.name;
     roomCode = savedRoomCode;
+    console.log('[WP] Name selected: ' + myName + ', roomCode: ' + roomCode);
 
     // Save name everywhere
     store.set('wedding_name', myName);
 
     // Go!
     showScreen('appScreen');
-    setTimeout(function() { initFirebase(); }, 100);
+    setTimeout(function() { initFirebase(); }, 200);
   });
 });
 
@@ -981,20 +982,27 @@ document.querySelectorAll('.name-pill').forEach(function(pill) {
 let firebaseInitAttempts = 0;
 
 function initFirebase(silent) {
+  console.log('[WP] initFirebase called, silent=' + !!silent + ', roomCode=' + roomCode + ', myName=' + myName);
+
   // Always ensure app screen is shown
   showScreen('appScreen');
 
   // Init app UI first (so user sees something immediately)
   if (!isFirebaseReady) initApp();
 
+  // Render initial empty state so user sees the UI
+  renderTasks();
+
   // Guard: need valid config
   if (!firebaseConfig || !firebaseConfig.databaseURL) {
+    console.log('[WP] No valid Firebase config');
     if (!silent) showToast('\u26a0 Firebase 設定無效');
     return;
   }
 
   try {
     if (!firebase.apps.length) {
+      console.log('[WP] Initializing Firebase app...');
       firebase.initializeApp(firebaseConfig);
     }
     db = firebase.database();
@@ -1003,13 +1011,26 @@ function initFirebase(silent) {
     isFirebaseReady = true;
     firebaseInitAttempts = 0;
 
+    console.log('[WP] Firebase ready, listening on rooms/' + roomCode + '/tasks');
     listenToTasks();
     setupPresence();
     loadCouplePhoto();
     showToast('\u2665 已連接雲端！');
+
+    // Monitor connection state + timeout fallback
+    db.ref('.info/connected').on('value', function(snap) {
+      console.log('[WP] Firebase connected: ' + snap.val());
+    });
+    // If no data loads in 5s, show a warning
+    setTimeout(function() {
+      if (tasks.length === 0) {
+        console.log('[WP] Timeout: no tasks loaded after 5s');
+        showToast('\u26a0 載入中… 如長時間無資料，請用瀏覽器直接打開（非 Poe）');
+      }
+    }, 5000);
   } catch (err) {
     firebaseInitAttempts++;
-    console.log('Firebase init error: ' + String(err));
+    console.log('[WP] Firebase init error: ' + String(err));
     if (firebaseInitAttempts <= 2) {
       // Retry silently after a short delay
       setTimeout(function() { initFirebase(true); }, 2000);
@@ -1025,9 +1046,11 @@ function initFirebase(silent) {
 let ignoreNextUpdate = false;
 
 function listenToTasks() {
+  console.log('[WP] listenToTasks: attaching listener to ' + tasksRef.toString());
   tasksRef.on('value', (snapshot) => {
     if (ignoreNextUpdate) { ignoreNextUpdate = false; return; }
     const data = snapshot.val();
+    console.log('[WP] tasks data received, keys: ' + (data ? Object.keys(data).length : 'null'));
     if (data) {
       tasks = Object.keys(data).map(key => {
         const t = { id: key, ...data[key] };
@@ -1039,10 +1062,14 @@ function listenToTasks() {
       });
     } else {
       // First time — seed defaults
+      console.log('[WP] No tasks found, seeding defaults');
       seedDefaultTasks();
       return;
     }
     renderTasks();
+  }, function(error) {
+    console.log('[WP] Firebase listen error: ' + String(error));
+    showToast('\u26a0 同步失敗: ' + error.message);
   });
 }
 
