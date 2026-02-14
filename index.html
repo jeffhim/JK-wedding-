@@ -981,6 +981,7 @@ try {
    FIREBASE INIT (direct — no auth needed)
    ═══════════════════════════════════════════ */
 let firebaseListenerAttached = false;
+let firebaseDataLoaded = false;
 
 function initFirebase(silent) {
   // Always ensure app screen is shown
@@ -988,7 +989,11 @@ function initFirebase(silent) {
 
   // Init app UI first
   if (!isFirebaseReady) initApp();
-  renderTasks();
+
+  // Show loading state (not empty state) while waiting for Firebase
+  if (!firebaseDataLoaded) {
+    taskListEl.innerHTML = '<div class="empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:var(--pink)"></i><p>載入中…</p></div>';
+  }
 
   // Guard
   if (!firebaseConfig || !firebaseConfig.databaseURL) return;
@@ -1010,6 +1015,13 @@ function initFirebase(silent) {
     listenToTasks();
     setupPresence();
     loadCouplePhoto();
+
+    // Timeout warning — if data hasn't loaded after 8s
+    setTimeout(function() {
+      if (!firebaseDataLoaded) {
+        showToast('⚠ 雲端連接較慢，請稍候…', true);
+      }
+    }, 8000);
   } catch (err) {
     showToast('\u26a0 連接失敗: ' + String(err), true);
   }
@@ -1024,6 +1036,7 @@ function listenToTasks() {
   console.log('[WP] listenToTasks: attaching listener to ' + tasksRef.toString());
   tasksRef.on('value', (snapshot) => {
     if (ignoreNextUpdate) { ignoreNextUpdate = false; return; }
+    firebaseDataLoaded = true;
     const data = snapshot.val();
     console.log('[WP] tasks data received, keys: ' + (data ? Object.keys(data).length : 'null'));
     if (data) {
@@ -1390,8 +1403,13 @@ function renderTasks() {
   const filtered = activeFilter === 'all' ? tasks : tasks.filter(t => t.cat === activeFilter);
 
   if (filtered.length === 0) {
-    taskListEl.innerHTML = '<div class="empty"><i class="fa-regular fa-heart"></i><p>' +
-      (tasks.length === 0 ? 'Kiki & Jeff\uff0c\u958b\u59cb\u6dfb\u52a0\u4efb\u52d9\u5427' : '\u6b64\u5206\u985e\u66ab\u7121\u4efb\u52d9') + '</p></div>';
+    // If Firebase hasn't loaded yet, show loading spinner instead of empty state
+    if (!firebaseDataLoaded && firebaseConfig && firebaseConfig.databaseURL) {
+      taskListEl.innerHTML = '<div class="empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:var(--pink)"></i><p>載入中…</p></div>';
+    } else {
+      taskListEl.innerHTML = '<div class="empty"><i class="fa-regular fa-heart"></i><p>' +
+        (tasks.length === 0 ? 'Kiki & Jeff\uff0c\u958b\u59cb\u6dfb\u52a0\u4efb\u52d9\u5427' : '\u6b64\u5206\u985e\u66ab\u7121\u4efb\u52d9') + '</p></div>';
+    }
     updateStats();
     return;
   }
@@ -1613,6 +1631,7 @@ $('#settingsBtn').addEventListener('click', () => {
     myName = '';
     isFirebaseReady = false;
     firebaseListenerAttached = false;
+    firebaseDataLoaded = false;
     showScreen('setupScreen');
   };
   $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; resetHandler(); };
