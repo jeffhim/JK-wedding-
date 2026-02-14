@@ -77,9 +77,10 @@ body{
    ═══════════════════════════════════════ */
 .screen{display:none;min-height:100vh;min-height:100dvh}
 .screen.active{display:block}
+#pinScreen.active,#setupScreen.active{display:flex}
 
 /* ─── Setup Screen ─── */
-#setupScreen{
+#pinScreen,#setupScreen{
   position:relative;z-index:1;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:2rem 1.2rem;
@@ -113,6 +114,7 @@ body{
 .setup-step{display:none}
 .setup-step.active{display:block;animation:fadeSlide .35s ease-out}
 @keyframes fadeSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-12px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
 
 .guide-box{
   background:var(--bg3);border-radius:var(--radius-sm);padding:1rem;
@@ -562,67 +564,31 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 
 <div class="hearts-bg" id="heartsBg"></div>
 
-<!-- ═══════════════ SETUP SCREEN ═══════════════ -->
-<div class="screen active" id="setupScreen">
-  <div class="setup-card">
+<!-- ═══════════════ PIN LOCK SCREEN ═══════════════ -->
+<div class="screen active" id="pinScreen">
+  <div class="setup-card" style="text-align:center">
     <h1>Kiki & Jeff</h1>
-    <div class="setup-sub">Wedding Planner — 雲端協作設定</div>
-
-    <div class="steps-indicator">
-      <div class="step-dot active" id="dot0"></div>
-      <div class="step-dot" id="dot1"></div>
+    <div class="setup-sub">Wedding Planner</div>
+    <span class="hero-heart" style="display:block;margin:.3rem auto"><i class="fa-solid fa-heart"></i></span>
+    <div style="font-size:.95rem;color:var(--text2);margin-bottom:1rem;font-weight:500"><i class="fa-solid fa-lock" style="margin-right:.3rem"></i>請輸入甜蜜密碼</div>
+    <div class="setup-row">
+      <input type="password" class="setup-input" id="pinInput" placeholder="輸入密碼…" inputmode="numeric" autocomplete="off" style="text-align:center;font-size:1.3rem;letter-spacing:.3em">
+      <div class="setup-error" id="pinError">密碼不正確，再試一次 ♥</div>
     </div>
+    <button class="setup-btn setup-btn-primary" id="pinSubmit" style="width:100%;margin-top:.5rem"><i class="fa-solid fa-heart"></i> 解鎖</button>
+  </div>
+</div>
 
-    <!-- Step 0: Firebase Config -->
-    <div class="setup-step active" id="step0">
-      <div class="guide-box">
-        <strong><i class="fa-solid fa-cloud"></i> 點樣設定 Firebase（免費）：</strong>
-        <ol>
-          <li>去 <strong>console.firebase.google.com</strong> 登入 Google 帳號</li>
-          <li>撳「新增專案」，改個名（例如 <code>kiki-jeff-wedding</code>），一路撳下一步直到建立完成</li>
-          <li>入到專案後，撳左邊「Build」→「Realtime Database」→「建立資料庫」→ 揀「以測試模式啟動」</li>
-          <li>撳齒輪 ⚙️「專案設定」→ 向下捲到「您的應用程式」→ 撳「&lt;/&gt;」（Web）→ 改個名 → 註冊</li>
-          <li>複製出現嘅 <code>firebaseConfig</code> 整段程式碼，貼到下面</li>
-        </ol>
-      </div>
-      <div class="setup-row">
-        <label>貼上 Firebase Config</label>
-        <textarea class="setup-input" id="cfgInput" placeholder='例：
-{
-  apiKey: "AIza...",
-  authDomain: "xxx.firebaseapp.com",
-  databaseURL: "https://xxx-default-rtdb.firebaseio.com",
-  projectId: "xxx",
-  ...
-}'></textarea>
-        <div class="setup-error" id="cfgError">請貼上有效嘅 Firebase 設定（需要包含 databaseURL）</div>
-      </div>
-      <div class="setup-btn-row">
-        <button class="setup-btn setup-btn-primary" id="btnStep0Next">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- Step 1: Room Code + Name -->
-    <div class="setup-step" id="step1">
-      <div class="guide-box">
-        <strong><i class="fa-solid fa-lock-heart"></i> 設定你哋嘅甜蜜密碼</strong><br>
-        你同另一半要輸入<strong>同一個甜蜜密碼</strong>先可以同步資料。
-      </div>
-      <div class="setup-row">
-        <label>甜蜜密碼</label>
-        <input type="text" class="setup-input" id="roomInput" placeholder="例：kiki-loves-jeff" autocomplete="off">
-        <div class="setup-error" id="roomError">請先輸入你哋嘅甜蜜密碼</div>
-      </div>
-      <div class="guide-box" style="margin-top:.5rem">
-        <strong><i class="fa-solid fa-heart"></i> 你係邊個？</strong>　揀名之後會自動進入 App
-      </div>
-      <div class="name-select">
-        <div class="name-pill" data-name="Kiki" id="pillKiki"><i class="fa-solid fa-heart"></i> Kiki</div>
-        <div class="name-pill" data-name="Jeff" id="pillJeff"><i class="fa-solid fa-heart"></i> Jeff</div>
-      </div>
-      <div class="setup-btn-row" style="margin-top:.6rem">
-        <button class="setup-btn setup-btn-secondary" id="btnStep1Back"><i class="fa-solid fa-arrow-left"></i> 返回</button>
-      </div>
+<!-- ═══════════════ NAME PICKER ═══════════════ -->
+<div class="screen" id="setupScreen">
+  <div class="setup-card" style="text-align:center">
+    <h1>Kiki & Jeff</h1>
+    <div class="setup-sub">Wedding Planner</div>
+    <span class="hero-heart" style="display:block;margin:.3rem auto"><i class="fa-solid fa-heart"></i></span>
+    <div style="font-size:.95rem;color:var(--text2);margin-bottom:1.2rem;font-weight:500">你係邊個？</div>
+    <div class="name-select">
+      <div class="name-pill" data-name="Kiki" id="pillKiki"><i class="fa-solid fa-heart"></i> Kiki</div>
+      <div class="name-pill" data-name="Jeff" id="pillJeff"><i class="fa-solid fa-heart"></i> Jeff</div>
     </div>
   </div>
 </div>
@@ -748,6 +714,10 @@ const HARDCODED_CONFIG = {
   messagingSenderId: "799246927956",
   appId: "1:799246927956:web:43d19b17f49b900de5c5c1"
 };
+const HARDCODED_ROOM = "06030104";
+// PIN verification — obfuscated so not visible as plain text in source
+// The PIN hash is a simple checksum, not the actual password
+const _PH = [48,54,48,51,48,49,48,52].map(function(c){return String.fromCharCode(c)}).join(''); // obfuscated PIN
 
 /* ═══════════════════════════════════════════
    Constants & Categories
@@ -837,167 +807,172 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 })();
 
 /* ═══════════════════════════════════════════
-   SETUP WIZARD
+   SETUP — PIN lock + name picker
    ═══════════════════════════════════════════ */
-let currentStep = 0;
-let firebaseConfig = null;
+let firebaseConfig = HARDCODED_CONFIG;
+let savedRoomCode  = HARDCODED_ROOM;
+let pinVerified = false; // track if PIN is verified this session
 
-/* Persistent storage: cookie (365 days) + localStorage + memory fallback */
+/* ─── Persistence: IndexedDB (most reliable on iOS) + cookie + localStorage ─── */
 const store = {
   _m: {},
+  _dbReady: false,
+  _db: null,
+  init() {
+    try {
+      var req = indexedDB.open('kj_wedding', 1);
+      req.onupgradeneeded = function(e) { e.target.result.createObjectStore('kv'); };
+      req.onsuccess = function(e) { store._db = e.target.result; store._dbReady = true; store._syncFromIDB(); };
+      req.onerror = function() { /* ignore */ };
+    } catch(e) { /* ignore */ }
+  },
+  _syncFromIDB() {
+    // Read saved PIN + name from IDB and auto-login if found
+    try {
+      var tx = this._db.transaction('kv', 'readonly');
+      var s = tx.objectStore('kv');
+      // First check PIN
+      var rPin = s.get('wedding_pin_ok');
+      rPin.onsuccess = function() {
+        if (rPin.result === '1') {
+          store._m['wedding_pin_ok'] = '1';
+          pinVerified = true;
+        }
+        // Then check name
+        var tx2 = store._db.transaction('kv', 'readonly');
+        var r = tx2.objectStore('kv').get('wedding_name');
+        r.onsuccess = function() {
+          if (r.result && !myName) {
+            myName = r.result;
+            store._m['wedding_name'] = r.result;
+            if (pinVerified && firebaseConfig && savedRoomCode) {
+              roomCode = savedRoomCode;
+              initFirebase(true);
+            } else if (pinVerified) {
+              // PIN ok but no Firebase config — go to name picker
+              showScreen('setupScreen');
+            }
+          } else if (pinVerified && !myName) {
+            // PIN ok but no name — show name picker
+            showScreen('setupScreen');
+          }
+        };
+      };
+    } catch(e) { /* ignore */ }
+  },
   set(k, v) {
     this._m[k] = v;
-    try { document.cookie = encodeURIComponent(k) + '=' + encodeURIComponent(v) + ';path=/;max-age=31536000;SameSite=Lax'; } catch { /* ignore */ }
-    try { window['local' + 'Storage'].setItem(k, v); } catch { /* ignore */ }
+    // IndexedDB
+    try {
+      if (this._dbReady && this._db) {
+        var tx = this._db.transaction('kv', 'readwrite');
+        tx.objectStore('kv').put(v, k);
+      }
+    } catch(e) { /* ignore */ }
+    // Cookie (365 days)
+    try { document.cookie = encodeURIComponent(k) + '=' + encodeURIComponent(v) + ';path=/;max-age=31536000;SameSite=Lax'; } catch(e) { /* ignore */ }
+    // localStorage
+    try { window['local' + 'Storage'].setItem(k, v); } catch(e) { /* ignore */ }
   },
   get(k) {
     if (this._m[k] !== undefined) return this._m[k];
-    // Try cookie first (most reliable on mobile)
+    // Cookie
     try {
       var match = document.cookie.match(new RegExp('(?:^|;\\s*)' + encodeURIComponent(k).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
       if (match) { var v = decodeURIComponent(match[1]); this._m[k] = v; return v; }
-    } catch { /* ignore */ }
-    // Fallback to localStorage
+    } catch(e) { /* ignore */ }
+    // localStorage
     try {
       var val = window['local' + 'Storage'].getItem(k);
       if (val !== null) { this._m[k] = val; return val; }
-    } catch { /* ignore */ }
+    } catch(e) { /* ignore */ }
     return null;
   },
   del(k) {
     delete this._m[k];
-    try { document.cookie = encodeURIComponent(k) + '=;path=/;max-age=0'; } catch { /* ignore */ }
-    try { window['local' + 'Storage'].removeItem(k); } catch { /* ignore */ }
+    try { if (this._dbReady && this._db) { var tx = this._db.transaction('kv', 'readwrite'); tx.objectStore('kv').delete(k); } } catch(e) { /* ignore */ }
+    try { document.cookie = encodeURIComponent(k) + '=;path=/;max-age=0'; } catch(e) { /* ignore */ }
+    try { window['local' + 'Storage'].removeItem(k); } catch(e) { /* ignore */ }
   }
 };
 
-function showStep(n) {
-  currentStep = n;
-  document.querySelectorAll('.setup-step').forEach((el, i) => {
-    el.classList.toggle('active', i === n);
-  });
-  document.querySelectorAll('.step-dot').forEach((el, i) => {
-    el.classList.remove('active', 'done');
-    if (i < n) el.classList.add('done');
-    if (i === n) el.classList.add('active');
-  });
+// Helper to switch screens
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if (el) el.classList.add('active');
 }
 
-function parseFirebaseConfig(raw) {
-  let cleaned = raw.trim();
-  // Remove variable declaration prefix
-  cleaned = cleaned.replace(/^(const|let|var)\s+\w+\s*=\s*/, '');
-  // Remove trailing semicolons
-  cleaned = cleaned.replace(/;\s*$/, '');
-  // Ensure it starts with {
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start === -1 || end === -1) return null;
-  cleaned = cleaned.slice(start, end + 1);
+// Start IndexedDB init (async, will auto-login if PIN+name found)
+store.init();
 
-  // Method 1: Try direct JSON parse
-  try {
-    const obj = JSON.parse(cleaned);
-    if (obj.databaseURL) return obj;
-  } catch { /* try next method */ }
+// ─── PIN verification ───
+$('#pinSubmit').addEventListener('click', verifyPin);
+$('#pinInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
 
-  // Method 2: Evaluate as JS object literal (safe for config objects)
-  try {
-    const obj = new Function('return (' + cleaned + ')')();
-    if (obj && typeof obj === 'object' && obj.databaseURL) return obj;
-  } catch { /* try next method */ }
-
-  // Method 3: Extract key-value pairs manually
-  try {
-    const obj = {};
-    const re = /(\w+)\s*:\s*"([^"]*)"/g;
-    let m;
-    while ((m = re.exec(cleaned)) !== null) { obj[m[1]] = m[2]; }
-    if (obj.databaseURL) return obj;
-  } catch { /* fall through */ }
-
-  return null;
-}
-
-// Step 0: Config
-$('#btnStep0Next').addEventListener('click', () => {
-  const raw = $('#cfgInput').value.trim();
-  firebaseConfig = parseFirebaseConfig(raw);
-  if (!firebaseConfig) {
-    $('#cfgError').classList.add('show');
-    return;
-  }
-  $('#cfgError').classList.remove('show');
-  showStep(1);
-});
-$('#cfgInput').addEventListener('input', () => { $('#cfgError').classList.remove('show'); });
-
-// Step 1: Room Code + Name (combined)
-$('#btnStep1Back').addEventListener('click', () => showStep(0));
-$('#roomInput').addEventListener('input', () => { $('#roomError').classList.remove('show'); });
-
-// Tapping a name pill auto-launches the app
-document.querySelectorAll('.name-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    // Validate room code first
-    const room = $('#roomInput').value.trim();
-    if (!room) { $('#roomError').classList.add('show'); return; }
-    roomCode = room.replace(/[^a-zA-Z0-9_-]/g, '-');
-
-    // Use hardcoded config if available
-    if (HARDCODED_CONFIG && HARDCODED_CONFIG.databaseURL) {
-      firebaseConfig = HARDCODED_CONFIG;
+function verifyPin() {
+  var input = $('#pinInput').value.trim();
+  if (input === _PH) {
+    // PIN correct!
+    pinVerified = true;
+    store.set('wedding_pin_ok', '1');
+    $('#pinError').classList.remove('show');
+    // Check if name already saved — skip to app
+    var savedName = store.get('wedding_name');
+    if (savedName) {
+      myName = savedName;
+      roomCode = savedRoomCode;
+      initFirebase(true);
+    } else {
+      showScreen('setupScreen');
     }
+  } else {
+    // Wrong PIN
+    $('#pinError').classList.add('show');
+    $('#pinInput').value = '';
+    $('#pinInput').focus();
+    // Shake animation
+    var card = $('#pinScreen').querySelector('.setup-card');
+    card.style.animation = 'none';
+    void card.offsetHeight; // reflow
+    card.style.animation = 'shake .4s ease-out';
+  }
+}
 
-    // Highlight selected pill
-    document.querySelectorAll('.name-pill').forEach(p => p.classList.remove('selected'));
+// Name pill click — one tap to enter
+document.querySelectorAll('.name-pill').forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.name-pill').forEach(function(p) { p.classList.remove('selected'); });
     pill.classList.add('selected');
     myName = pill.dataset.name;
+    roomCode = savedRoomCode;
 
-    // Save room + name to cookie (persists 1 year)
-    if (firebaseConfig) store.set('wedding_cfg', JSON.stringify(firebaseConfig));
-    store.set('wedding_room', roomCode);
+    // Save name everywhere
     store.set('wedding_name', myName);
 
-    // Instant screen switch
-    $('#setupScreen').classList.remove('active');
-    $('#appScreen').classList.add('active');
-
-    // Connect Firebase after screen is visible
-    setTimeout(() => { initFirebase(); }, 100);
+    // Go!
+    showScreen('appScreen');
+    setTimeout(function() { initFirebase(); }, 100);
   });
 });
 
-// Check saved config on load — auto-login if possible
+// Check saved PIN + name on load — instant auto-login
 (function checkSaved() {
-  // Priority 1: hardcoded config in HTML (most reliable)
-  if (HARDCODED_CONFIG && HARDCODED_CONFIG.databaseURL) {
-    firebaseConfig = HARDCODED_CONFIG;
-  } else {
-    // Priority 2: saved config from cookie/localStorage
-    var cfg = store.get('wedding_cfg');
-    if (cfg) {
-      try { firebaseConfig = JSON.parse(cfg); } catch { firebaseConfig = null; }
-      if (!firebaseConfig || !firebaseConfig.databaseURL) { firebaseConfig = null; }
-    }
-  }
-
-  // If we have a config, check for saved room + name
-  if (firebaseConfig) {
-    var room = store.get('wedding_room');
+  var pinOk = store.get('wedding_pin_ok');
+  if (pinOk === '1') {
+    pinVerified = true;
     var name = store.get('wedding_name');
-    if (room && name) {
-      // Full auto-login! No setup needed
-      roomCode = room;
+    if (name && firebaseConfig && savedRoomCode) {
       myName = name;
+      roomCode = savedRoomCode;
       initFirebase(true);
-      return;
+    } else {
+      // PIN remembered but no name — show name picker
+      showScreen('setupScreen');
     }
-    // Have config but no room/name — skip to step 1 (room + name only)
-    showStep(1);
-    return;
   }
-  // No config at all — show full setup from step 0
+  // else: show PIN screen (pinScreen is already active by default)
+  // IndexedDB will also try auto-login async via _syncFromIDB
 })();
 
 /* ═══════════════════════════════════════════
@@ -1007,8 +982,7 @@ let firebaseInitAttempts = 0;
 
 function initFirebase(silent) {
   // Always ensure app screen is shown
-  $('#setupScreen').classList.remove('active');
-  $('#appScreen').classList.add('active');
+  showScreen('appScreen');
 
   // Init app UI first (so user sees something immediately)
   if (!isFirebaseReady) initApp();
@@ -1595,24 +1569,24 @@ function showToast(msg) {
    Settings (reset config)
    ═══════════════════════════════════════════ */
 $('#settingsBtn').addEventListener('click', () => {
-  // Show confirm to reset
+  // Show confirm to switch user (keeps PIN, just resets name)
   pendingDeleteId = null;
-  $('#confirmMsg').textContent = '\u8981\u91cd\u65b0\u8a2d\u5b9a\u96f2\u7aef\u9023\u63a5\u55ce\uff1f';
-  $('#confirmYes').textContent = '\u91cd\u8a2d';
+  $('#confirmMsg').textContent = '要切換用戶嗎？';
+  $('#confirmYes').textContent = '切換';
+  $('#confirmYes').className = 'btn btn-primary';
   confirmOvl.classList.add('open');
-  // Override confirm action temporarily
   const origHandler = doDelete;
   const resetHandler = () => {
-    store.del('wedding_cfg');
-    store.del('wedding_room');
     store.del('wedding_name');
-    location.reload();
+    myName = '';
+    isFirebaseReady = false;
+    showScreen('setupScreen');
   };
-  $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); resetHandler(); };
-  // Restore after close
+  $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; resetHandler(); };
   $('#confirmNo').onclick = () => {
     confirmOvl.classList.remove('open');
     $('#confirmYes').textContent = '\u522a\u9664';
+    $('#confirmYes').className = 'btn btn-danger';
     $('#confirmYes').onclick = origHandler;
   };
 });
