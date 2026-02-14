@@ -827,7 +827,7 @@ const store = {
   _db: null,
   init() {
     try {
-      var req = indexedDB.open('kj_wedding', 1);
+      var req = indexedDB.open('kj_wed_v2', 1);
       req.onupgradeneeded = function(e) { e.target.result.createObjectStore('kv'); };
       req.onsuccess = function(e) { store._db = e.target.result; store._dbReady = true; store._syncFromIDB(); };
       req.onerror = function() { /* ignore */ };
@@ -839,19 +839,19 @@ const store = {
       var tx = this._db.transaction('kv', 'readonly');
       var s = tx.objectStore('kv');
       // First check PIN
-      var rPin = s.get('wedding_pin_ok');
+      var rPin = s.get('v2_pin');
       rPin.onsuccess = function() {
         if (rPin.result === '1') {
-          store._m['wedding_pin_ok'] = '1';
+          store._m['v2_pin'] = '1';
           pinVerified = true;
         }
         // Then check name
         var tx2 = store._db.transaction('kv', 'readonly');
-        var r = tx2.objectStore('kv').get('wedding_name');
+        var r = tx2.objectStore('kv').get('v2_name');
         r.onsuccess = function() {
           if (r.result && !myName) {
             myName = r.result;
-            store._m['wedding_name'] = r.result;
+            store._m['v2_name'] = r.result;
             if (pinVerified && firebaseConfig && savedRoomCode) {
               roomCode = savedRoomCode;
               initFirebase(true);
@@ -919,10 +919,10 @@ function verifyPin() {
     var input = document.getElementById('pinInput').value.trim();
     if (input === _PH) {
       pinVerified = true;
-      store.set('wedding_pin_ok', '1');
+      store.set('v2_pin', '1');
       var pe = document.getElementById('pinError');
       if (pe) pe.classList.remove('show');
-      var savedName = store.get('wedding_name');
+      var savedName = store.get('v2_name');
       if (savedName) {
         myName = savedName;
         roomCode = savedRoomCode;
@@ -952,7 +952,7 @@ function pickName(name) {
   try {
     myName = name;
     roomCode = savedRoomCode;
-    store.set('wedding_name', myName);
+    store.set('v2_name', myName);
     showScreen('appScreen');
     setTimeout(function() { initFirebase(); }, 200);
   } catch(e) {
@@ -963,10 +963,10 @@ function pickName(name) {
 
 // Auto-login on load
 try {
-  var _pinOk = store.get('wedding_pin_ok');
+  var _pinOk = store.get('v2_pin');
   if (_pinOk === '1') {
     pinVerified = true;
-    var _name = store.get('wedding_name');
+    var _name = store.get('v2_name');
     if (_name && firebaseConfig && savedRoomCode) {
       myName = _name;
       roomCode = savedRoomCode;
@@ -1609,7 +1609,7 @@ $('#settingsBtn').addEventListener('click', () => {
   confirmOvl.classList.add('open');
   const origHandler = doDelete;
   const resetHandler = () => {
-    store.del('wedding_name');
+    store.del('v2_name');
     myName = '';
     isFirebaseReady = false;
     firebaseListenerAttached = false;
