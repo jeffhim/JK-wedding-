@@ -30,6 +30,7 @@
   --font-body:'Quicksand',sans-serif;
   --cat-venue:#c27878;--cat-photo:#a87cb2;--cat-floral:#7eaa8e;
   --cat-attire:#c2728e;--cat-guest:#7899b5;--cat-food:#b5a068;--cat-other:#9a8a8a;
+  --cat-orphan:#b07070;
   --online:#6ec47e;
 }
 
@@ -43,6 +44,7 @@
   --done-bg:#243026;--danger-bg:#382020;
   --cat-venue:#e09898;--cat-photo:#c8a0d4;--cat-floral:#80cc9e;
   --cat-attire:#e098b0;--cat-guest:#98b8d4;--cat-food:#d4c080;--cat-other:#b0a0a0;
+  --cat-orphan:#d09090;
   --online:#80e090;
 }
 
@@ -334,6 +336,12 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
   background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;border-color:transparent;
   box-shadow:0 2px 10px rgba(200,80,100,.25);
 }
+.filter-btn.orphan-filter{
+  border-style:dashed;border-color:var(--cat-orphan);color:var(--cat-orphan);
+}
+.filter-btn.orphan-filter.active{
+  background:var(--cat-orphan);color:#fff;border-color:transparent;
+}
 
 /* ─── Category Manage Button ─── */
 .cat-manage-btn{
@@ -395,6 +403,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 .cat-food{background:color-mix(in srgb,var(--cat-food) 15%,transparent);color:var(--cat-food)}
 .cat-other{background:color-mix(in srgb,var(--cat-other) 15%,transparent);color:var(--cat-other)}
 .cat-custom{background:color-mix(in srgb,var(--pink) 12%,transparent);color:var(--pink)}
+.cat-orphan{background:color-mix(in srgb,var(--cat-orphan) 15%,transparent);color:var(--cat-orphan);border:1px dashed var(--cat-orphan)}
 
 /* ─── Task Actions ─── */
 .task-actions{display:flex;gap:.2rem;flex-shrink:0;opacity:0;transition:opacity .2s}
@@ -488,24 +497,31 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 .assignee-pill i{margin-right:.2rem;font-size:.7rem}
 
 /* ─── Category Manager Modal ─── */
-.cat-mgr-list{margin:.6rem 0}
+.cat-mgr-list{margin:.6rem 0;max-height:50vh;overflow-y:auto}
 .cat-mgr-item{
-  display:flex;align-items:center;gap:.5rem;padding:.5rem .6rem;
+  display:flex;align-items:center;gap:.4rem;padding:.45rem .5rem;
   border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:.35rem;
   background:var(--bg);transition:background .2s;
 }
 .cat-mgr-item:hover{background:var(--bg3)}
-.cat-mgr-icon{font-size:.85rem;width:24px;text-align:center;color:var(--pink)}
-.cat-mgr-name{flex:1;font-size:.85rem;font-weight:600}
-.cat-mgr-badge{font-size:.6rem;color:var(--text3);padding:.1rem .4rem;border-radius:8px;background:var(--bg3)}
-.cat-mgr-del{
-  width:26px;height:26px;border-radius:8px;border:none;cursor:pointer;
-  background:transparent;color:var(--text3);font-size:.7rem;
-  display:flex;align-items:center;justify-content:center;transition:all .2s;
+.cat-mgr-item.dragging{opacity:.5;border-style:dashed}
+.cat-mgr-icon{font-size:.8rem;width:22px;text-align:center;color:var(--pink);flex-shrink:0}
+.cat-mgr-name{flex:1;font-size:.82rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat-mgr-name-input{
+  flex:1;font-size:.82rem;font-weight:600;font-family:var(--font-body);
+  border:1.5px solid var(--pink);border-radius:6px;padding:.2rem .4rem;
+  background:var(--bg);color:var(--text);outline:none;min-width:0;
 }
-.cat-mgr-del:hover{background:var(--danger-bg);color:var(--danger)}
-.cat-mgr-del:disabled{opacity:.3;cursor:default}
-.cat-mgr-del:disabled:hover{background:transparent;color:var(--text3)}
+.cat-mgr-badge{font-size:.58rem;color:var(--text3);padding:.1rem .35rem;border-radius:8px;background:var(--bg3);white-space:nowrap;flex-shrink:0}
+.cat-mgr-actions{display:flex;gap:.1rem;flex-shrink:0}
+.cat-mgr-btn{
+  width:26px;height:26px;border-radius:8px;border:none;cursor:pointer;
+  background:transparent;color:var(--text3);font-size:.65rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;
+}
+.cat-mgr-btn:hover{background:var(--bg3);color:var(--pink)}
+.cat-mgr-btn.del:hover{background:var(--danger-bg);color:var(--danger)}
+.cat-mgr-btn:disabled{opacity:.25;cursor:default;pointer-events:none}
 .cat-mgr-add{
   display:flex;gap:.4rem;margin-top:.5rem;
 }
@@ -519,6 +535,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
   background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;
   font-family:var(--font-body);font-size:.82rem;font-weight:600;white-space:nowrap;
 }
+.cat-mgr-hint{font-size:.65rem;color:var(--text3);margin-top:.3rem;font-style:italic;text-align:center}
 
 /* ─── Attachments in Modal ─── */
 .attach-area{
@@ -786,7 +803,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 
 <!-- Category Manager Modal -->
 <div class="modal-overlay" id="catMgrOverlay">
-  <div class="modal" style="max-width:400px">
+  <div class="modal" style="max-width:420px">
     <div class="modal-handle"></div>
     <h2><i class="fa-solid fa-tags"></i> 管理分類</h2>
     <div class="cat-mgr-list" id="catMgrList"></div>
@@ -794,7 +811,8 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
       <input type="text" id="catMgrInput" placeholder="新分類名稱…" maxlength="10">
       <button id="catMgrAddBtn" onclick="addCustomCategory()"><i class="fa-solid fa-plus"></i> 新增</button>
     </div>
-    <div class="btn-row" style="margin-top:.8rem">
+    <div class="cat-mgr-hint">⬆⬇ 調整順序 ・ ✏️ 改名 ・ 🗑️ 刪除</div>
+    <div class="btn-row" style="margin-top:.6rem">
       <button class="btn btn-secondary" onclick="closeCatMgr()">完成</button>
     </div>
   </div>
@@ -840,7 +858,7 @@ window.onerror = function(msg, src, line) {
 /* ╔═══════════════════════════════════════════╗
    ║  Firebase 設定                             ║
    ╚═══════════════════════════════════════════╝ */
-const HARDCODED_CONFIG = {
+var HARDCODED_CONFIG = {
   apiKey: "AIzaSyCkhCYW6SiLnmbbALlxLw0QAkgLe2KjjgQ",
   authDomain: "wedding-planner-d23aa.firebaseapp.com",
   databaseURL: "https://wedding-planner-d23aa-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -849,13 +867,13 @@ const HARDCODED_CONFIG = {
   messagingSenderId: "582441404767",
   appId: "1:582441404767:web:810b566ffaf0a52424ceea"
 };
-const HARDCODED_ROOM = "06030104";
-const _PH = [48,54,48,51,48,49,48,52].map(function(c){return String.fromCharCode(c)}).join('');
+var HARDCODED_ROOM = "06030104";
+var _PH = [48,54,48,51,48,49,48,52].map(function(c){return String.fromCharCode(c)}).join('');
 
 /* ═══════════════════════════════════════════
    Wedding Date & Countdown
    ═══════════════════════════════════════════ */
-const WEDDING_DATE = new Date('2026-09-05T00:00:00');
+var WEDDING_DATE = new Date('2026-09-05T00:00:00');
 
 function updateCountdown() {
   var now = new Date();
@@ -880,21 +898,28 @@ updateCountdown();
 setInterval(updateCountdown, 1000);
 
 /* ═══════════════════════════════════════════
-   Constants & Categories (dynamic — synced to Firebase)
+   Default Categories — seeds to Firebase on first load
+   ALL categories are stored in Firebase and fully manageable
    ═══════════════════════════════════════════ */
-const DEFAULT_CATEGORIES = [
-  { id: 'venue',  name: '場地', icon: 'fa-location-dot', css: 'cat-venue', builtin: true },
-  { id: 'photo',  name: '攝影', icon: 'fa-camera',       css: 'cat-photo', builtin: true },
-  { id: 'floral', name: '花藝', icon: 'fa-seedling',     css: 'cat-floral', builtin: true },
-  { id: 'attire', name: '服裝', icon: 'fa-shirt',        css: 'cat-attire', builtin: true },
-  { id: 'guest',  name: '賓客', icon: 'fa-users',        css: 'cat-guest', builtin: true },
-  { id: 'food',   name: '餐飲', icon: 'fa-utensils',     css: 'cat-food', builtin: true },
-  { id: 'other',  name: '其他', icon: 'fa-ellipsis',     css: 'cat-other', builtin: true },
+var DEFAULT_CAT_LIST = [
+  { id: 'venue',  name: '場地', icon: 'fa-location-dot', css: 'cat-venue',  order: 0 },
+  { id: 'photo',  name: '攝影', icon: 'fa-camera',       css: 'cat-photo',  order: 1 },
+  { id: 'floral', name: '花藝', icon: 'fa-seedling',     css: 'cat-floral', order: 2 },
+  { id: 'attire', name: '服裝', icon: 'fa-shirt',        css: 'cat-attire', order: 3 },
+  { id: 'guest',  name: '賓客', icon: 'fa-users',        css: 'cat-guest',  order: 4 },
+  { id: 'food',   name: '餐飲', icon: 'fa-utensils',     css: 'cat-food',   order: 5 },
+  { id: 'other',  name: '其他', icon: 'fa-ellipsis',     css: 'cat-other',  order: 6 },
 ];
 
-let CATEGORIES = DEFAULT_CATEGORIES.slice();
+/* Map of known CSS classes for built-in category IDs */
+var BUILTIN_CSS_MAP = {
+  venue: 'cat-venue', photo: 'cat-photo', floral: 'cat-floral',
+  attire: 'cat-attire', guest: 'cat-guest', food: 'cat-food', other: 'cat-other'
+};
 
-const DEFAULT_TASKS = [
+var CATEGORIES = [];
+
+var DEFAULT_TASKS = [
   { name: '預約婚禮場地', cat: 'venue', done: false, note: '', date: '', assignee: 'both' },
   { name: '選定婚禮日期', cat: 'venue', done: false, note: '', date: '', assignee: 'both' },
   { name: '預約婚紗攝影', cat: 'photo', done: false, note: '', date: '', assignee: 'both' },
@@ -915,31 +940,32 @@ const DEFAULT_TASKS = [
 /* ═══════════════════════════════════════════
    State
    ═══════════════════════════════════════════ */
-let tasks = [];
-let activeFilter = 'all';
-let editingId = null;
-let pendingDeleteId = null;
-let myName = '';
-let roomCode = '';
-let db = null;
-let tasksRef = null;
-let presenceRef = null;
-let categoriesRef = null;
-let isFirebaseReady = false;
-let selectedName = '';
-let pendingAttachments = [];
-let lightboxImages = [];
-let lightboxIndex = 0;
+var tasks = [];
+var activeFilter = 'all';
+var editingId = null;
+var pendingDeleteId = null;
+var myName = '';
+var roomCode = '';
+var db = null;
+var tasksRef = null;
+var presenceRef = null;
+var categoriesRef = null;
+var isFirebaseReady = false;
+var selectedName = '';
+var pendingAttachments = [];
+var lightboxImages = [];
+var lightboxIndex = 0;
+var categoriesSeeded = false;
 
 /* ═══════════════════════════════════════════
    DOM shortcuts
    ═══════════════════════════════════════════ */
-const $ = (s) => document.querySelector(s);
-const taskListEl   = $('#taskList');
-const filtersEl    = $('#filters');
-const modalOverlay = $('#modalOverlay');
-const confirmOvl   = $('#confirmOverlay');
-const toastEl      = $('#toast');
+var $ = function(s) { return document.querySelector(s); };
+var taskListEl   = $('#taskList');
+var filtersEl    = $('#filters');
+var modalOverlay = $('#modalOverlay');
+var confirmOvl   = $('#confirmOverlay');
+var toastEl      = $('#toast');
 
 /* ═══════════════════════════════════════════
    Dark Mode
@@ -947,7 +973,7 @@ const toastEl      = $('#toast');
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   document.documentElement.classList.add('dark');
 }
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
   document.documentElement.classList.toggle('dark', e.matches);
 });
 
@@ -955,10 +981,10 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
    Floating Hearts
    ═══════════════════════════════════════════ */
 (function spawnHearts() {
-  const container = $('#heartsBg');
-  const hearts = ['\u2665', '\u2764', '\u2661', '\u2763'];
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement('span');
+  var container = $('#heartsBg');
+  var hearts = ['\u2665', '\u2764', '\u2661', '\u2763'];
+  for (var i = 0; i < 18; i++) {
+    var el = document.createElement('span');
     el.className = 'float-heart';
     el.textContent = hearts[i % hearts.length];
     el.style.left = (Math.random() * 100) + '%';
@@ -972,16 +998,16 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 /* ═══════════════════════════════════════════
    SETUP — PIN lock + name picker
    ═══════════════════════════════════════════ */
-let firebaseConfig = HARDCODED_CONFIG;
-let savedRoomCode  = HARDCODED_ROOM;
-let pinVerified = false;
+var firebaseConfig = HARDCODED_CONFIG;
+var savedRoomCode  = HARDCODED_ROOM;
+var pinVerified = false;
 
 /* ─── Persistence: IndexedDB + cookie + localStorage ─── */
-const store = {
+var store = {
   _m: {},
   _dbReady: false,
   _db: null,
-  init() {
+  init: function() {
     try {
       var req = indexedDB.open('kj_wed_v2', 1);
       req.onupgradeneeded = function(e) { e.target.result.createObjectStore('kv'); };
@@ -989,7 +1015,7 @@ const store = {
       req.onerror = function() { /* ignore */ };
     } catch(e) { /* ignore */ }
   },
-  _syncFromIDB() {
+  _syncFromIDB: function() {
     try {
       var tx = this._db.transaction('kv', 'readonly');
       var s = tx.objectStore('kv');
@@ -1018,7 +1044,7 @@ const store = {
       };
     } catch(e) { /* ignore */ }
   },
-  set(k, v) {
+  set: function(k, v) {
     this._m[k] = v;
     try {
       if (this._dbReady && this._db) {
@@ -1029,7 +1055,7 @@ const store = {
     try { document.cookie = encodeURIComponent(k) + '=' + encodeURIComponent(v) + ';path=/;max-age=31536000;SameSite=Lax'; } catch(e) { /* ignore */ }
     try { window['local' + 'Storage'].setItem(k, v); } catch(e) { /* ignore */ }
   },
-  get(k) {
+  get: function(k) {
     if (this._m[k] !== undefined) return this._m[k];
     try {
       var match = document.cookie.match(new RegExp('(?:^|;\\s*)' + encodeURIComponent(k).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
@@ -1041,7 +1067,7 @@ const store = {
     } catch(e) { /* ignore */ }
     return null;
   },
-  del(k) {
+  del: function(k) {
     delete this._m[k];
     try { if (this._dbReady && this._db) { var tx = this._db.transaction('kv', 'readwrite'); tx.objectStore('kv').delete(k); } } catch(e) { /* ignore */ }
     try { document.cookie = encodeURIComponent(k) + '=;path=/;max-age=0'; } catch(e) { /* ignore */ }
@@ -1110,8 +1136,8 @@ function pickName(name) {
 /* ═══════════════════════════════════════════
    FIREBASE INIT (direct — no auth needed)
    ═══════════════════════════════════════════ */
-let firebaseListenerAttached = false;
-let firebaseDataLoaded = false;
+var firebaseListenerAttached = false;
+var firebaseDataLoaded = false;
 
 function initFirebase(silent) {
   showScreen('appScreen');
@@ -1169,51 +1195,150 @@ try {
 } catch(e) { /* ignore, show PIN screen */ }
 
 /* ═══════════════════════════════════════════
-   CATEGORIES — synced to Firebase
+   CATEGORIES — ALL stored in Firebase, fully manageable
    ═══════════════════════════════════════════ */
 function listenToCategories() {
   if (!categoriesRef) return;
   categoriesRef.on('value', function(snapshot) {
     var data = snapshot.val();
-    // Merge: always keep builtin, then add custom from Firebase
-    CATEGORIES = DEFAULT_CATEGORIES.slice();
-    if (data) {
-      Object.keys(data).forEach(function(key) {
-        var c = data[key];
-        // Don't duplicate builtins
-        if (!CATEGORIES.find(function(x) { return x.id === c.id; })) {
-          CATEGORIES.push({ id: c.id, name: c.name, icon: c.icon || 'fa-tag', css: 'cat-custom', builtin: false });
-        }
-      });
+    if (!data) {
+      // First time: seed default categories to Firebase
+      if (!categoriesSeeded) {
+        categoriesSeeded = true;
+        seedDefaultCategories();
+      }
+      return;
     }
+    // Build categories array from Firebase data, sorted by order
+    var catArr = [];
+    Object.keys(data).forEach(function(fbKey) {
+      var c = data[fbKey];
+      catArr.push({
+        id: c.id,
+        name: c.name,
+        icon: c.icon || 'fa-tag',
+        css: BUILTIN_CSS_MAP[c.id] || 'cat-custom',
+        order: typeof c.order === 'number' ? c.order : 999,
+        fbKey: fbKey
+      });
+    });
+    catArr.sort(function(a, b) { return a.order - b.order; });
+    CATEGORIES = catArr;
     initCatSelect();
     renderFilters();
+    // Re-render category manager if open
+    if (document.getElementById('catMgrOverlay').classList.contains('open')) {
+      renderCatMgrList();
+    }
   });
+}
+
+function seedDefaultCategories() {
+  if (!categoriesRef) return;
+  var updates = {};
+  DEFAULT_CAT_LIST.forEach(function(c, i) {
+    var key = 'cat_' + c.id;
+    updates[key] = { id: c.id, name: c.name, icon: c.icon, order: i };
+  });
+  categoriesRef.update(updates);
 }
 
 function addCustomCategory() {
   var input = document.getElementById('catMgrInput');
   var name = input.value.trim();
   if (!name) return;
+  // Check duplicate name
+  var dup = CATEGORIES.find(function(c) { return c.name === name; });
+  if (dup) { showToast('⚠ 分類名稱已存在'); return; }
   var id = 'custom_' + Date.now();
-  categoriesRef.push({ id: id, name: name, icon: 'fa-tag' });
+  var maxOrder = 0;
+  CATEGORIES.forEach(function(c) { if (c.order >= maxOrder) maxOrder = c.order + 1; });
+  categoriesRef.push({ id: id, name: name, icon: 'fa-tag', order: maxOrder });
   input.value = '';
   showToast('♥ 分類已新增');
 }
 
 function deleteCategory(catId) {
   if (!categoriesRef) return;
-  // Find the Firebase key for this category
-  categoriesRef.once('value', function(snapshot) {
-    var data = snapshot.val();
-    if (!data) return;
-    Object.keys(data).forEach(function(key) {
-      if (data[key].id === catId) {
-        categoriesRef.child(key).remove();
-        showToast('已刪除分類');
+  var cat = CATEGORIES.find(function(c) { return c.id === catId; });
+  if (!cat) return;
+  // Count tasks using this category
+  var taskCount = tasks.filter(function(t) { return t.cat === catId; }).length;
+  if (taskCount > 0) {
+    // Show confirmation
+    showConfirmAction(
+      '分類「' + cat.name + '」有 ' + taskCount + ' 個任務，刪除後任務會顯示為「未分類」。確定刪除？',
+      '刪除分類',
+      function() {
+        doDeleteCategory(cat.fbKey);
       }
-    });
+    );
+  } else {
+    doDeleteCategory(cat.fbKey);
+  }
+}
+
+function doDeleteCategory(fbKey) {
+  categoriesRef.child(fbKey).remove();
+  showToast('已刪除分類');
+}
+
+function renameCategory(catId) {
+  var cat = CATEGORIES.find(function(c) { return c.id === catId; });
+  if (!cat) return;
+  // Replace the name element with an input field
+  var nameEl = document.querySelector('.cat-mgr-item[data-cat-id="' + catId + '"] .cat-mgr-name');
+  if (!nameEl) return;
+  var currentName = cat.name;
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'cat-mgr-name-input';
+  input.value = currentName;
+  input.maxLength = 10;
+  nameEl.replaceWith(input);
+  input.focus();
+  input.select();
+
+  function finishRename() {
+    var newName = input.value.trim();
+    if (!newName || newName === currentName) {
+      renderCatMgrList();
+      return;
+    }
+    // Check duplicate
+    var dup = CATEGORIES.find(function(c) { return c.name === newName && c.id !== catId; });
+    if (dup) { showToast('⚠ 分類名稱已存在'); renderCatMgrList(); return; }
+    categoriesRef.child(cat.fbKey).update({ name: newName });
+    showToast('♥ 已更名');
+  }
+
+  input.addEventListener('blur', finishRename);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { renderCatMgrList(); }
   });
+}
+
+function moveCategoryUp(catId) {
+  var idx = CATEGORIES.findIndex(function(c) { return c.id === catId; });
+  if (idx <= 0) return;
+  swapCategoryOrder(idx, idx - 1);
+}
+
+function moveCategoryDown(catId) {
+  var idx = CATEGORIES.findIndex(function(c) { return c.id === catId; });
+  if (idx < 0 || idx >= CATEGORIES.length - 1) return;
+  swapCategoryOrder(idx, idx + 1);
+}
+
+function swapCategoryOrder(idxA, idxB) {
+  var catA = CATEGORIES[idxA];
+  var catB = CATEGORIES[idxB];
+  if (!catA || !catB) return;
+  var updates = {};
+  updates[catA.fbKey + '/order'] = catB.order;
+  updates[catB.fbKey + '/order'] = catA.order;
+  categoriesRef.update(updates);
 }
 
 function openCatMgr() {
@@ -1228,20 +1353,51 @@ function closeCatMgr() {
 function renderCatMgrList() {
   var list = document.getElementById('catMgrList');
   var html = '';
-  CATEGORIES.forEach(function(c) {
-    // Count tasks using this category
+  CATEGORIES.forEach(function(c, idx) {
     var count = tasks.filter(function(t) { return t.cat === c.id; }).length;
-    var delBtn = c.builtin
-      ? '<button class="cat-mgr-del" disabled title="預設分類不能刪除"><i class="fa-solid fa-lock"></i></button>'
-      : '<button class="cat-mgr-del" onclick="deleteCategory(\'' + c.id + '\')" title="刪除分類"><i class="fa-solid fa-trash-can"></i></button>';
-    html += '<div class="cat-mgr-item">' +
+    var isFirst = idx === 0;
+    var isLast = idx === CATEGORIES.length - 1;
+    html += '<div class="cat-mgr-item" data-cat-id="' + c.id + '">' +
       '<div class="cat-mgr-icon"><i class="fa-solid ' + c.icon + '"></i></div>' +
       '<div class="cat-mgr-name">' + escHtml(c.name) + '</div>' +
-      '<div class="cat-mgr-badge">' + count + ' 個任務</div>' +
-      delBtn +
+      '<div class="cat-mgr-badge">' + count + '</div>' +
+      '<div class="cat-mgr-actions">' +
+        '<button class="cat-mgr-btn" onclick="moveCategoryUp(\'' + c.id + '\')" title="上移"' + (isFirst ? ' disabled' : '') + '><i class="fa-solid fa-chevron-up"></i></button>' +
+        '<button class="cat-mgr-btn" onclick="moveCategoryDown(\'' + c.id + '\')" title="下移"' + (isLast ? ' disabled' : '') + '><i class="fa-solid fa-chevron-down"></i></button>' +
+        '<button class="cat-mgr-btn" onclick="renameCategory(\'' + c.id + '\')" title="改名"><i class="fa-solid fa-pen"></i></button>' +
+        '<button class="cat-mgr-btn del" onclick="deleteCategory(\'' + c.id + '\')" title="刪除"><i class="fa-solid fa-trash-can"></i></button>' +
+      '</div>' +
     '</div>';
   });
+  if (CATEGORIES.length === 0) {
+    html = '<div style="text-align:center;padding:1rem;color:var(--text3);font-size:.85rem">暫無分類，請新增</div>';
+  }
   list.innerHTML = html;
+}
+
+// Custom confirm action helper (reuses the confirm overlay)
+function showConfirmAction(msg, btnText, onConfirm) {
+  var confirmMsg = document.getElementById('confirmMsg');
+  var confirmYes = document.getElementById('confirmYes');
+  var confirmNo = document.getElementById('confirmNo');
+  confirmMsg.textContent = msg;
+  confirmYes.textContent = btnText;
+  confirmYes.className = 'btn btn-danger';
+  confirmOvl.classList.add('open');
+
+  function cleanup() {
+    confirmYes.onclick = null;
+    confirmNo.onclick = null;
+    confirmOvl.classList.remove('open');
+    // Restore defaults
+    confirmYes.textContent = '刪除';
+    confirmYes.className = 'btn btn-danger';
+    confirmYes.onclick = doDelete;
+    confirmNo.onclick = function() { confirmOvl.classList.remove('open'); };
+  }
+
+  confirmYes.onclick = function() { cleanup(); onConfirm(); };
+  confirmNo.onclick = function() { cleanup(); };
 }
 
 // Close cat manager on overlay click
@@ -1255,16 +1411,18 @@ document.getElementById('catMgrInput').addEventListener('keydown', function(e) {
 /* ═══════════════════════════════════════════
    REAL-TIME SYNC
    ═══════════════════════════════════════════ */
-let ignoreNextUpdate = false;
+var ignoreNextUpdate = false;
 
 function listenToTasks() {
-  tasksRef.on('value', (snapshot) => {
+  tasksRef.on('value', function(snapshot) {
     if (ignoreNextUpdate) { ignoreNextUpdate = false; return; }
     firebaseDataLoaded = true;
-    const data = snapshot.val();
+    var data = snapshot.val();
     if (data) {
-      tasks = Object.keys(data).map(key => {
-        const t = { id: key, ...data[key] };
+      tasks = Object.keys(data).map(function(key) {
+        var raw = data[key];
+        var t = { id: key };
+        Object.keys(raw).forEach(function(k) { t[k] = raw[k]; });
         if (t.attachments && !Array.isArray(t.attachments)) {
           t.attachments = Object.values(t.attachments);
         }
@@ -1286,9 +1444,9 @@ function listenToTasks() {
 }
 
 function seedDefaultTasks() {
-  const updates = {};
-  DEFAULT_TASKS.forEach((t, i) => {
-    const key = 'task_' + Date.now() + '_' + i;
+  var updates = {};
+  DEFAULT_TASKS.forEach(function(t, i) {
+    var key = 'task_' + Date.now() + '_' + i;
     updates[key] = { name: t.name, cat: t.cat, done: t.done, note: t.note, date: t.date, assignee: t.assignee || '', createdBy: myName, ts: Date.now() + i };
   });
   tasksRef.update(updates);
@@ -1308,17 +1466,17 @@ function removeTaskFromCloud(id) {
    PRESENCE
    ═══════════════════════════════════════════ */
 function setupPresence() {
-  const myPresRef = presenceRef.child(myName);
+  var myPresRef = presenceRef.child(myName);
   myPresRef.set(true);
   myPresRef.onDisconnect().remove();
 
-  presenceRef.on('value', (snapshot) => {
-    const data = snapshot.val() || {};
-    const kikiOnline = !!data['Kiki'];
-    const jeffOnline = !!data['Jeff'];
+  presenceRef.on('value', function(snapshot) {
+    var data = snapshot.val() || {};
+    var kikiOnline = !!data['Kiki'];
+    var jeffOnline = !!data['Jeff'];
 
-    const tagK = $('#tagKiki');
-    const tagJ = $('#tagJeff');
+    var tagK = $('#tagKiki');
+    var tagJ = $('#tagJeff');
     if (tagK) {
       tagK.classList.toggle('is-online', kikiOnline);
       tagK.classList.toggle('is-me', myName === 'Kiki');
@@ -1380,7 +1538,7 @@ function loadCouplePhoto() {
       if (photoImg) photoImg.src = data;
       if (couplePhoto) couplePhoto.classList.add('has-img');
     }
-  }, function(err) { /* ignore */ });
+  }, function() { /* ignore */ });
 }
 
 function initPhotoUpload() {
@@ -1389,7 +1547,7 @@ function initPhotoUpload() {
   var photoImg    = $('#photoImg');
   if (!photoInput) return;
 
-  photoInput.addEventListener('change', async function() {
+  photoInput.addEventListener('change', function() {
     var file = photoInput.files[0];
     if (!file) return;
     try {
@@ -1398,17 +1556,16 @@ function initPhotoUpload() {
       if (couplePhoto) couplePhoto.classList.add('has-img');
     } catch(e) { /* ignore */ }
     showToast('♥ 正在壓縮合照...');
-    try {
-      var dataUrl = await compressCouplePhoto(file);
+    compressCouplePhoto(file).then(function(dataUrl) {
       if (dataUrl) {
         if (photoImg) photoImg.src = dataUrl;
         saveCouplePhoto(dataUrl);
       } else {
         showToast('⚠ 相片壓縮失敗', true);
       }
-    } catch(e) {
+    }).catch(function(e) {
       showToast('⚠ 相片處理失敗: ' + e, true);
-    }
+    });
     photoInput.value = '';
   });
 }
@@ -1416,88 +1573,96 @@ function initPhotoUpload() {
 /* ═══════════════════════════════════════════
    Attachment Handling
    ═══════════════════════════════════════════ */
-const MAX_IMG_SIZE = 800;
-const MAX_FILE_B64 = 200000;
+var MAX_IMG_SIZE = 800;
+var MAX_FILE_B64 = 200000;
 
 function isImageType(type) {
   return type && type.startsWith('image/');
 }
 
 function getFileIcon(name) {
-  const ext = (name || '').split('.').pop().toLowerCase();
-  const icons = {
+  var ext = (name || '').split('.').pop().toLowerCase();
+  var icons = {
     pdf: 'fa-file-pdf', doc: 'fa-file-word', docx: 'fa-file-word',
     xls: 'fa-file-excel', xlsx: 'fa-file-excel',
-    txt: 'fa-file-lines', csv: 'fa-file-csv',
+    txt: 'fa-file-lines', csv: 'fa-file-csv'
   };
   return icons[ext] || 'fa-file';
 }
 
 function compressImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var w = img.width, h = img.height;
         if (w > MAX_IMG_SIZE || h > MAX_IMG_SIZE) {
           if (w > h) { h = Math.round(h * MAX_IMG_SIZE / w); w = MAX_IMG_SIZE; }
           else { w = Math.round(w * MAX_IMG_SIZE / h); h = MAX_IMG_SIZE; }
         }
-        const canvas = document.createElement('canvas');
+        var canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL('image/jpeg', 0.7));
       };
-      img.onerror = () => resolve(null);
+      img.onerror = function() { resolve(null); };
       img.src = e.target.result;
     };
-    reader.onerror = () => resolve(null);
+    reader.onerror = function() { resolve(null); };
     reader.readAsDataURL(file);
   });
 }
 
 function fileToBase64(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => resolve(e.target.result);
-    reader.onerror = () => resolve(null);
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) { resolve(e.target.result); };
+    reader.onerror = function() { resolve(null); };
     reader.readAsDataURL(file);
   });
 }
 
-async function processFiles(files) {
-  for (const file of files) {
+function processFiles(files) {
+  var idx = 0;
+  function next() {
+    if (idx >= files.length) { renderAttachPreviews(); return; }
+    var file = files[idx];
+    idx++;
     if (isImageType(file.type)) {
-      const data = await compressImage(file);
-      if (data && data.length <= MAX_FILE_B64 * 4) {
-        pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: true });
-      } else {
-        showToast('⚠ 相片太大', true);
-      }
+      compressImage(file).then(function(data) {
+        if (data && data.length <= MAX_FILE_B64 * 4) {
+          pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: true });
+        } else {
+          showToast('⚠ 相片太大', true);
+        }
+        next();
+      });
     } else {
-      const data = await fileToBase64(file);
-      if (data && data.length <= MAX_FILE_B64) {
-        pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: false });
-      } else {
-        showToast('⚠ 文件太大 (最大~150KB)', true);
-      }
+      fileToBase64(file).then(function(data) {
+        if (data && data.length <= MAX_FILE_B64) {
+          pendingAttachments.push({ name: file.name, type: file.type, data: data, isImage: false });
+        } else {
+          showToast('⚠ 文件太大 (最大~150KB)', true);
+        }
+        next();
+      });
     }
   }
-  renderAttachPreviews();
+  next();
 }
 
 function renderAttachPreviews() {
-  const container = $('#attachPreviews');
+  var container = $('#attachPreviews');
   if (!container) return;
-  container.innerHTML = pendingAttachments.map((a, i) => {
+  container.innerHTML = pendingAttachments.map(function(a, i) {
     if (a.isImage) {
       return '<div class="attach-preview"><img src="' + a.data + '" alt="' + escHtml(a.name) + '"><button class="remove-attach" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></button></div>';
     }
     return '<div class="attach-preview"><div class="file-icon"><i class="fa-solid ' + getFileIcon(a.name) + '"></i><span>' + escHtml(a.name) + '</span></div><button class="remove-attach" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></button></div>';
   }).join('');
-  container.querySelectorAll('.remove-attach').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  container.querySelectorAll('.remove-attach').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       pendingAttachments.splice(parseInt(btn.dataset.idx, 10), 1);
@@ -1507,34 +1672,34 @@ function renderAttachPreviews() {
 }
 
 function initAttachInput() {
-  const attachInput = $('#attachInput');
+  var attachInput = $('#attachInput');
   if (!attachInput) return;
-  attachInput.addEventListener('change', async () => {
+  attachInput.addEventListener('change', function() {
     if (attachInput.files.length > 0) {
-      await processFiles(Array.from(attachInput.files));
+      processFiles(Array.from(attachInput.files));
     }
     attachInput.value = '';
   });
 }
 
 function initLightbox() {
-  const overlay = $('#lightboxOverlay');
-  const img = $('#lightboxImg');
-  const counter = $('#lightboxCounter');
-  const fname = $('#lightboxFilename');
+  var overlay = $('#lightboxOverlay');
+  var img = $('#lightboxImg');
+  var counter = $('#lightboxCounter');
+  var fname = $('#lightboxFilename');
 
   function show() {
-    const item = lightboxImages[lightboxIndex];
+    var item = lightboxImages[lightboxIndex];
     if (!item) return;
     img.src = item.data;
     counter.textContent = (lightboxIndex + 1) + ' / ' + lightboxImages.length;
     fname.textContent = item.name || '';
   }
 
-  $('#lightboxClose').addEventListener('click', () => overlay.classList.remove('open'));
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
-  $('#lightboxPrev').addEventListener('click', () => { lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; show(); });
-  $('#lightboxNext').addEventListener('click', () => { lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; show(); });
+  $('#lightboxClose').addEventListener('click', function() { overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); });
+  $('#lightboxPrev').addEventListener('click', function() { lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; show(); });
+  $('#lightboxNext').addEventListener('click', function() { lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; show(); });
 
   window._showLightbox = show;
 }
@@ -1550,12 +1715,26 @@ function openLightbox(images, idx) {
    Render Helpers
    ═══════════════════════════════════════════ */
 function getCat(id) {
-  return CATEGORIES.find(c => c.id === id) || { name: id || '其他', icon: 'fa-tag', css: 'cat-custom' };
+  var found = CATEGORIES.find(function(c) { return c.id === id; });
+  if (found) return found;
+  // Orphaned category — category was deleted but task still references it
+  return { name: '⚠ 未分類', icon: 'fa-triangle-exclamation', css: 'cat-orphan', id: id, orphan: true };
+}
+
+function getOrphanCatIds() {
+  // Find category IDs used by tasks but not in CATEGORIES
+  var catIds = {};
+  CATEGORIES.forEach(function(c) { catIds[c.id] = true; });
+  var orphans = {};
+  tasks.forEach(function(t) {
+    if (t.cat && !catIds[t.cat]) orphans[t.cat] = true;
+  });
+  return Object.keys(orphans);
 }
 
 function formatDate(d) {
   if (!d) return '';
-  const dt = new Date(d + 'T00:00:00');
+  var dt = new Date(d + 'T00:00:00');
   return (dt.getMonth() + 1) + '月' + dt.getDate() + '日';
 }
 
@@ -1566,10 +1745,10 @@ function formatAssignee(a) {
 }
 
 function updateStats() {
-  const total = tasks.length;
-  const done = tasks.filter(t => t.done).length;
-  const pending = total - done;
-  const pct = total ? Math.round(done / total * 100) : 0;
+  var total = tasks.length;
+  var done = tasks.filter(function(t) { return t.done; }).length;
+  var pending = total - done;
+  var pct = total ? Math.round(done / total * 100) : 0;
   $('#statTotal').textContent = total;
   $('#statPending').textContent = pending;
   $('#statDone').textContent = done;
@@ -1578,27 +1757,48 @@ function updateStats() {
 }
 
 function renderFilters() {
-  let html = '<button class="filter-btn active" data-cat="all">全部</button>';
-  for (const c of CATEGORIES) {
+  var html = '<button class="filter-btn active" data-cat="all">全部</button>';
+  CATEGORIES.forEach(function(c) {
     html += '<button class="filter-btn" data-cat="' + c.id + '"><i class="fa-solid ' + c.icon + '"></i> ' + c.name + '</button>';
+  });
+  // Show orphan filter if tasks reference deleted categories
+  var orphans = getOrphanCatIds();
+  if (orphans.length > 0) {
+    html += '<button class="filter-btn orphan-filter" data-cat="__orphan__"><i class="fa-solid fa-triangle-exclamation"></i> 未分類</button>';
   }
   html += '<button class="cat-manage-btn" title="管理分類" onclick="openCatMgr()"><i class="fa-solid fa-gear"></i></button>';
   filtersEl.innerHTML = html;
-  filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  filtersEl.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
       activeFilter = btn.dataset.cat;
-      filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      filtersEl.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.toggle('active', b === btn); });
       renderTasks();
     });
   });
   // Restore active filter
-  filtersEl.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.cat === activeFilter);
+  var filterExists = false;
+  filtersEl.querySelectorAll('.filter-btn').forEach(function(b) {
+    var match = b.dataset.cat === activeFilter;
+    b.classList.toggle('active', match);
+    if (match) filterExists = true;
   });
+  if (!filterExists) {
+    activeFilter = 'all';
+    var allBtn = filtersEl.querySelector('[data-cat="all"]');
+    if (allBtn) allBtn.classList.add('active');
+  }
 }
 
 function renderTasks() {
-  const filtered = activeFilter === 'all' ? tasks : tasks.filter(t => t.cat === activeFilter);
+  var filtered;
+  if (activeFilter === 'all') {
+    filtered = tasks;
+  } else if (activeFilter === '__orphan__') {
+    var orphans = getOrphanCatIds();
+    filtered = tasks.filter(function(t) { return orphans.indexOf(t.cat) !== -1; });
+  } else {
+    filtered = tasks.filter(function(t) { return t.cat === activeFilter; });
+  }
 
   if (filtered.length === 0) {
     if (!firebaseDataLoaded && firebaseConfig && firebaseConfig.databaseURL) {
@@ -1611,22 +1811,22 @@ function renderTasks() {
     return;
   }
 
-  const pendingItems = filtered.filter(t => !t.done).sort((a, b) => {
+  var pendingItems = filtered.filter(function(t) { return !t.done; }).sort(function(a, b) {
     if (a.date && b.date) return a.date.localeCompare(b.date);
     if (a.date) return -1;
     if (b.date) return 1;
     return 0;
   });
-  const doneItems = filtered.filter(t => t.done);
+  var doneItems = filtered.filter(function(t) { return t.done; });
 
-  let html = '';
+  var html = '';
   if (pendingItems.length) {
     html += '<div class="task-group-label"><i class="fa-regular fa-clock"></i> 待辦 (' + pendingItems.length + ')</div>';
-    pendingItems.forEach((t, i) => { html += cardHTML(t, i); });
+    pendingItems.forEach(function(t, i) { html += cardHTML(t, i); });
   }
   if (doneItems.length) {
     html += '<div class="task-group-label"><i class="fa-solid fa-heart"></i> 已完成 (' + doneItems.length + ')</div>';
-    doneItems.forEach((t, i) => { html += cardHTML(t, i + pendingItems.length); });
+    doneItems.forEach(function(t, i) { html += cardHTML(t, i + pendingItems.length); });
   }
   taskListEl.innerHTML = html;
   bindTaskEvents();
@@ -1634,31 +1834,31 @@ function renderTasks() {
 }
 
 function cardHTML(t, idx) {
-  const cat = getCat(t.cat);
-  const checkedClass = t.done ? ' checked' : '';
-  const doneClass = t.done ? ' done' : '';
-  const dateStr = t.date ? '<span class="task-date"><i class="fa-regular fa-calendar"></i>' + formatDate(t.date) + '</span>' : '';
-  const noteStr = t.note ? '<div class="task-note">' + escHtml(t.note) + '</div>' : '';
-  const delay = Math.min(idx * 0.04, 0.4);
+  var cat = getCat(t.cat);
+  var checkedClass = t.done ? ' checked' : '';
+  var doneClass = t.done ? ' done' : '';
+  var dateStr = t.date ? '<span class="task-date"><i class="fa-regular fa-calendar"></i>' + formatDate(t.date) + '</span>' : '';
+  var noteStr = t.note ? '<div class="task-note">' + escHtml(t.note) + '</div>' : '';
+  var delay = Math.min(idx * 0.04, 0.4);
 
   // Assignee badge
-  let assigneeStr = '';
+  var assigneeStr = '';
   if (t.assignee) {
-    const aIcon = t.assignee === 'both' ? 'fa-user-group' : 'fa-user';
+    var aIcon = t.assignee === 'both' ? 'fa-user-group' : 'fa-user';
     assigneeStr = '<span class="task-assignee"><i class="fa-solid ' + aIcon + '"></i> ' + formatAssignee(t.assignee) + '</span>';
   }
 
   // Attachment thumbnails
-  let attachStr = '';
-  const atts = t.attachments || [];
+  var attachStr = '';
+  var atts = t.attachments || [];
   if (atts.length > 0) {
-    const images = atts.filter(a => a.isImage);
-    const files = atts.filter(a => !a.isImage);
+    var images = atts.filter(function(a) { return a.isImage; });
+    var files = atts.filter(function(a) { return !a.isImage; });
     attachStr = '<div class="task-thumbs">';
-    images.forEach((a, i) => {
+    images.forEach(function(a, i) {
       attachStr += '<div class="task-thumb" data-task-id="' + t.id + '" data-img-idx="' + i + '"><img src="' + a.data + '" alt="' + escHtml(a.name) + '"></div>';
     });
-    files.forEach(a => {
+    files.forEach(function(a) {
       attachStr += '<div class="task-thumb" title="' + escHtml(a.name) + '"><span class="thumb-file"><i class="fa-solid ' + getFileIcon(a.name) + '"></i></span></div>';
     });
     attachStr += '</div>';
@@ -1683,31 +1883,31 @@ function cardHTML(t, idx) {
 }
 
 function escHtml(s) {
-  const d = document.createElement('div');
+  var d = document.createElement('div');
   d.textContent = s;
   return d.innerHTML;
 }
 
 function bindTaskEvents() {
-  taskListEl.querySelectorAll('.ck').forEach(el => {
-    el.addEventListener('click', () => toggleDone(el.dataset.id));
-    el.addEventListener('keydown', e => {
+  taskListEl.querySelectorAll('.ck').forEach(function(el) {
+    el.addEventListener('click', function() { toggleDone(el.dataset.id); });
+    el.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDone(el.dataset.id); }
     });
   });
-  taskListEl.querySelectorAll('.act-btn.edit').forEach(el => {
-    el.addEventListener('click', () => openEdit(el.dataset.id));
+  taskListEl.querySelectorAll('.act-btn.edit').forEach(function(el) {
+    el.addEventListener('click', function() { openEdit(el.dataset.id); });
   });
-  taskListEl.querySelectorAll('.act-btn.del').forEach(el => {
-    el.addEventListener('click', () => askDelete(el.dataset.id));
+  taskListEl.querySelectorAll('.act-btn.del').forEach(function(el) {
+    el.addEventListener('click', function() { askDelete(el.dataset.id); });
   });
-  taskListEl.querySelectorAll('.task-thumb[data-task-id]').forEach(el => {
-    el.addEventListener('click', () => {
-      const taskId = el.dataset.taskId;
-      const imgIdx = parseInt(el.dataset.imgIdx, 10);
-      const t = tasks.find(x => x.id === taskId);
+  taskListEl.querySelectorAll('.task-thumb[data-task-id]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var taskId = el.dataset.taskId;
+      var imgIdx = parseInt(el.dataset.imgIdx, 10);
+      var t = tasks.find(function(x) { return x.id === taskId; });
       if (!t || !t.attachments) return;
-      const images = t.attachments.filter(a => a.isImage);
+      var images = t.attachments.filter(function(a) { return a.isImage; });
       if (images.length > 0) openLightbox(images, imgIdx);
     });
   });
@@ -1717,7 +1917,7 @@ function bindTaskEvents() {
    CRUD (synced to Firebase)
    ═══════════════════════════════════════════ */
 function toggleDone(id) {
-  const t = tasks.find(x => x.id === id);
+  var t = tasks.find(function(x) { return x.id === id; });
   if (!t) return;
   t.done = !t.done;
   saveTaskToCloud(id, taskData(t));
@@ -1725,7 +1925,7 @@ function toggleDone(id) {
 }
 
 function taskData(t) {
-  const d = { name: t.name, cat: t.cat, done: t.done, note: t.note || '', date: t.date || '', assignee: t.assignee || '', createdBy: t.createdBy || myName, ts: t.ts || Date.now() };
+  var d = { name: t.name, cat: t.cat, done: t.done, note: t.note || '', date: t.date || '', assignee: t.assignee || '', createdBy: t.createdBy || myName, ts: t.ts || Date.now() };
   if (t.attachments && t.attachments.length > 0) {
     d.attachments = t.attachments;
   }
@@ -1738,43 +1938,57 @@ function openAdd() {
   $('#modalTitle').innerHTML = '<i class="fa-solid fa-heart"></i> 新增任務';
   $('#inputName').value = '';
   $('#inputNote').value = '';
-  $('#inputCat').value = 'other';
+  $('#inputCat').value = CATEGORIES.length > 0 ? CATEGORIES[CATEGORIES.length - 1].id : '';
   $('#inputDate').value = '';
   $('#inputAssignee').value = '';
   $('#btnSave').textContent = '新增';
   renderAttachPreviews();
   modalOverlay.classList.add('open');
-  setTimeout(() => $('#inputName').focus(), 350);
+  setTimeout(function() { $('#inputName').focus(); }, 350);
 }
 
 function openEdit(id) {
-  const t = tasks.find(x => x.id === id);
+  var t = tasks.find(function(x) { return x.id === id; });
   if (!t) return;
   editingId = id;
-  pendingAttachments = t.attachments ? t.attachments.map(a => ({...a})) : [];
+  pendingAttachments = t.attachments ? t.attachments.map(function(a) {
+    var copy = {};
+    Object.keys(a).forEach(function(k) { copy[k] = a[k]; });
+    return copy;
+  }) : [];
   $('#modalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯任務';
   $('#inputName').value = t.name;
   $('#inputNote').value = t.note || '';
-  $('#inputCat').value = t.cat;
+  // If the task's category still exists, select it; otherwise add a temp option
+  var catSelect = $('#inputCat');
+  var catExists = CATEGORIES.find(function(c) { return c.id === t.cat; });
+  if (!catExists && t.cat) {
+    // Add temporary orphan option
+    var opt = document.createElement('option');
+    opt.value = t.cat;
+    opt.textContent = '⚠ ' + t.cat + ' (已刪除)';
+    catSelect.appendChild(opt);
+  }
+  catSelect.value = t.cat;
   $('#inputDate').value = t.date || '';
   $('#inputAssignee').value = t.assignee || '';
   $('#btnSave').textContent = '儲存';
   renderAttachPreviews();
   modalOverlay.classList.add('open');
-  setTimeout(() => $('#inputName').focus(), 350);
+  setTimeout(function() { $('#inputName').focus(); }, 350);
 }
 
 function saveTask() {
-  const name = $('#inputName').value.trim();
+  var name = $('#inputName').value.trim();
   if (!name) { $('#inputName').style.borderColor = 'var(--danger)'; return; }
-  const cat = $('#inputCat').value;
-  const note = $('#inputNote').value.trim();
-  const date = $('#inputDate').value;
-  const assignee = $('#inputAssignee').value;
-  const attachments = pendingAttachments.length > 0 ? pendingAttachments.slice() : null;
+  var cat = $('#inputCat').value;
+  var note = $('#inputNote').value.trim();
+  var date = $('#inputDate').value;
+  var assignee = $('#inputAssignee').value;
+  var attachments = pendingAttachments.length > 0 ? pendingAttachments.slice() : null;
 
   if (editingId !== null) {
-    const t = tasks.find(x => x.id === editingId);
+    var t = tasks.find(function(x) { return x.id === editingId; });
     if (t) {
       t.name = name; t.cat = cat; t.note = note; t.date = date; t.assignee = assignee;
       t.attachments = attachments || [];
@@ -1782,8 +1996,8 @@ function saveTask() {
     }
     showToast('♥ 已更新');
   } else {
-    const key = 'task_' + Date.now();
-    const newTask = { name: name, cat: cat, done: false, note: note, date: date, assignee: assignee, createdBy: myName, ts: Date.now() };
+    var key = 'task_' + Date.now();
+    var newTask = { name: name, cat: cat, done: false, note: note, date: date, assignee: assignee, createdBy: myName, ts: Date.now() };
     if (attachments) newTask.attachments = attachments;
     saveTaskToCloud(key, newTask);
     showToast('♥ 已新增');
@@ -1794,8 +2008,10 @@ function saveTask() {
 
 function askDelete(id) {
   pendingDeleteId = id;
-  const t = tasks.find(x => x.id === id);
+  var t = tasks.find(function(x) { return x.id === id; });
   $('#confirmMsg').textContent = '確定要刪除「' + (t ? t.name : '') + '」？';
+  $('#confirmYes').textContent = '刪除';
+  $('#confirmYes').className = 'btn btn-danger';
   confirmOvl.classList.add('open');
 }
 
@@ -1813,25 +2029,24 @@ function closeModal() { modalOverlay.classList.remove('open'); editingId = null;
 /* ═══════════════════════════════════════════
    Toast
    ═══════════════════════════════════════════ */
-let toastTimer;
+var toastTimer;
 function showToast(msg, longer) {
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), longer ? 6000 : 1800);
+  toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, longer ? 6000 : 1800);
 }
 
 /* ═══════════════════════════════════════════
    Settings (reset config)
    ═══════════════════════════════════════════ */
-$('#settingsBtn').addEventListener('click', () => {
+$('#settingsBtn').addEventListener('click', function() {
   pendingDeleteId = null;
   $('#confirmMsg').textContent = '要切換用戶嗎？';
   $('#confirmYes').textContent = '切換';
   $('#confirmYes').className = 'btn btn-primary';
   confirmOvl.classList.add('open');
-  const origHandler = doDelete;
-  const resetHandler = () => {
+  var resetHandler = function() {
     store.del('v2_name');
     myName = '';
     isFirebaseReady = false;
@@ -1839,12 +2054,12 @@ $('#settingsBtn').addEventListener('click', () => {
     firebaseDataLoaded = false;
     showScreen('setupScreen');
   };
-  $('#confirmYes').onclick = () => { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; resetHandler(); };
-  $('#confirmNo').onclick = () => {
+  $('#confirmYes').onclick = function() { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; $('#confirmYes').textContent = '刪除'; resetHandler(); };
+  $('#confirmNo').onclick = function() {
     confirmOvl.classList.remove('open');
     $('#confirmYes').textContent = '刪除';
     $('#confirmYes').className = 'btn btn-danger';
-    $('#confirmYes').onclick = origHandler;
+    $('#confirmYes').onclick = doDelete;
   };
 });
 
@@ -1861,17 +2076,17 @@ function initApp() {
   $('#fabAdd').addEventListener('click', openAdd);
   $('#btnCancel').addEventListener('click', closeModal);
   $('#btnSave').addEventListener('click', saveTask);
-  $('#confirmNo').addEventListener('click', () => { confirmOvl.classList.remove('open'); });
+  $('#confirmNo').addEventListener('click', function() { confirmOvl.classList.remove('open'); });
   $('#confirmYes').addEventListener('click', doDelete);
-  modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
-  confirmOvl.addEventListener('click', e => { if (e.target === confirmOvl) confirmOvl.classList.remove('open'); });
-  $('#inputName').addEventListener('keydown', e => { if (e.key === 'Enter') saveTask(); });
-  $('#inputName').addEventListener('input', () => { $('#inputName').style.borderColor = ''; });
+  modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
+  confirmOvl.addEventListener('click', function(e) { if (e.target === confirmOvl) confirmOvl.classList.remove('open'); });
+  $('#inputName').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveTask(); });
+  $('#inputName').addEventListener('input', function() { $('#inputName').style.borderColor = ''; });
 }
 
 function initCatSelect() {
-  const sel = $('#inputCat');
-  if (sel) sel.innerHTML = CATEGORIES.map(c => '<option value="' + c.id + '">' + c.name + '</option>').join('');
+  var sel = $('#inputCat');
+  if (sel) sel.innerHTML = CATEGORIES.map(function(c) { return '<option value="' + c.id + '">' + c.name + '</option>'; }).join('');
 }
 </script>
 </body>
