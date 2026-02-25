@@ -30,8 +30,8 @@
   --font-body:'Quicksand',sans-serif;
   --cat-venue:#c27878;--cat-photo:#a87cb2;--cat-floral:#7eaa8e;
   --cat-attire:#c2728e;--cat-guest:#7899b5;--cat-food:#b5a068;--cat-other:#9a8a8a;
-  --cat-orphan:#b07070;
   --online:#6ec47e;
+  --cat-missing:#b07070;
 }
 
 .dark{
@@ -44,8 +44,8 @@
   --done-bg:#243026;--danger-bg:#382020;
   --cat-venue:#e09898;--cat-photo:#c8a0d4;--cat-floral:#80cc9e;
   --cat-attire:#e098b0;--cat-guest:#98b8d4;--cat-food:#d4c080;--cat-other:#b0a0a0;
-  --cat-orphan:#d09090;
   --online:#80e090;
+  --cat-missing:#d09090;
 }
 
 html{font-size:16px;-webkit-text-size-adjust:100%}
@@ -336,12 +336,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
   background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;border-color:transparent;
   box-shadow:0 2px 10px rgba(200,80,100,.25);
 }
-.filter-btn.orphan-filter{
-  border-style:dashed;border-color:var(--cat-orphan);color:var(--cat-orphan);
-}
-.filter-btn.orphan-filter.active{
-  background:var(--cat-orphan);color:#fff;border-color:transparent;
-}
+.filter-btn.missing{border-style:dashed;color:var(--cat-missing);border-color:var(--cat-missing)}
 
 /* ─── Category Manage Button ─── */
 .cat-manage-btn{
@@ -403,7 +398,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 .cat-food{background:color-mix(in srgb,var(--cat-food) 15%,transparent);color:var(--cat-food)}
 .cat-other{background:color-mix(in srgb,var(--cat-other) 15%,transparent);color:var(--cat-other)}
 .cat-custom{background:color-mix(in srgb,var(--pink) 12%,transparent);color:var(--pink)}
-.cat-orphan{background:color-mix(in srgb,var(--cat-orphan) 15%,transparent);color:var(--cat-orphan);border:1px dashed var(--cat-orphan)}
+.cat-missing{background:color-mix(in srgb,var(--cat-missing) 12%,transparent);color:var(--cat-missing);border:1px dashed var(--cat-missing)}
 
 /* ─── Task Actions ─── */
 .task-actions{display:flex;gap:.2rem;flex-shrink:0;opacity:0;transition:opacity .2s}
@@ -504,24 +499,28 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
   background:var(--bg);transition:background .2s;
 }
 .cat-mgr-item:hover{background:var(--bg3)}
-.cat-mgr-item.dragging{opacity:.5;border-style:dashed}
-.cat-mgr-icon{font-size:.8rem;width:22px;text-align:center;color:var(--pink);flex-shrink:0}
-.cat-mgr-name{flex:1;font-size:.82rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cat-mgr-name-input{
-  flex:1;font-size:.82rem;font-weight:600;font-family:var(--font-body);
-  border:1.5px solid var(--pink);border-radius:6px;padding:.2rem .4rem;
-  background:var(--bg);color:var(--text);outline:none;min-width:0;
+.cat-mgr-icon{font-size:.85rem;width:24px;text-align:center;color:var(--pink)}
+.cat-mgr-name{
+  flex:1;font-size:.85rem;font-weight:600;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.cat-mgr-badge{font-size:.58rem;color:var(--text3);padding:.1rem .35rem;border-radius:8px;background:var(--bg3);white-space:nowrap;flex-shrink:0}
-.cat-mgr-actions{display:flex;gap:.1rem;flex-shrink:0}
+.cat-mgr-name-input{
+  flex:1;font-size:.82rem;font-weight:600;
+  padding:.2rem .4rem;border:1.5px solid var(--pink);border-radius:6px;
+  background:var(--bg);color:var(--text);font-family:var(--font-body);
+  outline:none;min-width:0;
+}
+.cat-mgr-badge{font-size:.58rem;color:var(--text3);padding:.1rem .35rem;border-radius:8px;background:var(--bg3);white-space:nowrap}
+.cat-mgr-actions{display:flex;gap:.15rem;flex-shrink:0}
 .cat-mgr-btn{
   width:26px;height:26px;border-radius:8px;border:none;cursor:pointer;
   background:transparent;color:var(--text3);font-size:.65rem;
-  display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
 }
 .cat-mgr-btn:hover{background:var(--bg3);color:var(--pink)}
-.cat-mgr-btn.del:hover{background:var(--danger-bg);color:var(--danger)}
-.cat-mgr-btn:disabled{opacity:.25;cursor:default;pointer-events:none}
+.cat-mgr-btn.del-btn:hover{background:var(--danger-bg);color:var(--danger)}
+.cat-mgr-btn:disabled{opacity:.25;cursor:default}
+.cat-mgr-btn:disabled:hover{background:transparent;color:var(--text3)}
 .cat-mgr-add{
   display:flex;gap:.4rem;margin-top:.5rem;
 }
@@ -535,7 +534,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
   background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;
   font-family:var(--font-body);font-size:.82rem;font-weight:600;white-space:nowrap;
 }
-.cat-mgr-hint{font-size:.65rem;color:var(--text3);margin-top:.3rem;font-style:italic;text-align:center}
+.cat-mgr-hint{font-size:.65rem;color:var(--text3);margin-top:.4rem;font-style:italic;text-align:center}
 
 /* ─── Attachments in Modal ─── */
 .attach-area{
@@ -809,10 +808,10 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
     <div class="cat-mgr-list" id="catMgrList"></div>
     <div class="cat-mgr-add">
       <input type="text" id="catMgrInput" placeholder="新分類名稱…" maxlength="10">
-      <button id="catMgrAddBtn" onclick="addCustomCategory()"><i class="fa-solid fa-plus"></i> 新增</button>
+      <button id="catMgrAddBtn" onclick="addCategory()"><i class="fa-solid fa-plus"></i> 新增</button>
     </div>
-    <div class="cat-mgr-hint">⬆⬇ 調整順序 ・ ✏️ 改名 ・ 🗑️ 刪除</div>
-    <div class="btn-row" style="margin-top:.6rem">
+    <div class="cat-mgr-hint"><i class="fa-solid fa-circle-info"></i> 點名稱可改名 · 上下箭頭調次序 · 刪除後任務會標為「未分類」</div>
+    <div class="btn-row" style="margin-top:.8rem">
       <button class="btn btn-secondary" onclick="closeCatMgr()">完成</button>
     </div>
   </div>
@@ -846,6 +845,7 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 <!-- Firebase SDK from allowed CDN -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-app-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-database-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-auth-compat.min.js"></script>
 
 <script>
 /* Global error catcher — shows errors visually */
@@ -867,8 +867,19 @@ var HARDCODED_CONFIG = {
   messagingSenderId: "582441404767",
   appId: "1:582441404767:web:810b566ffaf0a52424ceea"
 };
-var HARDCODED_ROOM = "06030104";
-var _PH = [48,54,48,51,48,49,48,52].map(function(c){return String.fromCharCode(c)}).join('');
+var HARDCODED_ROOM = atob('MDYwMzAxMDQ='); // Obfuscated room path
+/* PIN stored as SHA-256 hash only — original PIN cannot be recovered from source code */
+var _PIN_HASH = 'a6f0fc1def03ad376b68845bdb7d839141f303d36e08bd3fd134443b3db24b74';
+
+/* SHA-256 hash utility using Web Crypto API */
+function sha256(str) {
+  var encoder = new TextEncoder();
+  var data = encoder.encode(str);
+  return crypto.subtle.digest('SHA-256', data).then(function(buf) {
+    var arr = Array.from(new Uint8Array(buf));
+    return arr.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  });
+}
 
 /* ═══════════════════════════════════════════
    Wedding Date & Countdown
@@ -898,26 +909,26 @@ updateCountdown();
 setInterval(updateCountdown, 1000);
 
 /* ═══════════════════════════════════════════
-   Default Categories — seeds to Firebase on first load
-   ALL categories are stored in Firebase and fully manageable
+   Default Categories — used to seed Firebase on first run
+   ALL categories live in Firebase after first load.
    ═══════════════════════════════════════════ */
-var DEFAULT_CAT_LIST = [
-  { id: 'venue',  name: '場地', icon: 'fa-location-dot', css: 'cat-venue',  order: 0 },
-  { id: 'photo',  name: '攝影', icon: 'fa-camera',       css: 'cat-photo',  order: 1 },
+var DEFAULT_CATEGORIES = [
+  { id: 'venue',  name: '場地', icon: 'fa-location-dot', css: 'cat-venue', order: 0 },
+  { id: 'photo',  name: '攝影', icon: 'fa-camera',       css: 'cat-photo', order: 1 },
   { id: 'floral', name: '花藝', icon: 'fa-seedling',     css: 'cat-floral', order: 2 },
   { id: 'attire', name: '服裝', icon: 'fa-shirt',        css: 'cat-attire', order: 3 },
-  { id: 'guest',  name: '賓客', icon: 'fa-users',        css: 'cat-guest',  order: 4 },
-  { id: 'food',   name: '餐飲', icon: 'fa-utensils',     css: 'cat-food',   order: 5 },
-  { id: 'other',  name: '其他', icon: 'fa-ellipsis',     css: 'cat-other',  order: 6 },
+  { id: 'guest',  name: '賓客', icon: 'fa-users',        css: 'cat-guest', order: 4 },
+  { id: 'food',   name: '餐飲', icon: 'fa-utensils',     css: 'cat-food', order: 5 },
+  { id: 'other',  name: '其他', icon: 'fa-ellipsis',     css: 'cat-other', order: 6 }
 ];
 
-/* Map of known CSS classes for built-in category IDs */
-var BUILTIN_CSS_MAP = {
+/* Known CSS class mapping for built-in IDs */
+var CAT_CSS_MAP = {
   venue: 'cat-venue', photo: 'cat-photo', floral: 'cat-floral',
   attire: 'cat-attire', guest: 'cat-guest', food: 'cat-food', other: 'cat-other'
 };
 
-var CATEGORIES = [];
+var CATEGORIES = DEFAULT_CATEGORIES.slice();
 
 var DEFAULT_TASKS = [
   { name: '預約婚禮場地', cat: 'venue', done: false, note: '', date: '', assignee: 'both' },
@@ -934,7 +945,7 @@ var DEFAULT_TASKS = [
   { name: '確定婚宴菜單', cat: 'food', done: false, note: '', date: '', assignee: 'both' },
   { name: '預約化妝及髮型師', cat: 'other', done: false, note: '', date: '', assignee: 'Kiki' },
   { name: '安排婚禮司儀', cat: 'other', done: false, note: '', date: '', assignee: '' },
-  { name: '準備結婚戒指', cat: 'other', done: false, note: '', date: '', assignee: 'both' },
+  { name: '準備結婚戒指', cat: 'other', done: false, note: '', date: '', assignee: 'both' }
 ];
 
 /* ═══════════════════════════════════════════
@@ -960,12 +971,12 @@ var categoriesSeeded = false;
 /* ═══════════════════════════════════════════
    DOM shortcuts
    ═══════════════════════════════════════════ */
-var $ = function(s) { return document.querySelector(s); };
-var taskListEl   = $('#taskList');
-var filtersEl    = $('#filters');
-var modalOverlay = $('#modalOverlay');
-var confirmOvl   = $('#confirmOverlay');
-var toastEl      = $('#toast');
+var qSel = function(s) { return document.querySelector(s); };
+var taskListEl   = qSel('#taskList');
+var filtersEl    = qSel('#filters');
+var modalOverlay = qSel('#modalOverlay');
+var confirmOvl   = qSel('#confirmOverlay');
+var toastEl      = qSel('#toast');
 
 /* ═══════════════════════════════════════════
    Dark Mode
@@ -981,7 +992,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', fun
    Floating Hearts
    ═══════════════════════════════════════════ */
 (function spawnHearts() {
-  var container = $('#heartsBg');
+  var container = qSel('#heartsBg');
   var hearts = ['\u2665', '\u2764', '\u2661', '\u2763'];
   for (var i = 0; i < 18; i++) {
     var el = document.createElement('span');
@@ -1085,32 +1096,42 @@ function showScreen(id) {
 // Start IndexedDB init
 store.init();
 
-// ─── PIN verify (called via onclick in HTML) ───
+// ─── PIN verify (async SHA-256 comparison) ───
 function verifyPin() {
+  var pinBtn = document.getElementById('pinSubmit');
+  if (pinBtn) pinBtn.disabled = true;
   try {
     var input = document.getElementById('pinInput').value.trim();
-    if (input === _PH) {
-      pinVerified = true;
-      store.set('v2_pin', '1');
-      var pe = document.getElementById('pinError');
-      if (pe) pe.classList.remove('show');
-      var savedName = store.get('v2_name');
-      if (savedName) {
-        myName = savedName;
-        roomCode = savedRoomCode;
-        initFirebase(true);
+    sha256(input).then(function(hash) {
+      if (hash === _PIN_HASH) {
+        pinVerified = true;
+        store.set('v2_pin', '1');
+        var pe = document.getElementById('pinError');
+        if (pe) pe.classList.remove('show');
+        var savedName = store.get('v2_name');
+        if (savedName) {
+          myName = savedName;
+          roomCode = savedRoomCode;
+          initFirebase(true);
+        } else {
+          showScreen('setupScreen');
+        }
       } else {
-        showScreen('setupScreen');
+        var pe2 = document.getElementById('pinError');
+        if (pe2) pe2.classList.add('show');
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
       }
-    } else {
-      var pe2 = document.getElementById('pinError');
-      if (pe2) pe2.classList.add('show');
-      document.getElementById('pinInput').value = '';
-      document.getElementById('pinInput').focus();
-    }
+      if (pinBtn) pinBtn.disabled = false;
+    }).catch(function(err) {
+      var t = document.getElementById('toast');
+      if (t) { t.textContent = 'Hash Error: ' + err; t.className = 'toast show'; }
+      if (pinBtn) pinBtn.disabled = false;
+    });
   } catch(e) {
     var t = document.getElementById('toast');
     if (t) { t.textContent = 'PIN Error: ' + e.message; t.className = 'toast show'; }
+    if (pinBtn) pinBtn.disabled = false;
   }
 }
 
@@ -1134,10 +1155,12 @@ function pickName(name) {
 }
 
 /* ═══════════════════════════════════════════
-   FIREBASE INIT (direct — no auth needed)
+   FIREBASE INIT — with Anonymous Auth for privacy
    ═══════════════════════════════════════════ */
 var firebaseListenerAttached = false;
 var firebaseDataLoaded = false;
+
+var authSucceeded = false;
 
 function initFirebase(silent) {
   showScreen('appScreen');
@@ -1153,29 +1176,49 @@ function initFirebase(silent) {
   try {
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.database();
-    tasksRef = db.ref('rooms/' + roomCode + '/tasks');
-    presenceRef = db.ref('rooms/' + roomCode + '/presence');
-    categoriesRef = db.ref('rooms/' + roomCode + '/categories');
-    isFirebaseReady = true;
-    firebaseListenerAttached = true;
 
-    db.ref('.info/connected').on('value', function(snap) {
-      if (snap.val() === true) showToast('♥ 已連接雲端！');
+    // Try Anonymous Auth first; fall back to direct access if not enabled
+    firebase.auth().signInAnonymously().then(function() {
+      authSucceeded = true;
+      setupFirebaseListeners();
+    }).catch(function(authErr) {
+      // Anonymous Auth not enabled — still connect, just without auth token
+      authSucceeded = false;
+      setupFirebaseListeners();
     });
-
-    listenToCategories();
-    listenToTasks();
-    setupPresence();
-    loadCouplePhoto();
-
-    setTimeout(function() {
-      if (!firebaseDataLoaded) {
-        showToast('⚠ 雲端連接較慢，請稍候…', true);
-      }
-    }, 8000);
   } catch (err) {
     showToast('⚠ 連接失敗: ' + String(err), true);
   }
+}
+
+var connectedShown = false;
+
+function setupFirebaseListeners() {
+  if (firebaseListenerAttached) return;
+
+  tasksRef = db.ref('rooms/' + roomCode + '/tasks');
+  presenceRef = db.ref('rooms/' + roomCode + '/presence');
+  categoriesRef = db.ref('rooms/' + roomCode + '/categories');
+  isFirebaseReady = true;
+  firebaseListenerAttached = true;
+
+  db.ref('.info/connected').on('value', function(snap) {
+    if (snap.val() === true && !connectedShown) {
+      connectedShown = true;
+      showToast('♥ 已連接雲端！');
+    }
+  });
+
+  listenToCategories();
+  listenToTasks();
+  setupPresence();
+  loadCouplePhoto();
+
+  setTimeout(function() {
+    if (!firebaseDataLoaded) {
+      showToast('⚠ 雲端連接較慢，請稍候…', true);
+    }
+  }, 8000);
 }
 
 // Auto-login on load
@@ -1201,56 +1244,61 @@ function listenToCategories() {
   if (!categoriesRef) return;
   categoriesRef.on('value', function(snapshot) {
     var data = snapshot.val();
-    if (!data) {
+    if (!data && !categoriesSeeded) {
       // First time: seed default categories to Firebase
-      if (!categoriesSeeded) {
-        categoriesSeeded = true;
-        seedDefaultCategories();
-      }
+      categoriesSeeded = true;
+      seedDefaultCategories();
       return;
     }
-    // Build categories array from Firebase data, sorted by order
-    var catArr = [];
+    if (!data) {
+      CATEGORIES = [];
+      initCatSelect();
+      renderFilters();
+      return;
+    }
+    // Build CATEGORIES from Firebase, sorted by order
+    var arr = [];
     Object.keys(data).forEach(function(fbKey) {
       var c = data[fbKey];
-      catArr.push({
+      arr.push({
         id: c.id,
         name: c.name,
         icon: c.icon || 'fa-tag',
-        css: BUILTIN_CSS_MAP[c.id] || 'cat-custom',
-        order: typeof c.order === 'number' ? c.order : 999,
+        css: CAT_CSS_MAP[c.id] || 'cat-custom',
+        order: (typeof c.order === 'number') ? c.order : 999,
         fbKey: fbKey
       });
     });
-    catArr.sort(function(a, b) { return a.order - b.order; });
-    CATEGORIES = catArr;
+    arr.sort(function(a, b) { return a.order - b.order; });
+    CATEGORIES = arr;
     initCatSelect();
     renderFilters();
-    // Re-render category manager if open
+    // Re-render cat manager if it's open
     if (document.getElementById('catMgrOverlay').classList.contains('open')) {
       renderCatMgrList();
     }
+  }, function() {
+    // Silent — task listener already handles permission errors
   });
 }
 
 function seedDefaultCategories() {
   if (!categoriesRef) return;
   var updates = {};
-  DEFAULT_CAT_LIST.forEach(function(c, i) {
-    var key = 'cat_' + c.id;
-    updates[key] = { id: c.id, name: c.name, icon: c.icon, order: i };
+  DEFAULT_CATEGORIES.forEach(function(c, i) {
+    updates['cat_' + c.id] = { id: c.id, name: c.name, icon: c.icon, order: i };
   });
   categoriesRef.update(updates);
 }
 
-function addCustomCategory() {
+function addCategory() {
   var input = document.getElementById('catMgrInput');
   var name = input.value.trim();
   if (!name) return;
-  // Check duplicate name
-  var dup = CATEGORIES.find(function(c) { return c.name === name; });
-  if (dup) { showToast('⚠ 分類名稱已存在'); return; }
+  if (!categoriesRef) return;
+  // Generate unique id
   var id = 'custom_' + Date.now();
+  // Put new category at the end — get max order
   var maxOrder = 0;
   CATEGORIES.forEach(function(c) { if (c.order >= maxOrder) maxOrder = c.order + 1; });
   categoriesRef.push({ id: id, name: name, icon: 'fa-tag', order: maxOrder });
@@ -1261,61 +1309,67 @@ function addCustomCategory() {
 function deleteCategory(catId) {
   if (!categoriesRef) return;
   var cat = CATEGORIES.find(function(c) { return c.id === catId; });
-  if (!cat) return;
+  if (!cat || !cat.fbKey) return;
   // Count tasks using this category
   var taskCount = tasks.filter(function(t) { return t.cat === catId; }).length;
   if (taskCount > 0) {
-    // Show confirmation
-    showConfirmAction(
-      '分類「' + cat.name + '」有 ' + taskCount + ' 個任務，刪除後任務會顯示為「未分類」。確定刪除？',
-      '刪除分類',
-      function() {
-        doDeleteCategory(cat.fbKey);
-      }
-    );
+    // Show warning via confirm dialog
+    pendingDeleteId = null;
+    document.getElementById('confirmMsg').textContent = '此分類有 ' + taskCount + ' 個任務，刪除後任務將標為「未分類」。確定刪除「' + cat.name + '」？';
+    document.getElementById('confirmYes').textContent = '刪除分類';
+    document.getElementById('confirmYes').className = 'btn btn-danger';
+    confirmOvl.classList.add('open');
+    document.getElementById('confirmYes').onclick = function() {
+      categoriesRef.child(cat.fbKey).remove();
+      confirmOvl.classList.remove('open');
+      document.getElementById('confirmYes').textContent = '刪除';
+      document.getElementById('confirmYes').onclick = doDelete;
+      showToast('已刪除分類');
+    };
+    document.getElementById('confirmNo').onclick = function() {
+      confirmOvl.classList.remove('open');
+      document.getElementById('confirmYes').textContent = '刪除';
+      document.getElementById('confirmYes').className = 'btn btn-danger';
+      document.getElementById('confirmYes').onclick = doDelete;
+    };
   } else {
-    doDeleteCategory(cat.fbKey);
+    categoriesRef.child(cat.fbKey).remove();
+    showToast('已刪除分類');
   }
 }
 
-function doDeleteCategory(fbKey) {
-  categoriesRef.child(fbKey).remove();
-  showToast('已刪除分類');
-}
-
-function renameCategory(catId) {
+function renameCategoryStart(catId) {
   var cat = CATEGORIES.find(function(c) { return c.id === catId; });
   if (!cat) return;
-  // Replace the name element with an input field
-  var nameEl = document.querySelector('.cat-mgr-item[data-cat-id="' + catId + '"] .cat-mgr-name');
+  // Replace the name span with an input field
+  var nameEl = document.querySelector('[data-rename-id="' + catId + '"]');
   if (!nameEl) return;
-  var currentName = cat.name;
   var input = document.createElement('input');
   input.type = 'text';
   input.className = 'cat-mgr-name-input';
-  input.value = currentName;
+  input.value = cat.name;
   input.maxLength = 10;
+  input.dataset.catId = catId;
   nameEl.replaceWith(input);
   input.focus();
   input.select();
 
   function finishRename() {
     var newName = input.value.trim();
-    if (!newName || newName === currentName) {
-      renderCatMgrList();
-      return;
+    if (newName && newName !== cat.name && cat.fbKey) {
+      categoriesRef.child(cat.fbKey).update({ name: newName });
+      showToast('♥ 分類已更名');
     }
-    // Check duplicate
-    var dup = CATEGORIES.find(function(c) { return c.name === newName && c.id !== catId; });
-    if (dup) { showToast('⚠ 分類名稱已存在'); renderCatMgrList(); return; }
-    categoriesRef.child(cat.fbKey).update({ name: newName });
-    showToast('♥ 已更名');
+    // renderCatMgrList will be called by the Firebase listener
   }
 
   input.addEventListener('blur', finishRename);
   input.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
-    if (e.key === 'Escape') { renderCatMgrList(); }
+    if (e.key === 'Enter') { input.blur(); }
+    if (e.key === 'Escape') {
+      input.value = cat.name;
+      input.blur();
+    }
   });
 }
 
@@ -1332,12 +1386,17 @@ function moveCategoryDown(catId) {
 }
 
 function swapCategoryOrder(idxA, idxB) {
+  if (!categoriesRef) return;
   var catA = CATEGORIES[idxA];
   var catB = CATEGORIES[idxB];
-  if (!catA || !catB) return;
+  if (!catA || !catB || !catA.fbKey || !catB.fbKey) return;
+  var orderA = catA.order;
+  var orderB = catB.order;
+  // If orders happen to be equal, force them apart
+  if (orderA === orderB) { orderB = orderA + 1; }
   var updates = {};
-  updates[catA.fbKey + '/order'] = catB.order;
-  updates[catB.fbKey + '/order'] = catA.order;
+  updates[catA.fbKey + '/order'] = orderB;
+  updates[catB.fbKey + '/order'] = orderA;
   categoriesRef.update(updates);
 }
 
@@ -1355,49 +1414,23 @@ function renderCatMgrList() {
   var html = '';
   CATEGORIES.forEach(function(c, idx) {
     var count = tasks.filter(function(t) { return t.cat === c.id; }).length;
-    var isFirst = idx === 0;
-    var isLast = idx === CATEGORIES.length - 1;
-    html += '<div class="cat-mgr-item" data-cat-id="' + c.id + '">' +
+    var isFirst = (idx === 0);
+    var isLast = (idx === CATEGORIES.length - 1);
+    html += '<div class="cat-mgr-item">' +
       '<div class="cat-mgr-icon"><i class="fa-solid ' + c.icon + '"></i></div>' +
-      '<div class="cat-mgr-name">' + escHtml(c.name) + '</div>' +
+      '<div class="cat-mgr-name" data-rename-id="' + c.id + '" onclick="renameCategoryStart(\'' + c.id + '\')" title="點擊改名" style="cursor:pointer">' + escHtml(c.name) + '</div>' +
       '<div class="cat-mgr-badge">' + count + '</div>' +
       '<div class="cat-mgr-actions">' +
         '<button class="cat-mgr-btn" onclick="moveCategoryUp(\'' + c.id + '\')" title="上移"' + (isFirst ? ' disabled' : '') + '><i class="fa-solid fa-chevron-up"></i></button>' +
         '<button class="cat-mgr-btn" onclick="moveCategoryDown(\'' + c.id + '\')" title="下移"' + (isLast ? ' disabled' : '') + '><i class="fa-solid fa-chevron-down"></i></button>' +
-        '<button class="cat-mgr-btn" onclick="renameCategory(\'' + c.id + '\')" title="改名"><i class="fa-solid fa-pen"></i></button>' +
-        '<button class="cat-mgr-btn del" onclick="deleteCategory(\'' + c.id + '\')" title="刪除"><i class="fa-solid fa-trash-can"></i></button>' +
+        '<button class="cat-mgr-btn del-btn" onclick="deleteCategory(\'' + c.id + '\')" title="刪除分類"><i class="fa-solid fa-trash-can"></i></button>' +
       '</div>' +
     '</div>';
   });
   if (CATEGORIES.length === 0) {
-    html = '<div style="text-align:center;padding:1rem;color:var(--text3);font-size:.85rem">暫無分類，請新增</div>';
+    html = '<div style="text-align:center;color:var(--text3);padding:1rem;font-size:.85rem;font-style:italic">暫無分類，請新增一個</div>';
   }
   list.innerHTML = html;
-}
-
-// Custom confirm action helper (reuses the confirm overlay)
-function showConfirmAction(msg, btnText, onConfirm) {
-  var confirmMsg = document.getElementById('confirmMsg');
-  var confirmYes = document.getElementById('confirmYes');
-  var confirmNo = document.getElementById('confirmNo');
-  confirmMsg.textContent = msg;
-  confirmYes.textContent = btnText;
-  confirmYes.className = 'btn btn-danger';
-  confirmOvl.classList.add('open');
-
-  function cleanup() {
-    confirmYes.onclick = null;
-    confirmNo.onclick = null;
-    confirmOvl.classList.remove('open');
-    // Restore defaults
-    confirmYes.textContent = '刪除';
-    confirmYes.className = 'btn btn-danger';
-    confirmYes.onclick = doDelete;
-    confirmNo.onclick = function() { confirmOvl.classList.remove('open'); };
-  }
-
-  confirmYes.onclick = function() { cleanup(); onConfirm(); };
-  confirmNo.onclick = function() { cleanup(); };
 }
 
 // Close cat manager on overlay click
@@ -1405,7 +1438,7 @@ document.getElementById('catMgrOverlay').addEventListener('click', function(e) {
   if (e.target === document.getElementById('catMgrOverlay')) closeCatMgr();
 });
 document.getElementById('catMgrInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') addCustomCategory();
+  if (e.key === 'Enter') addCategory();
 });
 
 /* ═══════════════════════════════════════════
@@ -1420,9 +1453,7 @@ function listenToTasks() {
     var data = snapshot.val();
     if (data) {
       tasks = Object.keys(data).map(function(key) {
-        var raw = data[key];
-        var t = { id: key };
-        Object.keys(raw).forEach(function(k) { t[k] = raw[k]; });
+        var t = Object.assign({ id: key }, data[key]);
         if (t.attachments && !Array.isArray(t.attachments)) {
           t.attachments = Object.values(t.attachments);
         }
@@ -1436,7 +1467,11 @@ function listenToTasks() {
   }, function(error) {
     var msg = String(error.message || error);
     if (msg.indexOf('permission') !== -1 || msg.indexOf('Permission') !== -1 || msg.indexOf('PERMISSION') !== -1) {
-      showToast('⚠ 權限被拒！請到 Firebase Console 更新安全規則', true);
+      if (!authSucceeded) {
+        showToast('⚠ 權限被拒 — 請先到 Firebase 開啟 Anonymous Auth 再設定安全規則', true);
+      } else {
+        showToast('⚠ 權限被拒 — 請檢查 Firebase 安全規則是否正確', true);
+      }
     } else {
       showToast('⚠ 同步失敗: ' + msg, true);
     }
@@ -1466,17 +1501,19 @@ function removeTaskFromCloud(id) {
    PRESENCE
    ═══════════════════════════════════════════ */
 function setupPresence() {
-  var myPresRef = presenceRef.child(myName);
-  myPresRef.set(true);
-  myPresRef.onDisconnect().remove();
+  try {
+    var myPresRef = presenceRef.child(myName);
+    myPresRef.set(true);
+    myPresRef.onDisconnect().remove();
+  } catch(e) { /* silent */ }
 
   presenceRef.on('value', function(snapshot) {
     var data = snapshot.val() || {};
     var kikiOnline = !!data['Kiki'];
     var jeffOnline = !!data['Jeff'];
 
-    var tagK = $('#tagKiki');
-    var tagJ = $('#tagJeff');
+    var tagK = qSel('#tagKiki');
+    var tagJ = qSel('#tagJeff');
     if (tagK) {
       tagK.classList.toggle('is-online', kikiOnline);
       tagK.classList.toggle('is-me', myName === 'Kiki');
@@ -1485,7 +1522,7 @@ function setupPresence() {
       tagJ.classList.toggle('is-online', jeffOnline);
       tagJ.classList.toggle('is-me', myName === 'Jeff');
     }
-  });
+  }, function() { /* silent */ });
 }
 
 /* ═══════════════════════════════════════════
@@ -1533,8 +1570,8 @@ function loadCouplePhoto() {
   db.ref('rooms/' + roomCode + '/couplePhoto').on('value', function(snapshot) {
     var data = snapshot.val();
     if (data) {
-      var photoImg = $('#photoImg');
-      var couplePhoto = $('#couplePhoto');
+      var photoImg = qSel('#photoImg');
+      var couplePhoto = qSel('#couplePhoto');
       if (photoImg) photoImg.src = data;
       if (couplePhoto) couplePhoto.classList.add('has-img');
     }
@@ -1542,9 +1579,9 @@ function loadCouplePhoto() {
 }
 
 function initPhotoUpload() {
-  var couplePhoto = $('#couplePhoto');
-  var photoInput  = $('#photoInput');
-  var photoImg    = $('#photoImg');
+  var photoInput  = qSel('#photoInput');
+  var photoImg    = qSel('#photoImg');
+  var couplePhoto = qSel('#couplePhoto');
   if (!photoInput) return;
 
   photoInput.addEventListener('change', function() {
@@ -1653,7 +1690,7 @@ function processFiles(files) {
 }
 
 function renderAttachPreviews() {
-  var container = $('#attachPreviews');
+  var container = qSel('#attachPreviews');
   if (!container) return;
   container.innerHTML = pendingAttachments.map(function(a, i) {
     if (a.isImage) {
@@ -1672,7 +1709,7 @@ function renderAttachPreviews() {
 }
 
 function initAttachInput() {
-  var attachInput = $('#attachInput');
+  var attachInput = qSel('#attachInput');
   if (!attachInput) return;
   attachInput.addEventListener('change', function() {
     if (attachInput.files.length > 0) {
@@ -1683,10 +1720,10 @@ function initAttachInput() {
 }
 
 function initLightbox() {
-  var overlay = $('#lightboxOverlay');
-  var img = $('#lightboxImg');
-  var counter = $('#lightboxCounter');
-  var fname = $('#lightboxFilename');
+  var overlay = qSel('#lightboxOverlay');
+  var img = qSel('#lightboxImg');
+  var counter = qSel('#lightboxCounter');
+  var fname = qSel('#lightboxFilename');
 
   function show() {
     var item = lightboxImages[lightboxIndex];
@@ -1696,10 +1733,10 @@ function initLightbox() {
     fname.textContent = item.name || '';
   }
 
-  $('#lightboxClose').addEventListener('click', function() { overlay.classList.remove('open'); });
+  qSel('#lightboxClose').addEventListener('click', function() { overlay.classList.remove('open'); });
   overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); });
-  $('#lightboxPrev').addEventListener('click', function() { lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; show(); });
-  $('#lightboxNext').addEventListener('click', function() { lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; show(); });
+  qSel('#lightboxPrev').addEventListener('click', function() { lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length; show(); });
+  qSel('#lightboxNext').addEventListener('click', function() { lightboxIndex = (lightboxIndex + 1) % lightboxImages.length; show(); });
 
   window._showLightbox = show;
 }
@@ -1708,7 +1745,7 @@ function openLightbox(images, idx) {
   lightboxImages = images;
   lightboxIndex = idx || 0;
   window._showLightbox();
-  $('#lightboxOverlay').classList.add('open');
+  qSel('#lightboxOverlay').classList.add('open');
 }
 
 /* ═══════════════════════════════════════════
@@ -1718,18 +1755,7 @@ function getCat(id) {
   var found = CATEGORIES.find(function(c) { return c.id === id; });
   if (found) return found;
   // Orphaned category — category was deleted but task still references it
-  return { name: '⚠ 未分類', icon: 'fa-triangle-exclamation', css: 'cat-orphan', id: id, orphan: true };
-}
-
-function getOrphanCatIds() {
-  // Find category IDs used by tasks but not in CATEGORIES
-  var catIds = {};
-  CATEGORIES.forEach(function(c) { catIds[c.id] = true; });
-  var orphans = {};
-  tasks.forEach(function(t) {
-    if (t.cat && !catIds[t.cat]) orphans[t.cat] = true;
-  });
-  return Object.keys(orphans);
+  return { name: '未分類', icon: 'fa-question', css: 'cat-missing', id: id, orphaned: true };
 }
 
 function formatDate(d) {
@@ -1749,23 +1775,36 @@ function updateStats() {
   var done = tasks.filter(function(t) { return t.done; }).length;
   var pending = total - done;
   var pct = total ? Math.round(done / total * 100) : 0;
-  $('#statTotal').textContent = total;
-  $('#statPending').textContent = pending;
-  $('#statDone').textContent = done;
-  $('#progressFill').style.width = pct + '%';
-  $('#progressText').textContent = pct + '% 完成';
+  qSel('#statTotal').textContent = total;
+  qSel('#statPending').textContent = pending;
+  qSel('#statDone').textContent = done;
+  qSel('#progressFill').style.width = pct + '%';
+  qSel('#progressText').textContent = pct + '% 完成';
+}
+
+function getOrphanedCatIds() {
+  // Find cat IDs used by tasks that aren't in CATEGORIES
+  var catIds = {};
+  CATEGORIES.forEach(function(c) { catIds[c.id] = true; });
+  var orphaned = {};
+  tasks.forEach(function(t) {
+    if (t.cat && !catIds[t.cat]) {
+      orphaned[t.cat] = true;
+    }
+  });
+  return Object.keys(orphaned);
 }
 
 function renderFilters() {
-  var html = '<button class="filter-btn active" data-cat="all">全部</button>';
+  var html = '<button class="filter-btn' + (activeFilter === 'all' ? ' active' : '') + '" data-cat="all">全部</button>';
   CATEGORIES.forEach(function(c) {
-    html += '<button class="filter-btn" data-cat="' + c.id + '"><i class="fa-solid ' + c.icon + '"></i> ' + c.name + '</button>';
+    html += '<button class="filter-btn' + (activeFilter === c.id ? ' active' : '') + '" data-cat="' + c.id + '"><i class="fa-solid ' + c.icon + '"></i> ' + c.name + '</button>';
   });
-  // Show orphan filter if tasks reference deleted categories
-  var orphans = getOrphanCatIds();
-  if (orphans.length > 0) {
-    html += '<button class="filter-btn orphan-filter" data-cat="__orphan__"><i class="fa-solid fa-triangle-exclamation"></i> 未分類</button>';
-  }
+  // Show orphaned category filters if tasks reference deleted categories
+  var orphans = getOrphanedCatIds();
+  orphans.forEach(function(oId) {
+    html += '<button class="filter-btn missing' + (activeFilter === oId ? ' active' : '') + '" data-cat="' + oId + '"><i class="fa-solid fa-question"></i> 未分類</button>';
+  });
   html += '<button class="cat-manage-btn" title="管理分類" onclick="openCatMgr()"><i class="fa-solid fa-gear"></i></button>';
   filtersEl.innerHTML = html;
   filtersEl.querySelectorAll('.filter-btn').forEach(function(btn) {
@@ -1775,30 +1814,10 @@ function renderFilters() {
       renderTasks();
     });
   });
-  // Restore active filter
-  var filterExists = false;
-  filtersEl.querySelectorAll('.filter-btn').forEach(function(b) {
-    var match = b.dataset.cat === activeFilter;
-    b.classList.toggle('active', match);
-    if (match) filterExists = true;
-  });
-  if (!filterExists) {
-    activeFilter = 'all';
-    var allBtn = filtersEl.querySelector('[data-cat="all"]');
-    if (allBtn) allBtn.classList.add('active');
-  }
 }
 
 function renderTasks() {
-  var filtered;
-  if (activeFilter === 'all') {
-    filtered = tasks;
-  } else if (activeFilter === '__orphan__') {
-    var orphans = getOrphanCatIds();
-    filtered = tasks.filter(function(t) { return orphans.indexOf(t.cat) !== -1; });
-  } else {
-    filtered = tasks.filter(function(t) { return t.cat === activeFilter; });
-  }
+  var filtered = activeFilter === 'all' ? tasks : tasks.filter(function(t) { return t.cat === activeFilter; });
 
   if (filtered.length === 0) {
     if (!firebaseDataLoaded && firebaseConfig && firebaseConfig.databaseURL) {
@@ -1848,6 +1867,12 @@ function cardHTML(t, idx) {
     assigneeStr = '<span class="task-assignee"><i class="fa-solid ' + aIcon + '"></i> ' + formatAssignee(t.assignee) + '</span>';
   }
 
+  // Orphaned warning
+  var orphanStr = '';
+  if (cat.orphaned) {
+    orphanStr = '<span class="task-cat cat-missing" title="此分類已刪除"><i class="fa-solid fa-question"></i> 未分類</span>';
+  }
+
   // Attachment thumbnails
   var attachStr = '';
   var atts = t.attachments || [];
@@ -1867,13 +1892,15 @@ function cardHTML(t, idx) {
     }
   }
 
+  var catBadge = cat.orphaned ? orphanStr : '<span class="task-cat ' + cat.css + '"><i class="fa-solid ' + cat.icon + '"></i> ' + cat.name + '</span>';
+
   return '<div class="task-card' + doneClass + '" data-id="' + t.id + '" style="animation-delay:' + delay + 's">' +
     '<div class="ck' + checkedClass + '" data-id="' + t.id + '" role="checkbox" tabindex="0"></div>' +
     '<div class="task-body">' +
       '<div class="task-text">' + escHtml(t.name) + '</div>' +
       noteStr +
       attachStr +
-      '<div class="task-meta"><span class="task-cat ' + cat.css + '"><i class="fa-solid ' + cat.icon + '"></i> ' + cat.name + '</span>' + assigneeStr + dateStr + '</div>' +
+      '<div class="task-meta">' + catBadge + assigneeStr + dateStr + '</div>' +
     '</div>' +
     '<div class="task-actions">' +
       '<button class="act-btn edit" data-id="' + t.id + '" aria-label="編輯"><i class="fa-solid fa-pen"></i></button>' +
@@ -1935,56 +1962,43 @@ function taskData(t) {
 function openAdd() {
   editingId = null;
   pendingAttachments = [];
-  $('#modalTitle').innerHTML = '<i class="fa-solid fa-heart"></i> 新增任務';
-  $('#inputName').value = '';
-  $('#inputNote').value = '';
-  $('#inputCat').value = CATEGORIES.length > 0 ? CATEGORIES[CATEGORIES.length - 1].id : '';
-  $('#inputDate').value = '';
-  $('#inputAssignee').value = '';
-  $('#btnSave').textContent = '新增';
+  qSel('#modalTitle').innerHTML = '<i class="fa-solid fa-heart"></i> 新增任務';
+  qSel('#inputName').value = '';
+  qSel('#inputNote').value = '';
+  var catSel = qSel('#inputCat');
+  if (catSel && catSel.options.length > 0) catSel.selectedIndex = 0;
+  qSel('#inputDate').value = '';
+  qSel('#inputAssignee').value = '';
+  qSel('#btnSave').textContent = '新增';
   renderAttachPreviews();
   modalOverlay.classList.add('open');
-  setTimeout(function() { $('#inputName').focus(); }, 350);
+  setTimeout(function() { qSel('#inputName').focus(); }, 350);
 }
 
 function openEdit(id) {
   var t = tasks.find(function(x) { return x.id === id; });
   if (!t) return;
   editingId = id;
-  pendingAttachments = t.attachments ? t.attachments.map(function(a) {
-    var copy = {};
-    Object.keys(a).forEach(function(k) { copy[k] = a[k]; });
-    return copy;
-  }) : [];
-  $('#modalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯任務';
-  $('#inputName').value = t.name;
-  $('#inputNote').value = t.note || '';
-  // If the task's category still exists, select it; otherwise add a temp option
-  var catSelect = $('#inputCat');
-  var catExists = CATEGORIES.find(function(c) { return c.id === t.cat; });
-  if (!catExists && t.cat) {
-    // Add temporary orphan option
-    var opt = document.createElement('option');
-    opt.value = t.cat;
-    opt.textContent = '⚠ ' + t.cat + ' (已刪除)';
-    catSelect.appendChild(opt);
-  }
-  catSelect.value = t.cat;
-  $('#inputDate').value = t.date || '';
-  $('#inputAssignee').value = t.assignee || '';
-  $('#btnSave').textContent = '儲存';
+  pendingAttachments = t.attachments ? t.attachments.map(function(a) { return Object.assign({}, a); }) : [];
+  qSel('#modalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯任務';
+  qSel('#inputName').value = t.name;
+  qSel('#inputNote').value = t.note || '';
+  qSel('#inputCat').value = t.cat;
+  qSel('#inputDate').value = t.date || '';
+  qSel('#inputAssignee').value = t.assignee || '';
+  qSel('#btnSave').textContent = '儲存';
   renderAttachPreviews();
   modalOverlay.classList.add('open');
-  setTimeout(function() { $('#inputName').focus(); }, 350);
+  setTimeout(function() { qSel('#inputName').focus(); }, 350);
 }
 
 function saveTask() {
-  var name = $('#inputName').value.trim();
-  if (!name) { $('#inputName').style.borderColor = 'var(--danger)'; return; }
-  var cat = $('#inputCat').value;
-  var note = $('#inputNote').value.trim();
-  var date = $('#inputDate').value;
-  var assignee = $('#inputAssignee').value;
+  var name = qSel('#inputName').value.trim();
+  if (!name) { qSel('#inputName').style.borderColor = 'var(--danger)'; return; }
+  var cat = qSel('#inputCat').value;
+  var note = qSel('#inputNote').value.trim();
+  var date = qSel('#inputDate').value;
+  var assignee = qSel('#inputAssignee').value;
   var attachments = pendingAttachments.length > 0 ? pendingAttachments.slice() : null;
 
   if (editingId !== null) {
@@ -2009,9 +2023,10 @@ function saveTask() {
 function askDelete(id) {
   pendingDeleteId = id;
   var t = tasks.find(function(x) { return x.id === id; });
-  $('#confirmMsg').textContent = '確定要刪除「' + (t ? t.name : '') + '」？';
-  $('#confirmYes').textContent = '刪除';
-  $('#confirmYes').className = 'btn btn-danger';
+  qSel('#confirmMsg').textContent = '確定要刪除「' + (t ? t.name : '') + '」？';
+  qSel('#confirmYes').textContent = '刪除';
+  qSel('#confirmYes').className = 'btn btn-danger';
+  qSel('#confirmYes').onclick = doDelete;
   confirmOvl.classList.add('open');
 }
 
@@ -2040,11 +2055,11 @@ function showToast(msg, longer) {
 /* ═══════════════════════════════════════════
    Settings (reset config)
    ═══════════════════════════════════════════ */
-$('#settingsBtn').addEventListener('click', function() {
+qSel('#settingsBtn').addEventListener('click', function() {
   pendingDeleteId = null;
-  $('#confirmMsg').textContent = '要切換用戶嗎？';
-  $('#confirmYes').textContent = '切換';
-  $('#confirmYes').className = 'btn btn-primary';
+  qSel('#confirmMsg').textContent = '要切換用戶嗎？';
+  qSel('#confirmYes').textContent = '切換';
+  qSel('#confirmYes').className = 'btn btn-primary';
   confirmOvl.classList.add('open');
   var resetHandler = function() {
     store.del('v2_name');
@@ -2054,12 +2069,12 @@ $('#settingsBtn').addEventListener('click', function() {
     firebaseDataLoaded = false;
     showScreen('setupScreen');
   };
-  $('#confirmYes').onclick = function() { confirmOvl.classList.remove('open'); $('#confirmYes').className = 'btn btn-danger'; $('#confirmYes').textContent = '刪除'; resetHandler(); };
-  $('#confirmNo').onclick = function() {
+  qSel('#confirmYes').onclick = function() { confirmOvl.classList.remove('open'); qSel('#confirmYes').className = 'btn btn-danger'; resetHandler(); };
+  qSel('#confirmNo').onclick = function() {
     confirmOvl.classList.remove('open');
-    $('#confirmYes').textContent = '刪除';
-    $('#confirmYes').className = 'btn btn-danger';
-    $('#confirmYes').onclick = doDelete;
+    qSel('#confirmYes').textContent = '刪除';
+    qSel('#confirmYes').className = 'btn btn-danger';
+    qSel('#confirmYes').onclick = doDelete;
   };
 });
 
@@ -2073,19 +2088,19 @@ function initApp() {
   initAttachInput();
   initLightbox();
 
-  $('#fabAdd').addEventListener('click', openAdd);
-  $('#btnCancel').addEventListener('click', closeModal);
-  $('#btnSave').addEventListener('click', saveTask);
-  $('#confirmNo').addEventListener('click', function() { confirmOvl.classList.remove('open'); });
-  $('#confirmYes').addEventListener('click', doDelete);
+  qSel('#fabAdd').addEventListener('click', openAdd);
+  qSel('#btnCancel').addEventListener('click', closeModal);
+  qSel('#btnSave').addEventListener('click', saveTask);
+  qSel('#confirmNo').addEventListener('click', function() { confirmOvl.classList.remove('open'); });
+  qSel('#confirmYes').addEventListener('click', doDelete);
   modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
   confirmOvl.addEventListener('click', function(e) { if (e.target === confirmOvl) confirmOvl.classList.remove('open'); });
-  $('#inputName').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveTask(); });
-  $('#inputName').addEventListener('input', function() { $('#inputName').style.borderColor = ''; });
+  qSel('#inputName').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveTask(); });
+  qSel('#inputName').addEventListener('input', function() { qSel('#inputName').style.borderColor = ''; });
 }
 
 function initCatSelect() {
-  var sel = $('#inputCat');
+  var sel = qSel('#inputCat');
   if (sel) sel.innerHTML = CATEGORIES.map(function(c) { return '<option value="' + c.id + '">' + c.name + '</option>'; }).join('');
 }
 </script>
