@@ -400,6 +400,135 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
 .cat-custom{background:color-mix(in srgb,var(--pink) 12%,transparent);color:var(--pink)}
 .cat-missing{background:color-mix(in srgb,var(--cat-missing) 12%,transparent);color:var(--cat-missing);border:1px dashed var(--cat-missing)}
 
+/* ─── Payment Tracking ─── */
+.task-payment{
+  display:flex;align-items:center;gap:.5rem;margin-top:.45rem;
+  padding-top:.45rem;border-top:1px dashed var(--border);
+}
+.payment-input-wrap{
+  display:flex;align-items:center;gap:.15rem;
+  background:var(--bg3);border-radius:8px;padding:.2rem .45rem;
+  border:1.5px solid var(--border);transition:border-color .2s;flex:1;max-width:150px;
+}
+.payment-input-wrap:focus-within{border-color:var(--pink)}
+.payment-prefix{font-size:.8rem;color:var(--text3);font-weight:700}
+.payment-amount{
+  width:100%;border:none;background:transparent;color:var(--text);
+  font-family:var(--font-body);font-size:1rem;font-weight:600;
+  outline:none;padding:.18rem 0;
+  -moz-appearance:textfield;
+}
+.payment-amount::-webkit-inner-spin-button,
+.payment-amount::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.payment-amount::placeholder{color:var(--text3);font-weight:400;font-size:.82rem}
+.payment-toggle{
+  display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);
+  flex-shrink:0;
+}
+.payment-who{
+  padding:.28rem .6rem;border:none;cursor:pointer;font-size:.72rem;font-weight:600;
+  font-family:var(--font-body);background:var(--bg);color:var(--text3);
+  transition:all .2s;line-height:1.2;
+}
+.payment-who:first-child{border-right:1.5px solid var(--border)}
+.payment-who.active-kiki{background:var(--pink);color:#fff;border-color:var(--pink)}
+.payment-who.active-jeff{background:var(--gold);color:#fff;border-color:var(--gold)}
+.payment-who:hover:not([class*="active-"]){background:var(--bg-hover);color:var(--text2)}
+.payment-has-value .payment-prefix{color:var(--pink-deep)}
+
+/* ─── Tab Bar ─── */
+.tab-bar{
+  display:flex;max-width:640px;margin:0 auto;padding:0;
+  border-bottom:2px solid var(--border);
+  background:var(--bg);
+}
+.tab-btn{
+  flex:1;padding:.65rem .8rem;border:none;background:transparent;
+  font-family:var(--font-body);font-size:.85rem;font-weight:600;
+  color:var(--text3);cursor:pointer;transition:all .2s;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  display:flex;align-items:center;justify-content:center;gap:.35rem;
+}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--pink-deep);border-bottom-color:var(--pink)}
+.tab-btn i{font-size:.75rem}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:tabIn .3s ease-out}
+@keyframes tabIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── Expense Summary ─── */
+.expense-summary{max-width:640px;margin:0 auto;padding:.8rem 1rem 7rem}
+.expense-overview{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1rem 1.1rem;margin-bottom:.8rem;
+}
+.expense-overview-title{
+  font-family:var(--font-display);font-size:1rem;font-weight:600;
+  color:var(--pink-deep);margin-bottom:.6rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.expense-total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.35rem 0;font-size:.88rem;
+}
+.expense-total-row.grand{
+  font-weight:700;font-size:1.05rem;color:var(--text);
+  border-top:1.5px solid var(--border);padding-top:.55rem;margin-top:.3rem;
+}
+.expense-total-label{color:var(--text2);font-weight:500;display:flex;align-items:center;gap:.25rem}
+.expense-total-amount{font-family:var(--font-display);font-weight:700;color:var(--text)}
+.expense-total-amount.kiki{color:var(--pink)}
+.expense-total-amount.jeff{color:var(--gold)}
+.expense-group{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:.6rem;overflow:hidden;
+}
+.expense-group-header{
+  padding:.65rem .85rem;font-family:var(--font-display);font-weight:600;
+  font-size:.9rem;display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg3);
+}
+.expense-group-header .name{display:flex;align-items:center;gap:.35rem}
+.expense-group-header .subtotal{font-family:var(--font-display);font-size:.85rem;font-weight:700}
+.expense-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem .85rem;border-top:1px solid var(--border);font-size:.82rem;
+}
+.expense-item .task-name{color:var(--text2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.expense-item .cat-tag{
+  font-size:.55rem;padding:.1rem .35rem;border-radius:8px;margin:0 .35rem;flex-shrink:0;
+  font-weight:600;letter-spacing:.02em;
+}
+.expense-item .amount{font-family:var(--font-display);font-weight:600;flex-shrink:0;margin-left:.3rem}
+.expense-settlement{
+  background:linear-gradient(135deg,var(--pink-light),var(--gold-light));
+  border:2px solid var(--border);border-radius:var(--radius);
+  padding:1.2rem;text-align:center;margin-top:.8rem;
+}
+.settlement-title{
+  font-family:var(--font-display);font-size:.85rem;font-weight:600;
+  color:var(--text2);margin-bottom:.5rem;
+  display:flex;align-items:center;justify-content:center;gap:.35rem;
+}
+.settlement-result{
+  font-family:var(--font-display);font-size:1rem;font-weight:600;
+  color:var(--text);line-height:1.6;
+}
+.settlement-amount{
+  display:block;font-size:1.7rem;font-weight:800;margin-top:.2rem;
+  background:linear-gradient(135deg,var(--pink),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.settlement-balanced{color:var(--done);font-size:1.1rem}
+.expense-empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.expense-empty i{font-size:2.5rem;margin-bottom:.5rem;color:var(--pink-light);display:block}
+.expense-empty p{font-family:var(--font-display);font-style:italic;font-size:.95rem}
+.expense-unassigned-note{
+  font-size:.7rem;color:var(--text3);font-style:italic;text-align:center;
+  margin-top:.5rem;padding:.3rem;
+}
+
 /* ─── Task Actions ─── */
 .task-actions{display:flex;gap:.2rem;flex-shrink:0;opacity:0;transition:opacity .2s}
 .task-card:hover .task-actions{opacity:1}
@@ -745,8 +874,19 @@ textarea.setup-input{resize:vertical;min-height:100px;font-family:monospace;font
     <div class="progress-text" id="progressText">0% 完成</div>
   </div>
 
-  <div class="filters" id="filters"></div>
-  <div class="task-list" id="taskList"></div>
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-tab="tasks"><i class="fa-solid fa-list-check"></i> 任務清單</button>
+    <button class="tab-btn" data-tab="expenses"><i class="fa-solid fa-coins"></i> 支出紀錄</button>
+  </div>
+
+  <div class="tab-content active" id="tabTasks">
+    <div class="filters" id="filters"></div>
+    <div class="task-list" id="taskList"></div>
+  </div>
+
+  <div class="tab-content" id="tabExpenses">
+    <div class="expense-summary" id="expenseSummary"></div>
+  </div>
 
   <button class="fab" id="fabAdd" aria-label="新增任務"><i class="fa-solid fa-plus"></i></button>
   <button class="settings-btn" id="settingsBtn" aria-label="設定"><i class="fa-solid fa-gear"></i></button>
@@ -1816,6 +1956,133 @@ function renderFilters() {
   });
 }
 
+/* ─── Tab Switching ─── */
+var currentTab = 'tasks';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.getElementById('tabTasks').classList.toggle('active', tab === 'tasks');
+  document.getElementById('tabExpenses').classList.toggle('active', tab === 'expenses');
+  var fab = document.getElementById('fabAdd');
+  if (fab) fab.style.display = (tab === 'tasks') ? '' : 'none';
+  if (tab === 'expenses') renderExpenses();
+}
+
+function formatMoney(n) {
+  if (!n) return '$0';
+  var s = n % 1 === 0 ? String(n) : n.toFixed(2);
+  var parts = s.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return '$' + parts.join('.');
+}
+
+function renderExpenses() {
+  var container = document.getElementById('expenseSummary');
+  if (!container) return;
+
+  var kikiTasks = [];
+  var jeffTasks = [];
+  var unassignedTasks = [];
+  var kikiTotal = 0;
+  var jeffTotal = 0;
+  var unassignedTotal = 0;
+
+  tasks.forEach(function(t) {
+    if (t.paidAmount && t.paidAmount > 0) {
+      if (t.paidBy === 'Kiki') {
+        kikiTasks.push(t);
+        kikiTotal += t.paidAmount;
+      } else if (t.paidBy === 'Jeff') {
+        jeffTasks.push(t);
+        jeffTotal += t.paidAmount;
+      } else {
+        unassignedTasks.push(t);
+        unassignedTotal += t.paidAmount;
+      }
+    }
+  });
+
+  var grandTotal = kikiTotal + jeffTotal + unassignedTotal;
+
+  if (grandTotal === 0) {
+    container.innerHTML = '<div class="expense-empty"><i class="fa-solid fa-receipt"></i>' +
+      '<p>暫無支出記錄</p>' +
+      '<p style="font-size:.75rem;margin-top:.4rem;font-style:normal;color:var(--text3)">喺「任務清單」入面輸入金額同揀付款人</p></div>';
+    return;
+  }
+
+  var html = '';
+
+  // Overview card
+  html += '<div class="expense-overview">';
+  html += '<div class="expense-overview-title"><i class="fa-solid fa-chart-pie"></i> 支出總覽</div>';
+  html += '<div class="expense-total-row grand"><span class="expense-total-label">總支出</span><span class="expense-total-amount">' + formatMoney(grandTotal) + '</span></div>';
+  html += '<div class="expense-total-row"><span class="expense-total-label"><i class="fa-solid fa-heart" style="color:var(--pink);font-size:.6rem"></i> Kiki</span><span class="expense-total-amount kiki">' + formatMoney(kikiTotal) + '</span></div>';
+  html += '<div class="expense-total-row"><span class="expense-total-label"><i class="fa-solid fa-heart" style="color:var(--gold);font-size:.6rem"></i> Jeff</span><span class="expense-total-amount jeff">' + formatMoney(jeffTotal) + '</span></div>';
+  if (unassignedTotal > 0) {
+    html += '<div class="expense-total-row"><span class="expense-total-label"><i class="fa-solid fa-question" style="color:var(--text3);font-size:.6rem"></i> 未指定</span><span class="expense-total-amount" style="color:var(--text3)">' + formatMoney(unassignedTotal) + '</span></div>';
+  }
+  html += '</div>';
+
+  // Kiki's expenses
+  if (kikiTasks.length > 0) {
+    html += '<div class="expense-group">';
+    html += '<div class="expense-group-header" style="color:var(--pink)"><span class="name"><i class="fa-solid fa-heart"></i> Kiki 嘅支出</span><span class="subtotal">' + formatMoney(kikiTotal) + '</span></div>';
+    kikiTasks.forEach(function(t) {
+      var cat = getCat(t.cat);
+      html += '<div class="expense-item"><span class="task-name">' + escHtml(t.name) + '</span><span class="cat-tag ' + cat.css + '">' + escHtml(cat.name) + '</span><span class="amount" style="color:var(--pink)">' + formatMoney(t.paidAmount) + '</span></div>';
+    });
+    html += '</div>';
+  }
+
+  // Jeff's expenses
+  if (jeffTasks.length > 0) {
+    html += '<div class="expense-group">';
+    html += '<div class="expense-group-header" style="color:var(--gold)"><span class="name"><i class="fa-solid fa-heart"></i> Jeff 嘅支出</span><span class="subtotal">' + formatMoney(jeffTotal) + '</span></div>';
+    jeffTasks.forEach(function(t) {
+      var cat = getCat(t.cat);
+      html += '<div class="expense-item"><span class="task-name">' + escHtml(t.name) + '</span><span class="cat-tag ' + cat.css + '">' + escHtml(cat.name) + '</span><span class="amount" style="color:var(--gold)">' + formatMoney(t.paidAmount) + '</span></div>';
+    });
+    html += '</div>';
+  }
+
+  // Unassigned expenses
+  if (unassignedTasks.length > 0) {
+    html += '<div class="expense-group">';
+    html += '<div class="expense-group-header" style="color:var(--text3)"><span class="name"><i class="fa-solid fa-question"></i> 未指定付款人</span><span class="subtotal">' + formatMoney(unassignedTotal) + '</span></div>';
+    unassignedTasks.forEach(function(t) {
+      var cat = getCat(t.cat);
+      html += '<div class="expense-item"><span class="task-name">' + escHtml(t.name) + '</span><span class="cat-tag ' + cat.css + '">' + escHtml(cat.name) + '</span><span class="amount">' + formatMoney(t.paidAmount) + '</span></div>';
+    });
+    html += '</div>';
+    html += '<div class="expense-unassigned-note"><i class="fa-solid fa-circle-info"></i> 未指定付款人嘅支出唔包括喺結算入面</div>';
+  }
+
+  // Settlement (only based on assigned expenses)
+  html += '<div class="expense-settlement">';
+  html += '<div class="settlement-title"><i class="fa-solid fa-scale-balanced"></i> 結算</div>';
+  if (kikiTotal === 0 && jeffTotal === 0) {
+    html += '<div class="settlement-result" style="color:var(--text3)">未有指定付款人嘅支出記錄</div>';
+  } else if (kikiTotal === jeffTotal) {
+    html += '<div class="settlement-result settlement-balanced">♥ 雙方支出相同，無需補還</div>';
+  } else {
+    var assignedTotal = kikiTotal + jeffTotal;
+    var fairShare = assignedTotal / 2;
+    var kikiOwes = fairShare - kikiTotal;
+    var owesAmount = Math.abs(kikiOwes);
+    if (kikiOwes > 0) {
+      html += '<div class="settlement-result">Kiki 需要俾返 Jeff<br><span class="settlement-amount">' + formatMoney(owesAmount) + '</span></div>';
+    } else {
+      html += '<div class="settlement-result">Jeff 需要俾返 Kiki<br><span class="settlement-amount">' + formatMoney(owesAmount) + '</span></div>';
+    }
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
 function renderTasks() {
   var filtered = activeFilter === 'all' ? tasks : tasks.filter(function(t) { return t.cat === activeFilter; });
 
@@ -1827,6 +2094,7 @@ function renderTasks() {
         (tasks.length === 0 ? 'Kiki & Jeff，開始添加任務吧' : '此分類暫無任務') + '</p></div>';
     }
     updateStats();
+    if (currentTab === 'expenses') renderExpenses();
     return;
   }
 
@@ -1850,6 +2118,7 @@ function renderTasks() {
   taskListEl.innerHTML = html;
   bindTaskEvents();
   updateStats();
+  if (currentTab === 'expenses') renderExpenses();
 }
 
 function cardHTML(t, idx) {
@@ -1894,6 +2163,21 @@ function cardHTML(t, idx) {
 
   var catBadge = cat.orphaned ? orphanStr : '<span class="task-cat ' + cat.css + '"><i class="fa-solid ' + cat.icon + '"></i> ' + cat.name + '</span>';
 
+  // Payment tracking
+  var paidAmt = t.paidAmount ? t.paidAmount : '';
+  var paidBy = t.paidBy || '';
+  var hasValue = paidAmt !== '' ? ' payment-has-value' : '';
+  var paymentStr = '<div class="task-payment">' +
+    '<div class="payment-input-wrap' + hasValue + '">' +
+      '<span class="payment-prefix">$</span>' +
+      '<input type="number" class="payment-amount" data-id="' + t.id + '" value="' + paidAmt + '" placeholder="金額" inputmode="decimal" min="0">' +
+    '</div>' +
+    '<div class="payment-toggle">' +
+      '<button class="payment-who' + (paidBy === 'Kiki' ? ' active-kiki' : '') + '" data-id="' + t.id + '" data-who="Kiki">Kiki</button>' +
+      '<button class="payment-who' + (paidBy === 'Jeff' ? ' active-jeff' : '') + '" data-id="' + t.id + '" data-who="Jeff">Jeff</button>' +
+    '</div>' +
+  '</div>';
+
   return '<div class="task-card' + doneClass + '" data-id="' + t.id + '" style="animation-delay:' + delay + 's">' +
     '<div class="ck' + checkedClass + '" data-id="' + t.id + '" role="checkbox" tabindex="0"></div>' +
     '<div class="task-body">' +
@@ -1901,6 +2185,7 @@ function cardHTML(t, idx) {
       noteStr +
       attachStr +
       '<div class="task-meta">' + catBadge + assigneeStr + dateStr + '</div>' +
+      paymentStr +
     '</div>' +
     '<div class="task-actions">' +
       '<button class="act-btn edit" data-id="' + t.id + '" aria-label="編輯"><i class="fa-solid fa-pen"></i></button>' +
@@ -1938,6 +2223,58 @@ function bindTaskEvents() {
       if (images.length > 0) openLightbox(images, imgIdx);
     });
   });
+
+  // Payment amount — debounced save to avoid re-render while typing
+  taskListEl.querySelectorAll('.payment-amount').forEach(function(input) {
+    var debounceTimer;
+    function saveAmount() {
+      clearTimeout(debounceTimer);
+      var id = input.dataset.id;
+      var t = tasks.find(function(x) { return x.id === id; });
+      if (t) {
+        var val = parseFloat(input.value) || 0;
+        t.paidAmount = val;
+        // Update prefix highlight
+        var wrap = input.closest('.payment-input-wrap');
+        if (wrap) wrap.classList.toggle('payment-has-value', val > 0);
+        ignoreNextUpdate = true;
+        saveTaskToCloud(id, taskData(t));
+      }
+    }
+    input.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(saveAmount, 800);
+    });
+    input.addEventListener('blur', saveAmount);
+    input.addEventListener('click', function(e) { e.stopPropagation(); });
+    input.addEventListener('focus', function(e) { e.stopPropagation(); });
+  });
+
+  // Payment person toggle
+  taskListEl.querySelectorAll('.payment-who').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = btn.dataset.id;
+      var who = btn.dataset.who;
+      var t = tasks.find(function(x) { return x.id === id; });
+      if (t) {
+        var newPaidBy = (t.paidBy === who) ? '' : who;
+        t.paidBy = newPaidBy;
+        // Update DOM directly for instant feedback
+        var card = btn.closest('.task-card');
+        if (card) {
+          card.querySelectorAll('.payment-who').forEach(function(b) {
+            b.classList.remove('active-kiki', 'active-jeff');
+            if (b.dataset.who === newPaidBy) {
+              b.classList.add('active-' + newPaidBy.toLowerCase());
+            }
+          });
+        }
+        ignoreNextUpdate = true;
+        saveTaskToCloud(id, taskData(t));
+      }
+    });
+  });
 }
 
 /* ═══════════════════════════════════════════
@@ -1956,6 +2293,8 @@ function taskData(t) {
   if (t.attachments && t.attachments.length > 0) {
     d.attachments = t.attachments;
   }
+  d.paidAmount = t.paidAmount || 0;
+  d.paidBy = t.paidBy || '';
   return d;
 }
 
@@ -2087,6 +2426,11 @@ function initApp() {
   initPhotoUpload();
   initAttachInput();
   initLightbox();
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
+  });
 
   qSel('#fabAdd').addEventListener('click', openAdd);
   qSel('#btnCancel').addEventListener('click', closeModal);
